@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Source/Application.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source/Log.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source/Main.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source/ModuleAudio.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source/ModulePhysics.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source/ModuleRender.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source/ModuleWindow.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Timer.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ModuleGame.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source/p2Point.h">
+      <Filter>Headers\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source/Application.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source/Globals.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source/Module.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source/ModuleAudio.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source/ModulePhysics.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source/ModuleRender.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source/ModuleWindow.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Timer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ModuleGame.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{d82c32f1-eea9-456f-981b-a7e64f40f8d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{8fd46c61-4dab-4d27-8542-1af6dd78d6d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Containers">
+      <UniqueIdentifier>{39bd4360-6afc-44b3-8ba5-578b26392b24}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Source\resources.rc" />
+  </ItemGroup>
+</Project>
