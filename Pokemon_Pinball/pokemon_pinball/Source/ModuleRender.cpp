@@ -25,6 +25,7 @@ bool ModuleRender::Init()
 // PreUpdate: clear buffer
 update_status ModuleRender::PreUpdate()
 {
+    DrawTexture(background, 0, 0, WHITE);
 	return UPDATE_CONTINUE;
 }
 
@@ -46,7 +47,7 @@ update_status ModuleRender::PostUpdate()
 {
     // Draw everything in our batch!
     DrawFPS(10, 10);
-    DrawTexture(background, 0, 0, WHITE);
+    
     EndDrawing();
 
 	return UPDATE_CONTINUE;

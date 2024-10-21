@@ -34,7 +34,7 @@ class Circle : public PhysicEntity
 {
 public:
 	Circle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateCircle(_x, _y, 10), _listener)
+		: PhysicEntity(physics->CreateCircle(_x, _y, 16), _listener)
 		, texture(_texture)
 	{
 
