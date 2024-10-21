@@ -30,8 +30,8 @@ enum update_status
 };
 
 // Configuration -----------
-#define SCREEN_WIDTH		  256
-#define SCREEN_HEIGHT		  424
+#define SCREEN_WIDTH		  614
+#define SCREEN_HEIGHT		  1017
 #define SCREEN_SIZE				1
 #define WIN_FULLSCREEN		false
 #define WIN_RESIZABLE		false

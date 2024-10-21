@@ -6,7 +6,7 @@
 
 ModuleRender::ModuleRender(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-    background = RAYWHITE;
+    backgroundcolor = RAYWHITE;
 }
 
 // Destructor
@@ -18,7 +18,7 @@ bool ModuleRender::Init()
 {
 	LOG("Creating Renderer context");
 	bool ret = true;
-
+    background = LoadTexture("Assets/map.png");
 	return ret;
 }
 
@@ -31,7 +31,7 @@ update_status ModuleRender::PreUpdate()
 // Update: debug camera
 update_status ModuleRender::Update()
 {
-    ClearBackground(background);
+    ClearBackground(backgroundcolor);
 
     // NOTE: This function setups render batching system for
     // maximum performance, all consecutive Draw() calls are
@@ -46,7 +46,7 @@ update_status ModuleRender::PostUpdate()
 {
     // Draw everything in our batch!
     DrawFPS(10, 10);
-
+    DrawTexture(background, 0, 0, WHITE);
     EndDrawing();
 
 	return UPDATE_CONTINUE;
@@ -60,7 +60,7 @@ bool ModuleRender::CleanUp()
 
 void ModuleRender::SetBackgroundColor(Color color)
 {
-	background = color;
+	backgroundcolor = color;
 }
 
 // Draw to screen

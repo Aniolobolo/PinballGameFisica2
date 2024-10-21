@@ -22,6 +22,7 @@ public:
 
 public:
 
-	Color background;
+	Color backgroundcolor;
+	Texture background;
     Rectangle camera;
 };
