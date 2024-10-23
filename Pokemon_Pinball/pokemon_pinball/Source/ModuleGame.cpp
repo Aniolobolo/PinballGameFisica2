@@ -34,7 +34,7 @@ class Circle : public PhysicEntity
 {
 public:
 	Circle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateCircle(_x, _y, 32), _listener)
+		: PhysicEntity(physics->CreateCircle(_x, _y, 15), _listener)
 		, texture(_texture)
 	{
 
@@ -91,43 +91,81 @@ class Rick : public PhysicEntity
 {
 public:
 	// Pivot 0, 0
-	static constexpr int rick_head[64] = {
-			14, 36,
-			42, 40,
-			40, 0,
-			75, 30,
-			88, 4,
-			94, 39,
-			111, 36,
-			104, 58,
-			107, 62,
-			117, 67,
-			109, 73,
-			110, 85,
-			106, 91,
-			109, 99,
-			103, 104,
-			100, 115,
-			106, 121,
-			103, 125,
-			98, 126,
-			95, 137,
-			83, 147,
-			67, 147,
-			53, 140,
-			46, 132,
-			34, 136,
-			38, 126,
-			23, 123,
-			30, 114,
-			10, 102,
-			29, 90,
-			0, 75,
-			30, 62
+	static constexpr int rick_head[138] = {
+		337, 1019,
+	336, 1006,
+	346, 1000,
+	401, 971,
+	480, 921,
+	523, 895,
+	523, 776,
+	518, 762,
+	505, 757,
+	489, 756,
+	472, 753,
+	465, 750,
+	461, 743,
+	461, 684,
+	479, 666,
+	496, 641,
+	513, 612,
+	527, 583,
+	535, 553,
+	543, 520,
+	548, 476,
+	547, 436,
+	542, 392,
+	529, 331,
+	534, 336,
+	542, 350,
+	552, 380,
+	559, 421,
+	564, 509,
+	564, 981,
+	605, 981,
+	606, 452,
+	603, 412,
+	591, 351,
+	571, 308,
+	548, 275,
+	513, 243,
+	472, 214,
+	417, 184,
+	369, 166,
+	323, 155,
+	256, 155,
+	217, 162,
+	176, 177,
+	135, 201,
+	95, 235,
+	64, 276,
+	40, 335,
+	28, 407,
+	28, 502,
+	37, 546,
+	55, 599,
+	82, 645,
+	115, 685,
+	115, 742,
+	110, 750,
+	98, 755,
+	74, 757,
+	65, 763,
+	58, 774,
+	58, 896,
+	101, 927,
+	129, 945,
+	165, 966,
+	213, 991,
+	228, 998,
+	238, 1005,
+	238, 1020,
+	336, 1020
+
 	};
 
 	Rick(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(GetMouseX() - 50, GetMouseY() - 100, rick_head, 64), _listener)
+		: PhysicEntity(physics->CreateChain(GetMouseX() - 50, GetMouseY() - 100, rick_head, 138), _listener)
 		, texture(_texture)
 	{
 
@@ -165,7 +203,7 @@ bool ModuleGame::Start()
 
 	circle = LoadTexture("Assets/pokeball.png"); 
 	box = LoadTexture("Assets/crate.png");
-	rick = LoadTexture("Assets/rick_head.png");
+	//rick = LoadTexture("Assets/rick_head.png");
 	
 	bonus_fx = App->audio->LoadFx("Assets/Po.wav");
 	backgroundMusic = LoadMusicStream("Assets/19-Red-Table.ogg");
@@ -197,19 +235,19 @@ update_status ModuleGame::Update()
 
 	if(IsKeyPressed(KEY_ONE))
 	{
-		entities.emplace_back(new Circle(App->physics, 583, 850, this, circle));
+		entities.emplace_back(new Circle(App->physics, GetMousePosition().x, GetMousePosition().y, this, circle));
 		
 	}
-
-	/*if(IsKeyPressed(KEY_TWO))
-	{
-		entities.emplace_back(new Box(App->physics, GetMouseX(), GetMouseY(), this, box));
-	}
+	//583, 850,
+	//if(IsKeyPressed(KEY_TWO))
+	//{
+	//	entities.emplace_back(new Box(App->physics, GetMouseX(), GetMouseY(), this, box));
+	//}
 
 	if(IsKeyPressed(KEY_THREE))
 	{
 		entities.emplace_back(new Rick(App->physics, GetMouseX(), GetMouseY(), this, rick));
-	}*/
+	}
 
 	// Prepare for raycast ------------------------------------------------------
 	
