@@ -34,7 +34,7 @@ class Circle : public PhysicEntity
 {
 public:
 	Circle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateCircle(_x, _y, 16), _listener)
+		: PhysicEntity(physics->CreateCircle(_x, _y, 32), _listener)
 		, texture(_texture)
 	{
 
@@ -197,11 +197,11 @@ update_status ModuleGame::Update()
 
 	if(IsKeyPressed(KEY_ONE))
 	{
-		entities.emplace_back(new Circle(App->physics, GetMouseX(), GetMouseY(), this, circle));
+		entities.emplace_back(new Circle(App->physics, 583, 850, this, circle));
 		
 	}
 
-	if(IsKeyPressed(KEY_TWO))
+	/*if(IsKeyPressed(KEY_TWO))
 	{
 		entities.emplace_back(new Box(App->physics, GetMouseX(), GetMouseY(), this, box));
 	}
@@ -209,7 +209,7 @@ update_status ModuleGame::Update()
 	if(IsKeyPressed(KEY_THREE))
 	{
 		entities.emplace_back(new Rick(App->physics, GetMouseX(), GetMouseY(), this, rick));
-	}
+	}*/
 
 	// Prepare for raycast ------------------------------------------------------
 	
