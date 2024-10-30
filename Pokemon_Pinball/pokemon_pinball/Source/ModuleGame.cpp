@@ -165,7 +165,7 @@ public:
 	};
 
 	Rick(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(GetMouseX() - 50, GetMouseY() - 100, rick_head, 138), _listener)
+		: PhysicEntity(physics->CreateChain(0, 0, rick_head, 138), _listener)
 		, texture(_texture)
 	{
 
