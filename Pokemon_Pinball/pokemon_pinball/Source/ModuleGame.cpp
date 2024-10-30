@@ -210,6 +210,9 @@ bool ModuleGame::Start()
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
 	PlayMusicStream(backgroundMusic);
+
+	entities.emplace_back(new Rick(App->physics, 0, 0, this, rick));
+
 	return ret;
 }
 
@@ -244,10 +247,6 @@ update_status ModuleGame::Update()
 	//	entities.emplace_back(new Box(App->physics, GetMouseX(), GetMouseY(), this, box));
 	//}
 
-	if(IsKeyPressed(KEY_THREE))
-	{
-		entities.emplace_back(new Rick(App->physics, GetMouseX(), GetMouseY(), this, rick));
-	}
 
 	// Prepare for raycast ------------------------------------------------------
 	

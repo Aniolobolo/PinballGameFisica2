@@ -46,7 +46,14 @@ bool ModulePhysics::Start()
 
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
-	big_ball->CreateFixture(&fixture);
+	//big_ball->CreateFixture(&fixture);
+
+	// Crear el cuerpo base para las `joints`
+	ground = world->CreateBody(&bd);
+
+	// Llama a la función de creación de las palas
+	CreateFlippers();
+
 
 	return true;
 }
@@ -88,7 +95,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
 	fixture.density = 1.0f;
-	fixture.restitution = 1;
+	fixture.restitution = 0.75f;
 	b->CreateFixture(&fixture);
 
 	pbody->body = b;
@@ -186,6 +193,57 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size)
 	return pbody;
 }
 
+void ModulePhysics::CreateFlippers()
+{
+	// Anclajes para las palas
+	b2Vec2 p1(PIXEL_TO_METERS(335), PIXEL_TO_METERS(955));
+	b2Vec2 p2(PIXEL_TO_METERS(240), PIXEL_TO_METERS(955));
+
+	b2BodyDef flipperDef;
+	flipperDef.type = b2_dynamicBody;
+
+	// Configurar la pala izquierda
+	flipperDef.position = p1;
+	rFlipper = world->CreateBody(&flipperDef);
+
+	// Configurar la pala derecha
+	flipperDef.position = p2;
+	lFlipper = world->CreateBody(&flipperDef);
+
+	// Definir la forma de la pala como un rectángulo estrecho
+	b2PolygonShape flipperShape;
+	flipperShape.SetAsBox(PIXEL_TO_METERS(35), PIXEL_TO_METERS(5)); // Tamaño ajustable
+
+	b2FixtureDef flipperFixture;
+	flipperFixture.shape = &flipperShape;
+	flipperFixture.density = 1.0f;
+
+	rFlipper->CreateFixture(&flipperFixture);
+	lFlipper->CreateFixture(&flipperFixture);
+
+	b2RevoluteJointDef jointDef;
+	jointDef.bodyA = ground;
+	jointDef.localAnchorB.SetZero();
+	jointDef.enableMotor = true;
+	jointDef.maxMotorTorque = 1000.0f;
+	jointDef.enableLimit = true;
+
+	// Configurar joint de la pala izquierda
+	jointDef.localAnchorA = p1;
+	jointDef.bodyB = rFlipper;
+	jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;
+	jointDef.upperAngle = .0f * b2_pi / 180.0f;
+	rJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
+
+	// Configurar `joint` de la pala derecha
+	jointDef.localAnchorA = p2;
+	jointDef.bodyB = lFlipper;
+	jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;
+	jointDef.upperAngle = 30.0f * b2_pi / 180.0f;
+	lJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
+}
+
+
 // 
 update_status ModulePhysics::PostUpdate()
 {
@@ -198,6 +256,16 @@ update_status ModulePhysics::PostUpdate()
 	{
 		return UPDATE_CONTINUE;
 	}
+
+	if (IsKeyDown(KEY_A)) {
+		rJoint->SetMotorSpeed(20.0f);  
+		lJoint->SetMotorSpeed(-20.0f);
+	}
+	else {
+		rJoint->SetMotorSpeed(-20.0f); 
+		lJoint->SetMotorSpeed(20.0f);
+	}
+
 
 	// Bonus code: this will iterate all objects in the world and draw the circles
 	// You need to provide your own macro to translate meters to pixels
@@ -272,6 +340,8 @@ update_status ModulePhysics::PostUpdate()
 
 			// TODO 1: If mouse button 1 is pressed ...
 			// test if the current body contains mouse position
+
+			
 		}
 	}
 
@@ -279,7 +349,7 @@ update_status ModulePhysics::PostUpdate()
 	// so we can pull it around
 	// TODO 2: If a body was selected, create a mouse joint
 	// using mouse_joint class property
-
+	
 
 	// TODO 3: If the player keeps pressing the mouse button, update
 	// target position and draw a red line between both anchor points
