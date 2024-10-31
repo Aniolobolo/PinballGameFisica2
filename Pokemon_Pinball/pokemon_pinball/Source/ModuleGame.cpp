@@ -201,16 +201,12 @@ public:
 	209, 949
 	};
 
-
 	Rick2(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
 		: PhysicEntity(physics->CreateChain(0, 0, down_left_collision, 24), _listener)
 		, texture(_texture)
 	{
 
 	}
-
-
-
 	void Update() override
 	{
 		int x, y;
@@ -241,15 +237,12 @@ public:
 	445, 901
 	};
 
-
 	Rick3(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
 		: PhysicEntity(physics->CreateChain(0, 0, down_right_collision, 24), _listener)
 		, texture(_texture)
 	{
 
 	}
-
-
 
 	void Update() override
 	{
@@ -266,30 +259,34 @@ class Rick4 : public PhysicEntity
 {
 public:
 	// Pivot 0, 0
-	static constexpr int down_up_left_collision[24] = {
-	369, 950,
-	356, 937,
-	356, 933,
-	443, 877,
-	451, 870,
-	456, 860,
-	456, 800,
-	459, 794,
-	466, 792,
-	472, 797,
-	472, 883,
-	445, 901
+	static constexpr int down_up_right_collision[38] = {
+	364, 861,
+	370, 851,
+	376, 843,
+	383, 834,
+	389, 825,
+	394, 818,
+	401, 808,
+	405, 801,
+	410, 794,
+	416, 794,
+	420, 801,
+	419, 822,
+	419, 846,
+	407, 854,
+	396, 861,
+	385, 868,
+	378, 872,
+	369, 872,
+	365, 866
 	};
 
-
 	Rick4(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, down_up_left_collision, 24), _listener)
+		: PhysicEntity(physics->CreateChain(0, 0, down_up_right_collision, 38), _listener)
 		, texture(_texture)
 	{
 
 	}
-
-
 
 	void Update() override
 	{
@@ -302,6 +299,196 @@ private:
 	Texture2D texture;
 };
 
+class Rick5 : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int down_up_left_collision[40] = {
+	199, 873,
+	187, 865,
+	176, 858,
+	163, 850,
+	156, 846,
+	156, 834,
+	156, 796,
+	161, 793,
+	167, 796,
+	172, 803,
+	176, 810,
+	183, 820,
+	188, 828,
+	193, 835,
+	198, 842,
+	202, 849,
+	208, 857,
+	210, 862,
+	210, 867,
+	205, 872
+	};
+
+	Rick5(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, down_up_left_collision, 40), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
+
+class Rick6 : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int hatch[110] = {
+	183, 449,
+	176, 435,
+	174, 425,
+	170, 409,
+	168, 396,
+	168, 382,
+	167, 318,
+	170, 302,
+	175, 288,
+	183, 273,
+	189, 263,
+	196, 252,
+	206, 241,
+	215, 232,
+	229, 222,
+	239, 216,
+	252, 210,
+	263, 208,
+	263, 254,
+	257, 260,
+	256, 325,
+	260, 342,
+	263, 364,
+	269, 383,
+	273, 396,
+	281, 410,
+	287, 421,
+	287, 426,
+	279, 426,
+	263, 426,
+	253, 426,
+	242, 418,
+	242, 400,
+	246, 373,
+	246, 349,
+	250, 341,
+	249, 325,
+	239, 317,
+	230, 316,
+	230, 307,
+	192, 307,
+	192, 318,
+	179, 325,
+	173, 326,
+	173, 342,
+	178, 344,
+	181, 348,
+	181, 373,
+	184, 391,
+	187, 404,
+	190, 414,
+	192, 423,
+	194, 433,
+	194, 443,
+	192, 449
+	};
+
+	Rick6(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, hatch, 110), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
+
+class GreenEvoD : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int GreenEvoDerechaCollision[82] = {
+	160, 667,
+	148, 654,
+	139, 642,
+	130, 630,
+	122, 618,
+	114, 606,
+	106, 592,
+	97, 574,
+	93, 561,
+	89, 548,
+	84, 530,
+	80, 511,
+	77, 489,
+	58, 462,
+	59, 442,
+	69, 460,
+	76, 470,
+	84, 481,
+	92, 489,
+	100, 497,
+	109, 507,
+	123, 520,
+	128, 524,
+	134, 529,
+	137, 531,
+	142, 534,
+	148, 537,
+	151, 547,
+	154, 554,
+	158, 564,
+	161, 571,
+	167, 580,
+	171, 590,
+	177, 600,
+	182, 609,
+	186, 615,
+	188, 620,
+	188, 637,
+	188, 649,
+	178, 659,
+	169, 660
+	};
+
+	GreenEvoD(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, GreenEvoDerechaCollision, 82), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -334,6 +521,9 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Rick2(App->physics, 0, 0, this, rick2));
 	entities.emplace_back(new Rick3(App->physics, 0, 0, this, rick3));
 	entities.emplace_back(new Rick4(App->physics, 0, 0, this, rick4));
+	entities.emplace_back(new Rick5(App->physics, 0, 0, this, rick5));
+	entities.emplace_back(new Rick6(App->physics, 0, 0, this, rick6));
+	entities.emplace_back(new GreenEvoD(App->physics, 0, 0, this, GreenEvoDer)); 
 	return ret;
 }
 

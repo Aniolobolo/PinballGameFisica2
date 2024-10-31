@@ -35,7 +35,8 @@ public:
 	Texture2D rick;
 	Texture2D rick2;
 	Texture2D rick3;
-	Texture2D rick4;
+	Texture2D rick4, rick5, rick6; 
+	Texture2D GreenEvoDer; //colision de la derecha del evo green
 
 	uint32 bonus_fx;
 	Music backgroundMusic;
