@@ -182,6 +182,125 @@ private:
 	Texture2D texture;
 };
 
+class Rick2 : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int down_left_collision[24] = {
+	207, 951,
+	111, 889,
+	103, 880,
+	103, 797,
+	112, 791,
+	120, 800,
+	120, 862,
+	123, 867,
+	129, 874,
+	220, 933,
+	220, 938,
+	209, 949
+	};
+
+
+	Rick2(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, down_left_collision, 24), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
+
+class Rick3 : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int down_right_collision[24] = {
+	369, 950,
+	356, 937,
+	356, 933,
+	443, 877,
+	451, 870,
+	456, 860,
+	456, 800,
+	459, 794,
+	466, 792,
+	472, 797,
+	472, 883,
+	445, 901
+	};
+
+
+	Rick3(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, down_right_collision, 24), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
+
+class Rick4 : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int down_up_left_collision[24] = {
+	369, 950,
+	356, 937,
+	356, 933,
+	443, 877,
+	451, 870,
+	456, 860,
+	456, 800,
+	459, 794,
+	466, 792,
+	472, 797,
+	472, 883,
+	445, 901
+	};
+
+
+	Rick4(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, down_up_left_collision, 24), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
 
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -212,7 +331,9 @@ bool ModuleGame::Start()
 	PlayMusicStream(backgroundMusic);
 
 	entities.emplace_back(new Rick(App->physics, 0, 0, this, rick));
-
+	entities.emplace_back(new Rick2(App->physics, 0, 0, this, rick2));
+	entities.emplace_back(new Rick3(App->physics, 0, 0, this, rick3));
+	entities.emplace_back(new Rick4(App->physics, 0, 0, this, rick4));
 	return ret;
 }
 

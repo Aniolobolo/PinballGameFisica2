@@ -33,6 +33,9 @@ public:
 	Texture2D circle;
 	Texture2D box;
 	Texture2D rick;
+	Texture2D rick2;
+	Texture2D rick3;
+	Texture2D rick4;
 
 	uint32 bonus_fx;
 	Music backgroundMusic;
