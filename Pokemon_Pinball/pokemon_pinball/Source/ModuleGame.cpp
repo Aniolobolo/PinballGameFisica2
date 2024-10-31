@@ -91,81 +91,83 @@ class Rick : public PhysicEntity
 {
 public:
 	// Pivot 0, 0
-	static constexpr int rick_head[138] = {
-		337, 1019,
-	336, 1006,
-	346, 1000,
-	401, 971,
-	480, 921,
-	523, 895,
-	523, 776,
-	518, 762,
-	505, 757,
-	489, 756,
-	472, 753,
-	465, 750,
+	static constexpr int rick_head[140] = {
+	336, 1018,
+	337, 1007,
+	341, 1000,
+	411, 965,
+	480, 920,
+	480, 954,
+	520, 954,
+	520, 774,
+	505, 758,
+	480, 755,
+	466, 751,
 	461, 743,
-	461, 684,
-	479, 666,
-	496, 641,
-	513, 612,
-	527, 583,
-	535, 553,
-	543, 520,
-	548, 476,
-	547, 436,
-	542, 392,
-	529, 331,
-	534, 336,
-	542, 350,
-	552, 380,
-	559, 421,
-	564, 509,
-	564, 981,
+	461, 690,
+	479, 672,
+	507, 635,
+	525, 599,
+	542, 552,
+	554, 498,
+	552, 418,
+	547, 383,
+	537, 349,
+	532, 334,
+	536, 337,
+	550, 373,
+	560, 433,
+	564, 513,
+	563, 981,
 	605, 981,
-	606, 452,
-	603, 412,
-	591, 351,
-	571, 308,
-	548, 275,
-	513, 243,
-	472, 214,
-	417, 184,
-	369, 166,
-	323, 155,
-	256, 155,
-	217, 162,
-	176, 177,
-	135, 201,
-	95, 235,
-	64, 276,
-	40, 335,
-	28, 407,
-	28, 502,
-	37, 546,
-	55, 599,
-	82, 645,
-	115, 685,
-	115, 742,
-	110, 750,
-	98, 755,
-	74, 757,
-	65, 763,
-	58, 774,
-	58, 896,
-	101, 927,
-	129, 945,
-	165, 966,
-	213, 991,
-	228, 998,
-	238, 1005,
-	238, 1020,
-	336, 1020
+	606, 454,
+	600, 386,
+	575, 317,
+	535, 270,
+	489, 229,
+	433, 193,
+	386, 172,
+	334, 158,
+	261, 155,
+	201, 167,
+	137, 198,
+	105, 223,
+	78, 254,
+	52, 300,
+	38, 346,
+	30, 386,
+	24, 444,
+	23, 493,
+	31, 548,
+	42, 583,
+	56, 614,
+	72, 641,
+	83, 657,
+	98, 674,
+	114, 691,
+	114, 743,
+	109, 750,
+	98, 754,
+	73, 756,
+	65, 762,
+	58, 776,
+	58, 952,
+	94, 950,
+	95, 920,
+	106, 930,
+	121, 940,
+	140, 951,
+	170, 969,
+	233, 1001,
+	239, 1006,
+	239, 1019,
+	334, 1019
+
 
 	};
 
 	Rick(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, rick_head, 138), _listener)
+		: PhysicEntity(physics->CreateChain(0, 0, rick_head, 140), _listener)
 		, texture(_texture)
 	{
 
@@ -489,6 +491,121 @@ public:
 private:
 	Texture2D texture;
 };
+class GreenOneI : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int GreenOneIzquierdaCollision[50] = {
+	126, 458,
+	116, 449,
+	107, 440,
+	100, 431,
+	94, 420,
+	88, 409,
+	83, 398,
+	78, 385,
+	82, 366,
+	87, 343,
+	92, 323,
+	98, 310,
+	105, 297,
+	115, 281,
+	124, 269,
+	133, 260,
+	138, 260,
+	138, 264,
+	131, 277,
+	123, 301,
+	118, 335,
+	118, 360,
+	118, 391,
+	120, 418,
+	126, 447
+
+	};
+
+	GreenOneI(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, GreenOneIzquierdaCollision, 50), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
+class TorresGemelasI : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int TorresGemelasIzquierdaCollision[16] = {
+	302, 254,
+	298, 248,
+	298, 213,
+	302, 207,
+	309, 207,
+	314, 213,
+	314, 251,
+	311, 254
+	};
+
+	TorresGemelasI(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, TorresGemelasIzquierdaCollision, 16), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
+
+class TorresGemelasD : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int TorresGemelasDerechaCollision[16] = {
+	352, 257,
+	348, 254,
+	348, 220,
+	354, 214,
+	359, 214,
+	365, 220,
+	365, 253,
+	361, 257
+	};
+
+	TorresGemelasD(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, TorresGemelasDerechaCollision, 16), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -524,6 +641,9 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Rick5(App->physics, 0, 0, this, rick5));
 	entities.emplace_back(new Rick6(App->physics, 0, 0, this, rick6));
 	entities.emplace_back(new GreenEvoD(App->physics, 0, 0, this, GreenEvoDer)); 
+	entities.emplace_back(new GreenOneI(App->physics, 0, 0, this, GreenOneIzq));
+	entities.emplace_back(new TorresGemelasI(App->physics, 0, 0, this, TorresGemelasIzq));
+	entities.emplace_back(new TorresGemelasD(App->physics, 0, 0, this, TorresGemelasDer));
 	return ret;
 }
 
