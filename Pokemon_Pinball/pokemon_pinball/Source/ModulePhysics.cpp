@@ -51,6 +51,14 @@ bool ModulePhysics::Start()
 	// Crear el cuerpo base para las `joints`
 	ground = world->CreateBody(&bd);
 
+	lFlipper = nullptr;
+	rFlipper = nullptr;
+	lJoint = nullptr;
+	rJoint = nullptr;
+
+	leftFlipperTexture = LoadTexture("Assets/leftFlipper.png");
+	rightFlipperTexture = LoadTexture("Assets/rightFlipper.png");
+
 	// Llama a la función de creación de las palas
 	CreateFlippers();
 
@@ -95,7 +103,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
 	fixture.density = 1.0f;
-	fixture.restitution = 0.75f;
+	fixture.restitution = 0.65f;
 	b->CreateFixture(&fixture);
 
 	pbody->body = b;
@@ -195,53 +203,49 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size)
 
 void ModulePhysics::CreateFlippers()
 {
-	// Anclajes para las palas
-	b2Vec2 p1(PIXEL_TO_METERS(335), PIXEL_TO_METERS(955));
-	b2Vec2 p2(PIXEL_TO_METERS(240), PIXEL_TO_METERS(955));
+	// Posiciones de los anclajes de las palas
+	b2Vec2 anchorLeft(PIXEL_TO_METERS(215), PIXEL_TO_METERS(940));  // Anclaje de la pala izquierda
+	b2Vec2 anchorRight(PIXEL_TO_METERS(360), PIXEL_TO_METERS(940)); // Anclaje de la pala derecha
 
-	b2BodyDef flipperDef;
-	flipperDef.type = b2_dynamicBody;
+	// Crear anclajes estáticos para las palas
+	b2BodyDef anchorDef;
+	anchorDef.type = b2_staticBody;
 
-	// Configurar la pala izquierda
-	flipperDef.position = p1;
-	rFlipper = world->CreateBody(&flipperDef);
+	// Crear cuerpos de los anclajes
+	anchorDef.position = anchorLeft;
+	b2Body* leftAnchor = world->CreateBody(&anchorDef);
 
-	// Configurar la pala derecha
-	flipperDef.position = p2;
-	lFlipper = world->CreateBody(&flipperDef);
+	anchorDef.position = anchorRight;
+	b2Body* rightAnchor = world->CreateBody(&anchorDef);
 
-	// Definir la forma de la pala como un rectángulo estrecho
-	b2PolygonShape flipperShape;
-	flipperShape.SetAsBox(PIXEL_TO_METERS(35), PIXEL_TO_METERS(5)); // Tamaño ajustable
+	// Crear las palas
+	leftFlipper = CreateRectangle(METERS_TO_PIXELS(anchorLeft.x), METERS_TO_PIXELS(anchorLeft.y), 60, 10);
+	rightFlipper = CreateRectangle(METERS_TO_PIXELS(anchorRight.x), METERS_TO_PIXELS(anchorRight.y), 60, 10);
 
-	b2FixtureDef flipperFixture;
-	flipperFixture.shape = &flipperShape;
-	flipperFixture.density = 1.0f;
-
-	rFlipper->CreateFixture(&flipperFixture);
-	lFlipper->CreateFixture(&flipperFixture);
-
+	// Configurar las revolute joints para las palas
 	b2RevoluteJointDef jointDef;
-	jointDef.bodyA = ground;
-	jointDef.localAnchorB.SetZero();
 	jointDef.enableMotor = true;
-	jointDef.maxMotorTorque = 1000.0f;
+	jointDef.maxMotorTorque = 1000.0f;  // Torque máximo del motor
 	jointDef.enableLimit = true;
-
-	// Configurar joint de la pala izquierda
-	jointDef.localAnchorA = p1;
-	jointDef.bodyB = rFlipper;
-	jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;
-	jointDef.upperAngle = .0f * b2_pi / 180.0f;
-	rJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
-
-	// Configurar `joint` de la pala derecha
-	jointDef.localAnchorA = p2;
-	jointDef.bodyB = lFlipper;
 	jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;
 	jointDef.upperAngle = 30.0f * b2_pi / 180.0f;
+
+	// Conectar la pala izquierda
+	jointDef.bodyA = leftAnchor;
+	jointDef.bodyB = leftFlipper->body;
+	jointDef.localAnchorA.SetZero();
+	jointDef.localAnchorB.Set(-PIXEL_TO_METERS(30), 0);  // Punto de anclaje en la pala
 	lJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
+
+	// Conectar la pala derecha
+	jointDef.bodyA = rightAnchor;
+	jointDef.bodyB = rightFlipper->body;
+	jointDef.localAnchorA.SetZero();
+	jointDef.localAnchorB.Set(PIXEL_TO_METERS(30), 0);  // Punto de anclaje en la pala
+	rJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
 }
+
+
 
 
 // 
@@ -257,15 +261,22 @@ update_status ModulePhysics::PostUpdate()
 		return UPDATE_CONTINUE;
 	}
 
-	if (IsKeyDown(KEY_A)) {
-		rJoint->SetMotorSpeed(20.0f);  
-		lJoint->SetMotorSpeed(-20.0f);
+	if (IsKeyDown(KEY_A))
+	{
+		lJoint->SetMotorSpeed(-20.0f); // Rotar a la izquierda
 	}
 	else {
-		rJoint->SetMotorSpeed(-20.0f); 
-		lJoint->SetMotorSpeed(20.0f);
+		lJoint->SetMotorSpeed(20.0f); // Detener
 	}
 
+	if (IsKeyDown(KEY_D))
+	{
+		rJoint->SetMotorSpeed(20.0f); // Rotar a la derecha
+	}
+	else
+	{
+		rJoint->SetMotorSpeed(-20.0f); // Detener
+	}
 
 	// Bonus code: this will iterate all objects in the world and draw the circles
 	// You need to provide your own macro to translate meters to pixels
@@ -338,9 +349,21 @@ update_status ModulePhysics::PostUpdate()
 				break;
 			}
 
-			// TODO 1: If mouse button 1 is pressed ...
-			// test if the current body contains mouse position
+			b2Vec2 pos = b->GetPosition();
+			float angle = b->GetAngle() * 180.0f / b2_pi;
 
+			Vector2 texturePosition = { (float)(METERS_TO_PIXELS(pos.x) - 30), (float)(METERS_TO_PIXELS(pos.y) - 5) };
+
+
+			if (b == leftFlipper->body)
+			{
+				DrawFlipper(leftFlipperTexture, leftFlipper, lJoint);
+				
+			}
+			else if (b == rightFlipper->body)
+			{
+				DrawFlipper(rightFlipperTexture, rightFlipper, rJoint);
+			}
 			
 		}
 	}
@@ -359,12 +382,33 @@ update_status ModulePhysics::PostUpdate()
 	return UPDATE_CONTINUE;
 }
 
+void ModulePhysics::DrawFlipper(Texture2D flipperTexture, PhysBody* flipper, b2RevoluteJoint* joint)
+{
+	// Obtiene el ángulo de la pala en radianes y lo convierte a grados
+	float angleDegrees = RADTODEG * joint->GetJointAngle();
+
+	// Obtiene la posición de la pala en pixeles
+	b2Vec2 position = flipper->body->GetPosition();
+	int posX = METERS_TO_PIXELS(position.x);
+	int posY = METERS_TO_PIXELS(position.y);
+
+	// Dibuja la textura en la posición y rotación actual de la pala
+	DrawTexturePro(
+		flipperTexture,
+		Rectangle{ 0, 0, (float)flipperTexture.width, (float)flipperTexture.height },
+		Rectangle{ (float)posX, (float)posY, (float)flipperTexture.width, (float)flipperTexture.height },
+		Vector2{ (float)(flipperTexture.width / 2), (float)(flipperTexture.height / 2) }, // Centro de rotación de la textura
+		angleDegrees,
+		WHITE
+	);
+}
 
 // Called before quitting
 bool ModulePhysics::CleanUp()
 {
 	LOG("Destroying physics world");
-
+	UnloadTexture(leftFlipperTexture);
+	UnloadTexture(rightFlipperTexture);
 	// Delete the whole physics world!
 	delete world;
 
@@ -381,6 +425,15 @@ void PhysBody::GetPhysicPosition(int& x, int& y) const
 float PhysBody::GetRotation() const
 {
 	return body->GetAngle();
+}
+
+void PhysBody::Rotate(float angle)
+{
+	if (body) {
+		b2Vec2 position = body->GetPosition();
+		float currentAngle = body->GetAngle();
+		body->SetTransform(position, currentAngle + angle);
+	}
 }
 
 bool PhysBody::Contains(int x, int y) const

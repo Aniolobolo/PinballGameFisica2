@@ -87,6 +87,73 @@ private:
 
 };
 
+class LeftPad : public PhysicEntity
+{
+public:
+	LeftPad(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20), _listener)
+		, texture(_texture)
+	{
+	}
+
+	void Update() override
+	{
+		// Rotación controlada por el teclado
+		if (IsKeyDown(KEY_A)) {
+			body->Rotate(-5.0f * DEG2RAD);
+		}
+		else {
+			body->Rotate(5.0f * DEG2RAD);
+		}
+
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTexturePro(texture,
+			Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
+			Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
+			Vector2{ (float)texture.width / 2, (float)texture.height / 2 },
+			body->GetRotation() * RAD2DEG, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
+
+class RightPad : public PhysicEntity
+{
+public:
+	RightPad(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20), _listener)
+		, texture(_texture)
+	{
+	}
+
+	void Update() override
+	{
+		// Rotación controlada por el teclado
+		if (IsKeyDown(KEY_D)) {
+			body->Rotate(-5.0f * DEG2RAD);
+		}
+		else {
+			body->Rotate(5.0f * DEG2RAD);
+		}
+
+		// Posición de la pala en el espacio de juego
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTexturePro(texture,
+			Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
+			Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
+			Vector2{ (float)texture.width / 2, (float)texture.height / 2 },
+			body->GetRotation() * RAD2DEG, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
+
+
+
 class Rick : public PhysicEntity
 {
 public:
@@ -625,6 +692,7 @@ bool ModuleGame::Start()
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 
 	circle = LoadTexture("Assets/pokeball.png"); 
+
 	box = LoadTexture("Assets/crate.png");
 	//rick = LoadTexture("Assets/rick_head.png");
 	

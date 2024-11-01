@@ -24,6 +24,7 @@ public:
 	//void GetPosition(int& x, int& y) const;
 	void GetPhysicPosition(int& x, int &y) const;
 	float GetRotation() const;
+	void Rotate(float angle);
 	bool Contains(int x, int y) const;
 	int RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const;
 
@@ -50,7 +51,8 @@ public:
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
 	PhysBody* CreateChain(int x, int y, const int* points, int size);
 	void CreateFlippers();
-	void StartFlippers();
+	void DrawFlipper(Texture2D flipperTexture, PhysBody* flipper, b2RevoluteJoint* joint);
+	
 
 	// b2ContactListener ---
 	void BeginContact(b2Contact* contact);
@@ -65,4 +67,9 @@ private:
 	b2RevoluteJoint* rJoint;
 	b2RevoluteJoint* lJoint;
 	b2Body* ground;
+	Texture2D leftFlipperTexture;
+	Texture2D rightFlipperTexture;
+	PhysBody* leftFlipper;
+	PhysBody* rightFlipper;
+
 };
