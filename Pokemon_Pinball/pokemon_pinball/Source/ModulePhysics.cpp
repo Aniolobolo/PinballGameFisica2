@@ -62,6 +62,8 @@ bool ModulePhysics::Start()
 	// Llama a la función de creación de las palas
 	CreateFlippers();
 
+	CreateSpring(SCREEN_WIDTH - 30, SCREEN_HEIGHT - 100, 30, 50);
+
 
 	return true;
 }
@@ -245,8 +247,43 @@ void ModulePhysics::CreateFlippers()
 	rJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
 }
 
+PhysBody* ModulePhysics::CreateSpring(int x, int y, int width, int height)
+{
+	// Crear el cuerpo base estático del muelle
+	b2BodyDef baseDef;
+	baseDef.type = b2_staticBody;
+	baseDef.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	springBase = world->CreateBody(&baseDef);
 
+	// Crear el cuerpo dinámico (el "pistón" del muelle)
+	PhysBody* springPiston = CreateRectangle(x, y + height / 2, width, height);
 
+	// Configurar el prismatic joint
+	b2PrismaticJointDef prismaticJointDef;
+	prismaticJointDef.bodyA = springBase;
+	prismaticJointDef.bodyB = springPiston->body;
+	prismaticJointDef.collideConnected = false;
+	prismaticJointDef.localAnchorA.Set(0, 0);
+	prismaticJointDef.localAnchorB.Set(0, -PIXEL_TO_METERS(height) / 2);
+
+	// Configurar la dirección de movimiento (solo en el eje Y)
+	prismaticJointDef.localAxisA.Set(0, 1);
+
+	// Configurar los límites del movimiento
+	prismaticJointDef.enableLimit = true;
+	prismaticJointDef.lowerTranslation = -PIXEL_TO_METERS(height * 0.3f); // Distancia máxima hacia abajo
+	prismaticJointDef.upperTranslation = PIXEL_TO_METERS(height * 0.3f);  // Distancia máxima hacia arriba
+
+	// Configurar el resorte para simular el muelle
+	prismaticJointDef.enableMotor = true;
+	prismaticJointDef.maxMotorForce = 1000.0f; // Fuerza del motor
+	prismaticJointDef.motorSpeed = 0.0f;       // Velocidad inicial del motor
+
+	// Crear el muelle
+	springJoint = (b2PrismaticJoint*)world->CreateJoint(&prismaticJointDef);
+
+	return springPiston;
+}
 
 // 
 update_status ModulePhysics::PostUpdate()
@@ -276,6 +313,16 @@ update_status ModulePhysics::PostUpdate()
 	else
 	{
 		rJoint->SetMotorSpeed(-20.0f); // Detener
+	}
+
+	if (IsKeyDown(KEY_S))
+	{
+		springJoint->SetMotorSpeed(5.0f); // Usa una velocidad menor si es necesario
+		springJoint->SetMaxMotorForce(1500.0f); // Ajusta la fuerza según lo necesario
+	}
+	else
+	{
+		springJoint->SetMotorSpeed(-500.0f); // Usa una velocidad positiva para regresar
 	}
 
 	// Bonus code: this will iterate all objects in the world and draw the circles

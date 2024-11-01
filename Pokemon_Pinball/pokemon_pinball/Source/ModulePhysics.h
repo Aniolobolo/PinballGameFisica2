@@ -52,6 +52,7 @@ public:
 	PhysBody* CreateChain(int x, int y, const int* points, int size);
 	void CreateFlippers();
 	void DrawFlipper(Texture2D flipperTexture, PhysBody* flipper, b2RevoluteJoint* joint);
+	PhysBody* ModulePhysics::CreateSpring(int x, int y, int width, int height);
 	
 
 	// b2ContactListener ---
@@ -71,5 +72,7 @@ private:
 	Texture2D rightFlipperTexture;
 	PhysBody* leftFlipper;
 	PhysBody* rightFlipper;
+	b2Body* springBase;
+	b2PrismaticJoint* springJoint;
 
 };
