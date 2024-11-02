@@ -58,7 +58,7 @@ bool ModulePhysics::Start()
 
 	leftFlipperTexture = LoadTexture("Assets/leftFlipper.png");
 	rightFlipperTexture = LoadTexture("Assets/rightFlipper.png");
-
+	muelle = LoadTexture("Assets/muelle1.png");
 	// Llama a la función de creación de las palas
 	CreateFlippers();
 
@@ -256,7 +256,7 @@ PhysBody* ModulePhysics::CreateSpring(int x, int y, int width, int height)
 	springBase = world->CreateBody(&baseDef);
 
 	// Crear el cuerpo dinámico (el "pistón" del muelle)
-	PhysBody* springPiston = CreateRectangle(x, y + height / 2, width, height);
+	springPiston = CreateRectangle(x, y + height / 2, width, height);
 
 	// Configurar el prismatic joint
 	b2PrismaticJointDef prismaticJointDef;
@@ -317,13 +317,15 @@ update_status ModulePhysics::PostUpdate()
 
 	if (IsKeyDown(KEY_S))
 	{
-		springJoint->SetMotorSpeed(5.0f); // Usa una velocidad menor si es necesario
+		springJoint->SetMotorSpeed(1.0f); // Usa una velocidad menor si es necesario
 		springJoint->SetMaxMotorForce(1500.0f); // Ajusta la fuerza según lo necesario
 	}
 	else
 	{
 		springJoint->SetMotorSpeed(-500.0f); // Usa una velocidad positiva para regresar
 	}
+	DrawSpring();
+
 
 	// Bonus code: this will iterate all objects in the world and draw the circles
 	// You need to provide your own macro to translate meters to pixels
@@ -411,6 +413,7 @@ update_status ModulePhysics::PostUpdate()
 			{
 				DrawFlipper(rightFlipperTexture, rightFlipper, rJoint);
 			}
+
 			
 		}
 	}
@@ -449,6 +452,17 @@ void ModulePhysics::DrawFlipper(Texture2D flipperTexture, PhysBody* flipper, b2R
 		WHITE
 	);
 }
+void ModulePhysics::DrawSpring()
+{
+	if (springPiston != nullptr)
+	{
+		int posX, posY;
+		springPiston->GetPhysicPosition(posX, posY);
+
+		// Ajusta las dimensiones según la textura
+		DrawTexture(muelle, posX - (muelle.width / 2), posY - (muelle.height / 2), WHITE);
+	}
+}
 
 // Called before quitting
 bool ModulePhysics::CleanUp()
@@ -456,6 +470,7 @@ bool ModulePhysics::CleanUp()
 	LOG("Destroying physics world");
 	UnloadTexture(leftFlipperTexture);
 	UnloadTexture(rightFlipperTexture);
+	UnloadTexture(muelle);
 	// Delete the whole physics world!
 	delete world;
 

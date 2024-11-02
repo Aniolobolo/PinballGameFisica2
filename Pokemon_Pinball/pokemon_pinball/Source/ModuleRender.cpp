@@ -18,7 +18,7 @@ bool ModuleRender::Init()
 {
 	LOG("Creating Renderer context");
 	bool ret = true;
-    background = LoadTexture("Assets/map.png");
+    background = LoadTexture("Assets/map1.png");
 	return ret;
 }
 

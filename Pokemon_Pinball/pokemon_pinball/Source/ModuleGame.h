@@ -34,14 +34,17 @@ public:
 	Texture2D box;
 	Texture2D leftPad;
 	Texture2D rightPad;
-	Texture2D rick;
-	Texture2D rick2;
-	Texture2D rick3;
-	Texture2D rick4, rick5, rick6; 
+	Texture2D collision1;
+	Texture2D collision2;
+	Texture2D collision3;
+	Texture2D collision4, collision5, collision6; 
 	Texture2D GreenEvoDer; //colision de la derecha del evo green
 	Texture2D GreenOneIzq;
-	Texture2D TorresGemelasIzq;
-	Texture2D TorresGemelasDer;
+	Texture2D collision7;
+	Texture2D collision8;
+	Texture2D collision9;
+	Texture2D collision10;
+	Texture2D collision11;
 
 	uint32 bonus_fx;
 	Music backgroundMusic;
