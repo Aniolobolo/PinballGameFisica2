@@ -45,6 +45,8 @@ public:
 	Texture2D collision9;
 	Texture2D collision10;
 	Texture2D collision11;
+	Texture2D collision12;
+	Texture2D collision13;
 
 	uint32 bonus_fx;
 	Music backgroundMusic;

@@ -159,28 +159,28 @@ class Collision1 : public PhysicEntity
 public:
 	// Pivot 0, 0
 	static constexpr int CollisionOne[140] = {
-	336, 1018,
+336, 1018,
 	337, 1007,
 	341, 1000,
 	411, 965,
 	480, 920,
-	480, 954,
-	520, 954,
-	520, 774,
-	505, 758,
+	503, 906,
+	520, 896,
+	520, 777,
+	509, 758,
 	480, 755,
-	466, 751,
-	461, 743,
-	461, 690,
-	479, 672,
-	507, 635,
-	525, 599,
-	542, 552,
-	554, 498,
-	552, 418,
-	547, 383,
-	537, 349,
-	532, 334,
+	467, 750,
+	462, 740,
+	461, 684,
+	479, 665,
+	501, 631,
+	519, 598,
+	535, 558,
+	548, 496,
+	546, 438,
+	541, 388,
+	533, 350,
+	527, 328,
 	536, 337,
 	550, 373,
 	560, 433,
@@ -191,36 +191,36 @@ public:
 	600, 386,
 	575, 317,
 	535, 270,
-	489, 229,
-	433, 193,
+	483, 225,
+	427, 194,
 	386, 172,
 	334, 158,
 	261, 155,
 	201, 167,
 	137, 198,
 	105, 223,
-	78, 254,
-	52, 300,
-	38, 346,
-	30, 386,
-	24, 444,
-	23, 493,
-	31, 548,
-	42, 583,
-	56, 614,
-	72, 641,
-	83, 657,
-	98, 674,
-	114, 691,
+	76, 253,
+	51, 298,
+	38, 343,
+	30, 399,
+	29, 437,
+	28, 500,
+	38, 550,
+	49, 581,
+	61, 609,
+	75, 633,
+	85, 650,
+	98, 668,
+	114, 684,
 	114, 743,
 	109, 750,
 	98, 754,
 	73, 756,
 	65, 762,
 	58, 776,
-	58, 952,
-	94, 950,
-	95, 920,
+	58, 895,
+	77, 908,
+	93, 920,
 	106, 930,
 	121, 940,
 	140, 951,
@@ -229,6 +229,7 @@ public:
 	239, 1006,
 	239, 1019,
 	334, 1019
+
 
 
 	};
@@ -665,17 +666,18 @@ class Collision9 : public PhysicEntity
 public:
 	// Pivot 0, 0
 	static constexpr int CollisionNine[22] = {
-	299, 393,
-	290, 389,
-	286, 381,
-	288, 374,
-	294, 368,
-	302, 365,
-	313, 365,
-	321, 370,
-	325, 377,
-	324, 386,
-	317, 391
+295, 392,
+	285, 389,
+	282, 381,
+	279, 371,
+	275, 348,
+	288, 362,
+	304, 367,
+	316, 369,
+	323, 377,
+	323, 386,
+	313, 389
+
 
 
 
@@ -740,20 +742,138 @@ class Collision11 : public PhysicEntity
 public:
 	// Pivot 0, 0
 	static constexpr int CollisionEleven[20] = {
-	374, 413,
+	372, 410,
 	364, 408,
 	359, 400,
 	361, 393,
 	368, 387,
-	383, 385,
-	391, 389,
-	397, 397,
-	396, 406,
-	387, 412
+	380, 385,
+	387, 388,
+	391, 394,
+	388, 402,
+	380, 409
 	};
 
 	Collision11(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionEleven, 20), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
+
+class Collision12 : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int CollisionTwelve[66] = {
+	399, 234,
+	410, 240,
+	426, 252,
+	438, 262,
+	452, 277,
+	454, 292,
+	456, 303,
+	455, 319,
+	451, 341,
+	447, 363,
+	440, 396,
+	430, 418,
+	417, 446,
+	400, 478,
+	386, 501,
+	370, 493,
+	370, 489,
+	376, 483,
+	388, 468,
+	400, 450,
+	411, 429,
+	421, 408,
+	432, 383,
+	441, 360,
+	449, 336,
+	452, 323,
+	453, 309,
+	452, 297,
+	446, 287,
+	435, 278,
+	422, 270,
+	412, 264,
+	399, 259
+	};
+
+	Collision12(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, CollisionTwelve, 66), _listener)
+		, texture(_texture)
+	{
+
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
+
+class Collision13 : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int CollisionThirteen[70] = {
+	416, 547,
+	416, 539,
+	434, 509,
+	456, 470,
+	471, 434,
+	481, 408,
+	486, 385,
+	489, 367,
+	487, 339,
+	496, 365,
+	500, 393,
+	503, 418,
+	505, 447,
+	503, 481,
+	496, 516,
+	486, 545,
+	479, 560,
+	467, 583,
+	459, 594,
+	459, 584,
+	466, 572,
+	475, 550,
+	481, 533,
+	487, 511,
+	491, 496,
+	492, 483,
+	486, 473,
+	478, 467,
+	470, 467,
+	460, 469,
+	453, 479,
+	445, 500,
+	439, 513,
+	429, 530,
+	423, 540
+	};
+
+	Collision13(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, CollisionThirteen, 70), _listener)
 		, texture(_texture)
 	{
 
@@ -811,6 +931,8 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9));
 	entities.emplace_back(new Collision10(App->physics, 0, 0, this, collision10));
 	entities.emplace_back(new Collision11(App->physics, 0, 0, this, collision11));
+	entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12));
+	entities.emplace_back(new Collision13(App->physics, 0, 0, this, collision13));
 	return ret;
 }
 
