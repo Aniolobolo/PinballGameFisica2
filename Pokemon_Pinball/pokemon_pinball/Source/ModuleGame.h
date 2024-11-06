@@ -11,7 +11,7 @@
 class PhysBody;
 class PhysicEntity;
 
-enum Collisions
+enum CollisionType
 {
 	DEFAULT,
 	CHINCHOU

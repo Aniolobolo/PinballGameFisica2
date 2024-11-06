@@ -24,11 +24,16 @@ public:
 	{
 		return 0;
 	}
+	
+	CollisionType GetCollisionType() const { return collisionType; }
+
 	PhysBody* body;
 
 protected:
-	
+
 	Module* listener;
+	CollisionType collisionType;
+
 };
 
 class Circle : public PhysicEntity
@@ -663,10 +668,10 @@ public:
 
 	};
 
-	Collision9(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture, Collisions type)
-		: PhysicEntity(physics->CreateChain(0, 0, CollisionNine, 22), _listener), texture(_texture), collisions(type)
+	Collision9(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, CollisionNine, 22), _listener), texture(_texture)
 	{
-
+		collisionType = CHINCHOU;
 	}
 
 	void Update() override
@@ -678,7 +683,6 @@ public:
 
 private:
 	Texture2D texture;
-	Collisions collisions;
 };
 class Collision10 : public PhysicEntity
 {
@@ -702,7 +706,7 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionTen, 22), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = CHINCHOU;
 	}
 
 	void Update() override
@@ -736,7 +740,7 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionEleven, 20), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = CHINCHOU;
 	}
 
 	void Update() override
@@ -906,7 +910,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new GreenOneI(App->physics, 0, 0, this, GreenOneIzq));
 	entities.emplace_back(new Collision7(App->physics, 0, 0, this, collision7));
 	entities.emplace_back(new Collision8(App->physics, 0, 0, this, collision8));
-	entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9, CHINCHOU));
+	entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9));
 	entities.emplace_back(new Collision10(App->physics, 0, 0, this, collision10));
 	entities.emplace_back(new Collision11(App->physics, 0, 0, this, collision11));
 	entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12));
@@ -995,10 +999,19 @@ update_status ModuleGame::Update()
 
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
+	bool hascollisioned = false;
 
-	/*
-	if (bodyA == entities->body || bodyA == entities->body && entities==CHINCHOU) {
-		suma += 500;
-	}*/
-	App->audio->PlayFx(bonus_fx);
+	int length = entities.size();
+	for (int i = 0; i < length; ++i) {
+		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == CHINCHOU ){
+			hascollisioned = true;
+		    break;
+		}
+	}
+	if (hascollisioned) suma += 500;
+
+	
+
+
+    App->audio->PlayFx(bonus_fx);  // Reproduce el sonido
 }
