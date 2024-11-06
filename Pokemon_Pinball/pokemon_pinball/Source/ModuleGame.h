@@ -30,6 +30,8 @@ public:
 	PhysBody* sensor;
 	bool sensed;
 
+	int suma = 0;
+
 	Texture2D circle;
 	Texture2D box;
 	Texture2D leftPad;

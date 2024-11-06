@@ -24,9 +24,10 @@ public:
 	{
 		return 0;
 	}
+	PhysBody* body;
 
 protected:
-	PhysBody* body;
+	
 	Module* listener;
 };
 
@@ -1010,10 +1011,16 @@ update_status ModuleGame::Update()
 		}
 	}
 
+	DrawText(TextFormat("Score: %d",suma), 10, 10, 30, WHITE);
+
 	return UPDATE_CONTINUE;
 }
 
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
+	if (bodyA == entities[9]->body || bodyA == entities[10]->body || bodyA == entities[11]->body ||
+		bodyB == entities[9]->body || bodyB == entities[10]->body || bodyB == entities[11]->body) {
+		suma += 500;
+	}
 	App->audio->PlayFx(bonus_fx);
 }
