@@ -11,6 +11,11 @@
 class PhysBody;
 class PhysicEntity;
 
+enum Collisions
+{
+	DEFAULT,
+	CHINCHOU
+};
 
 class ModuleGame : public Module
 {
@@ -22,6 +27,7 @@ public:
 	update_status Update();
 	bool CleanUp();
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+	void GetType();
 
 public:
 
@@ -31,6 +37,7 @@ public:
 	bool sensed;
 
 	int suma = 0;
+	int wait = 2; // time in seconds
 
 	Texture2D circle;
 	Texture2D box;

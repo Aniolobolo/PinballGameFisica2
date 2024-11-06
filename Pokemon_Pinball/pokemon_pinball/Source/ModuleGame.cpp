@@ -419,66 +419,43 @@ class Collision6 : public PhysicEntity
 {
 public:
 	// Pivot 0, 0
-	static constexpr int CollisionSix[110] = {
-	183, 449,
-	176, 435,
-	174, 425,
-	170, 409,
-	168, 396,
-	168, 382,
-	167, 318,
-	170, 302,
-	175, 288,
-	183, 273,
-	189, 263,
-	196, 252,
-	206, 241,
-	215, 232,
-	229, 222,
-	239, 216,
-	252, 210,
-	263, 208,
-	263, 254,
+	static constexpr int CollisionSix[62] = {
+	192, 448,
+	182, 448,
+	181, 446,
+	178, 427,
+	172, 399,
+	169, 385,
+	169, 349,
+	171, 328,
+	174, 312,
+	178, 294,
+	185, 273,
+	191, 260,
+	199, 249,
+	210, 238,
+	222, 229,
+	235, 221,
+	245, 216,
+	255, 212,
+	263, 211,
+	263, 253,
 	257, 260,
-	256, 325,
-	260, 342,
-	263, 364,
-	269, 383,
-	273, 396,
-	281, 410,
-	287, 421,
-	287, 426,
-	279, 426,
-	263, 426,
-	253, 426,
-	242, 418,
-	242, 400,
-	246, 373,
-	246, 349,
-	250, 341,
-	249, 325,
-	239, 317,
-	230, 316,
-	230, 307,
-	192, 307,
-	192, 318,
-	179, 325,
-	173, 326,
-	173, 342,
-	178, 344,
-	181, 348,
-	181, 373,
-	184, 391,
-	187, 404,
-	190, 414,
-	192, 423,
-	194, 433,
-	194, 443,
-	192, 449
+	257, 324,
+	259, 345,
+	262, 367,
+	264, 379,
+	269, 393,
+	275, 406,
+	282, 420,
+	241, 420,
+	196, 433,
+	196, 443
+
 	};
 
 	Collision6(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, CollisionSix, 110), _listener)
+		: PhysicEntity(physics->CreateChain(0, 0, CollisionSix, 62), _listener)
 		, texture(_texture)
 	{
 
@@ -686,9 +663,8 @@ public:
 
 	};
 
-	Collision9(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, CollisionNine, 22), _listener)
-		, texture(_texture)
+	Collision9(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture, Collisions type)
+		: PhysicEntity(physics->CreateChain(0, 0, CollisionNine, 22), _listener), texture(_texture), collisions(type)
 	{
 
 	}
@@ -702,6 +678,7 @@ public:
 
 private:
 	Texture2D texture;
+	Collisions collisions;
 };
 class Collision10 : public PhysicEntity
 {
@@ -929,7 +906,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new GreenOneI(App->physics, 0, 0, this, GreenOneIzq));
 	entities.emplace_back(new Collision7(App->physics, 0, 0, this, collision7));
 	entities.emplace_back(new Collision8(App->physics, 0, 0, this, collision8));
-	entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9));
+	entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9, CHINCHOU));
 	entities.emplace_back(new Collision10(App->physics, 0, 0, this, collision10));
 	entities.emplace_back(new Collision11(App->physics, 0, 0, this, collision11));
 	entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12));
@@ -1018,9 +995,10 @@ update_status ModuleGame::Update()
 
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
-	if (bodyA == entities[9]->body || bodyA == entities[10]->body || bodyA == entities[11]->body ||
-		bodyB == entities[9]->body || bodyB == entities[10]->body || bodyB == entities[11]->body) {
+
+	/*
+	if (bodyA == entities->body || bodyA == entities->body && entities==CHINCHOU) {
 		suma += 500;
-	}
+	}*/
 	App->audio->PlayFx(bonus_fx);
 }
