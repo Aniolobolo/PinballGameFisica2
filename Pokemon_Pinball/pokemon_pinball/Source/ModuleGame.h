@@ -17,6 +17,11 @@ enum CollisionType
 	CHINCHOU
 };
 
+enum BodyType {
+	STATIC,
+	DYNAMIC
+};
+
 class ModuleGame : public Module
 {
 public:
@@ -39,6 +44,8 @@ public:
 	int suma = 0;
 	int wait = 2; // time in seconds
 
+	Texture2D chinchou;
+
 	Texture2D circle;
 	Texture2D box;
 	Texture2D leftPad;
@@ -51,9 +58,9 @@ public:
 	Texture2D GreenOneIzq;
 	Texture2D collision7;
 	Texture2D collision8;
-	Texture2D collision9;
-	Texture2D collision10;
-	Texture2D collision11;
+	//Texture2D collision9;
+	//Texture2D collision10;
+	//Texture2D collision11;
 	Texture2D collision12;
 	Texture2D collision13;
 

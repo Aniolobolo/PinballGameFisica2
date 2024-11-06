@@ -3,6 +3,7 @@
 #include "ModuleRender.h"
 #include "ModulePhysics.h"
 
+
 #include "p2Point.h"
 
 #include <math.h>
@@ -89,12 +90,20 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, BodyType bodyType)
 {
 	PhysBody* pbody = new PhysBody();
 
 	b2BodyDef body;
-	body.type = b2_dynamicBody;
+
+	// Configura el tipo de cuerpo en función del parámetro bodyType
+	if (bodyType == STATIC) {
+		body.type = b2_staticBody;  // Cuerpo estático
+	}
+	else {
+		body.type = b2_dynamicBody; // Cuerpo dinámico
+	}
+
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
 
@@ -102,6 +111,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
 
 	b2CircleShape shape;
 	shape.m_radius = PIXEL_TO_METERS(radius);
+
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
 	fixture.density = 1.0f;
@@ -111,8 +121,12 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
 	pbody->body = b;
 	pbody->width = pbody->height = radius;
 
+	// Asigna el tipo de cuerpo al PhysBody
+	pbody->bodyType = bodyType;
+
 	return pbody;
 }
+
 
 PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
 {

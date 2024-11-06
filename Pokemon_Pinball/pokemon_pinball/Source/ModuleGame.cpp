@@ -40,7 +40,7 @@ class Circle : public PhysicEntity
 {
 public:
 	Circle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateCircle(_x, _y, 15), _listener)
+		: PhysicEntity(physics->CreateCircle(_x, _y, 15,DYNAMIC), _listener)
 		, texture(_texture)
 	{
 
@@ -158,7 +158,25 @@ private:
 	Texture2D texture;
 };
 
-
+class Chinchou : public PhysicEntity {
+public:
+	Chinchou(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
+	{
+		collisionType = CHINCHOU;
+	}
+	void Update() override {
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		Rectangle source = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
+		Rectangle dest = { (float)x, (float)y, (float)texture.width, (float)texture.height };
+		Vector2 origin = { (float)texture.width / 2.0f, (float)texture.height / 2.0f };
+		float rotation = body->GetRotation() * RAD2DEG;
+		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
+	}
+private:
+	Texture2D texture;  
+};
 
 class Collision1 : public PhysicEntity
 {
@@ -644,115 +662,115 @@ private:
 	Texture2D texture;
 };
 
-class Collision9 : public PhysicEntity
-{
-public:
-	// Pivot 0, 0
-	static constexpr int CollisionNine[22] = {
-295, 392,
-	285, 389,
-	282, 381,
-	279, 371,
-	275, 348,
-	288, 362,
-	304, 367,
-	316, 369,
-	323, 377,
-	323, 386,
-	313, 389
-
-
-
-
-
-
-	};
-
-	Collision9(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, CollisionNine, 22), _listener), texture(_texture)
-	{
-		collisionType = CHINCHOU;
-	}
-
-	void Update() override
-	{
-		int x, y;
-		body->GetPhysicPosition(x, y);
-		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
-	}
-
-private:
-	Texture2D texture;
-};
-class Collision10 : public PhysicEntity
-{
-public:
-	// Pivot 0, 0
-	static constexpr int CollisionTen[22] = {
-	352, 340,
-	343, 337,
-	340, 328,
-	343, 319,
-	351, 313,
-	363, 313,
-	372, 316,
-	377, 323,
-	377, 330,
-	371, 337,
-	364, 340
-	};
-
-	Collision10(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, CollisionTen, 22), _listener)
-		, texture(_texture)
-	{
-		collisionType = CHINCHOU;
-	}
-
-	void Update() override
-	{
-		int x, y;
-		body->GetPhysicPosition(x, y);
-		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
-	}
-
-private:
-	Texture2D texture;
-};
-class Collision11 : public PhysicEntity
-{
-public:
-	// Pivot 0, 0
-	static constexpr int CollisionEleven[20] = {
-	372, 410,
-	364, 408,
-	359, 400,
-	361, 393,
-	368, 387,
-	380, 385,
-	387, 388,
-	391, 394,
-	388, 402,
-	380, 409
-	};
-
-	Collision11(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, CollisionEleven, 20), _listener)
-		, texture(_texture)
-	{
-		collisionType = CHINCHOU;
-	}
-
-	void Update() override
-	{
-		int x, y;
-		body->GetPhysicPosition(x, y);
-		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
-	}
-
-private:
-	Texture2D texture;
-};
+//class Collision9 : public PhysicEntity
+//{
+//public:
+//	// Pivot 0, 0
+//	static constexpr int CollisionNine[22] = {
+//295, 392,
+//	285, 389,
+//	282, 381,
+//	279, 371,
+//	275, 348,
+//	288, 362,
+//	304, 367,
+//	316, 369,
+//	323, 377,
+//	323, 386,
+//	313, 389
+//
+//
+//
+//
+//
+//
+//	};
+//
+//	Collision9(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+//		: PhysicEntity(physics->CreateChain(0, 0, CollisionNine, 22), _listener), texture(_texture)
+//	{
+//		collisionType = CHINCHOU;
+//	}
+//
+//	void Update() override
+//	{
+//		int x, y;
+//		body->GetPhysicPosition(x, y);
+//		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+//	}
+//
+//private:
+//	Texture2D texture;
+//};
+//class Collision10 : public PhysicEntity
+//{
+//public:
+//	// Pivot 0, 0
+//	static constexpr int CollisionTen[22] = {
+//	352, 340,
+//	343, 337,
+//	340, 328,
+//	343, 319,
+//	351, 313,
+//	363, 313,
+//	372, 316,
+//	377, 323,
+//	377, 330,
+//	371, 337,
+//	364, 340
+//	};
+//
+//	Collision10(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+//		: PhysicEntity(physics->CreateChain(0, 0, CollisionTen, 22), _listener)
+//		, texture(_texture)
+//	{
+//		collisionType = CHINCHOU;
+//	}
+//
+//	void Update() override
+//	{
+//		int x, y;
+//		body->GetPhysicPosition(x, y);
+//		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+//	}
+//
+//private:
+//	Texture2D texture;
+//};
+//class Collision11 : public PhysicEntity
+//{
+//public:
+//	// Pivot 0, 0
+//	static constexpr int CollisionEleven[20] = {
+//	372, 410,
+//	364, 408,
+//	359, 400,
+//	361, 393,
+//	368, 387,
+//	380, 385,
+//	387, 388,
+//	391, 394,
+//	388, 402,
+//	380, 409
+//	};
+//
+//	Collision11(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+//		: PhysicEntity(physics->CreateChain(0, 0, CollisionEleven, 20), _listener)
+//		, texture(_texture)
+//	{
+//		collisionType = CHINCHOU;
+//	}
+//
+//	void Update() override
+//	{
+//		int x, y;
+//		body->GetPhysicPosition(x, y);
+//		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+//	}
+//
+//private:
+//	Texture2D texture;
+//};
 
 class Collision12 : public PhysicEntity
 {
@@ -891,6 +909,8 @@ bool ModuleGame::Start()
 
 	circle = LoadTexture("Assets/pokeball.png"); 
 
+	chinchou = LoadTexture("Assets/chinchou.png");
+
 	box = LoadTexture("Assets/crate.png");
 	//rick = LoadTexture("Assets/rick_head.png");
 	
@@ -899,6 +919,10 @@ bool ModuleGame::Start()
 
 	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
 	PlayMusicStream(backgroundMusic);
+
+	entities.emplace_back(new Chinchou(App->physics, 358, 320, this, chinchou));
+	entities.emplace_back(new Chinchou(App->physics, 306, 371, this, chinchou));
+	entities.emplace_back(new Chinchou(App->physics, 377, 392, this, chinchou));
 
 	entities.emplace_back(new Collision1(App->physics, 0, 0, this, collision1));
 	entities.emplace_back(new Collision2(App->physics, 0, 0, this, collision2));
@@ -910,9 +934,9 @@ bool ModuleGame::Start()
 	entities.emplace_back(new GreenOneI(App->physics, 0, 0, this, GreenOneIzq));
 	entities.emplace_back(new Collision7(App->physics, 0, 0, this, collision7));
 	entities.emplace_back(new Collision8(App->physics, 0, 0, this, collision8));
-	entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9));
-	entities.emplace_back(new Collision10(App->physics, 0, 0, this, collision10));
-	entities.emplace_back(new Collision11(App->physics, 0, 0, this, collision11));
+	//entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9));
+	//entities.emplace_back(new Collision10(App->physics, 0, 0, this, collision10));
+	//entities.emplace_back(new Collision11(App->physics, 0, 0, this, collision11));
 	entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12));
 	entities.emplace_back(new Collision13(App->physics, 0, 0, this, collision13));
 	return ret;
@@ -999,16 +1023,16 @@ update_status ModuleGame::Update()
 
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
-	bool hascollisioned = false;
+	bool hascollisionedwithchinchou = false;
 
 	int length = entities.size();
 	for (int i = 0; i < length; ++i) {
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == CHINCHOU ){
-			hascollisioned = true;
+			hascollisionedwithchinchou = true;
 		    break;
 		}
 	}
-	if (hascollisioned) suma += 500;
+	if (hascollisionedwithchinchou) suma += 500;
 
 	
 

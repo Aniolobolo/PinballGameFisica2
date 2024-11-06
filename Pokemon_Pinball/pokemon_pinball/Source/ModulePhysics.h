@@ -2,6 +2,7 @@
 
 #include "Module.h"
 #include "Globals.h"
+#include "ModuleGame.h"
 
 #include "box2d\box2d.h"
 
@@ -28,10 +29,13 @@ public:
 	bool Contains(int x, int y) const;
 	int RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const;
 
+
 public:
 	int width, height;
 	b2Body* body;
 	Module* listener;
+	BodyType bodyType;
+
 };
 
 // Module --------------------------------------
@@ -46,7 +50,7 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	PhysBody* CreateCircle(int x, int y, int radius);
+	PhysBody* CreateCircle(int x, int y, int radius, BodyType bodyType);
 	PhysBody* CreateRectangle(int x, int y, int width, int height);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
 	PhysBody* CreateChain(int x, int y, const int* points, int size);
