@@ -53,7 +53,7 @@ public:
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
 
-		float rotation = body->GetRotation() * (180.0f / PI); //radianes a grados
+		float rotation = body->GetRotation() * RAD2DEG; //radianes a grados
 
 		currentFrame = frameCount - 1 - (static_cast<int>((rotation / 360.0f) * frameCount) % frameCount);
 		
@@ -171,18 +171,42 @@ public:
 		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
 	{
 		collisionType = CHINCHOU;
+		frameCount = 2;          // Solo dos cuadros de animación
+		currentFrame = 0;
+		animationSpeed = 0.03f;   // Control de velocidad de la animación
+		frameTimer = 0.0f;
+		scale = 2.5f;
 	}
-	void Update() override {
+	void Update() override
+	{
 		int x, y;
 		body->GetPhysicPosition(x, y);
-		Rectangle source = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
-		Rectangle dest = { (float)x, (float)y, (float)texture.width, (float)texture.height };
-		Vector2 origin = { (float)texture.width / 2.0f, (float)texture.height / 2.0f };
-		float rotation = body->GetRotation() * RAD2DEG;
-		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
+		Vector2 position{ (float)x, (float)y };
+
+		// Avanza el temporizador de animación
+		frameTimer += animationSpeed;
+		if (frameTimer >= 1.0f)
+		{
+			// Cambia al siguiente cuadro y reinicia el temporizador
+			currentFrame = (currentFrame + 1) % frameCount;
+			frameTimer = 0.0f;
+		}
+
+		// Calcula el rectángulo de origen para el cuadro actual
+		Rectangle source = { currentFrame * 32.0f, 0.0f, 32.0f, 32.0f };
+		Rectangle dest = { position.x, position.y, 32.0f*scale, 32.0f*scale };
+		Vector2 origin = { 16.0f*scale, 22.0f*scale }; // Centro del cuadro de 48x48
+
+		// Dibuja el cuadro actual sin aplicar rotación
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 	}
 private:
-	Texture2D texture;  
+	Texture2D texture;
+	int currentFrame;       // Cuadro actual de la animación
+	int frameCount;         // Número total de cuadros en la animación (2 en este caso)
+	float animationSpeed;   // Control de velocidad de la animación
+	float frameTimer;       // Temporizador para cambiar de cuadro
+	float scale;
 };
 
 class Collision1 : public PhysicEntity
@@ -916,7 +940,7 @@ bool ModuleGame::Start()
 
 	circle = LoadTexture("Assets/pokeballAnim.png"); 
 
-	chinchou = LoadTexture("Assets/chinchou.png");
+	chinchou = LoadTexture("Assets/chinchouAnim2.png");
 
 	box = LoadTexture("Assets/crate.png");
 	//rick = LoadTexture("Assets/rick_head.png");
