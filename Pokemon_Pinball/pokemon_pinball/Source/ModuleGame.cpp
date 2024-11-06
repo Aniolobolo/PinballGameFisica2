@@ -40,10 +40,11 @@ class Circle : public PhysicEntity
 {
 public:
 	Circle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateCircle(_x, _y, 15,DYNAMIC), _listener)
+		: PhysicEntity(physics->CreateCircle(_x, _y, 15, DYNAMIC), _listener)
 		, texture(_texture)
 	{
-
+		frameCount = 16;
+		currentFrame = frameCount - 1; 
 	}
 
 	void Update() override
@@ -51,18 +52,24 @@ public:
 		int x, y;
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
-		float scale = 1.0f;
-		Rectangle source = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
-		Rectangle dest = { position.x, position.y, (float)texture.width * scale, (float)texture.height * scale };
-		Vector2 origin = { (float)texture.width / 2.0f, (float)texture.height / 2.0f};
-		float rotation = body->GetRotation() * RAD2DEG;
-		DrawTexturePro(texture, source, dest, origin, rotation, WHITE);
+
+		float rotation = body->GetRotation() * (180.0f / PI); //radianes a grados
+
+		currentFrame = frameCount - 1 - (static_cast<int>((rotation / 360.0f) * frameCount) % frameCount);
+		
+		Rectangle source = { currentFrame * 32.0f, 0.0f, 32.0f, 32.0f };
+		Rectangle dest = { position.x, position.y, 32.0f, 32.0f };
+		Vector2 origin = { 16.0f, 16.0f };
+
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 	}
 
 private:
 	Texture2D texture;
-
+	int currentFrame;      
+	int frameCount;     
 };
+
 
 class Box : public PhysicEntity
 {
@@ -907,7 +914,7 @@ bool ModuleGame::Start()
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 
-	circle = LoadTexture("Assets/pokeball.png"); 
+	circle = LoadTexture("Assets/pokeballAnim.png"); 
 
 	chinchou = LoadTexture("Assets/chinchou.png");
 

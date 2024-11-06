@@ -8,6 +8,8 @@
 #include "raylib.h"
 #include <vector>
 
+#define PI 3.14159265359
+
 class PhysBody;
 class PhysicEntity;
 
