@@ -111,7 +111,7 @@ public:
 
 	void Update() override
 	{
-		// Rotación controlada por el teclado
+		// Rotaciï¿½n controlada por el teclado
 		if (IsKeyDown(KEY_A)) {
 			body->Rotate(-5.0f * DEG2RAD);
 		}
@@ -143,7 +143,7 @@ public:
 
 	void Update() override
 	{
-		// Rotación controlada por el teclado
+		// Rotaciï¿½n controlada por el teclado
 		if (IsKeyDown(KEY_D)) {
 			body->Rotate(-5.0f * DEG2RAD);
 		}
@@ -151,7 +151,7 @@ public:
 			body->Rotate(5.0f * DEG2RAD);
 		}
 
-		// Posición de la pala en el espacio de juego
+		// Posiciï¿½n de la pala en el espacio de juego
 		int x, y;
 		body->GetPhysicPosition(x, y);
 		DrawTexturePro(texture,
@@ -171,9 +171,9 @@ public:
 		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
 	{
 		collisionType = CHINCHOU;
-		frameCount = 2;          // Solo dos cuadros de animación
+		frameCount = 2;          // Solo dos cuadros de animaciï¿½n
 		currentFrame = 0;
-		animationSpeed = 0.03f;   // Control de velocidad de la animación
+		animationSpeed = 0.03f;   // Control de velocidad de la animaciï¿½n
 		frameTimer = 0.0f;
 		scale = 2.5f;
 	}
@@ -183,7 +183,7 @@ public:
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
 
-		// Avanza el temporizador de animación
+		// Avanza el temporizador de animaciï¿½n
 		frameTimer += animationSpeed;
 		if (frameTimer >= 1.0f)
 		{
@@ -192,19 +192,19 @@ public:
 			frameTimer = 0.0f;
 		}
 
-		// Calcula el rectángulo de origen para el cuadro actual
+		// Calcula el rectï¿½ngulo de origen para el cuadro actual
 		Rectangle source = { currentFrame * 32.0f, 0.0f, 32.0f, 32.0f };
 		Rectangle dest = { position.x, position.y, 32.0f*scale, 32.0f*scale };
 		Vector2 origin = { 16.0f*scale, 22.0f*scale }; // Centro del cuadro de 48x48
 
-		// Dibuja el cuadro actual sin aplicar rotación
+		// Dibuja el cuadro actual sin aplicar rotaciï¿½n
 		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 	}
 private:
 	Texture2D texture;
-	int currentFrame;       // Cuadro actual de la animación
-	int frameCount;         // Número total de cuadros en la animación (2 en este caso)
-	float animationSpeed;   // Control de velocidad de la animación
+	int currentFrame;       // Cuadro actual de la animaciï¿½n
+	int frameCount;         // Nï¿½mero total de cuadros en la animaciï¿½n (2 en este caso)
+	float animationSpeed;   // Control de velocidad de la animaciï¿½n
 	float frameTimer;       // Temporizador para cambiar de cuadro
 	float scale;
 };
@@ -215,9 +215,9 @@ public:
 		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
 	{
 		collisionType = GULPIN;
-		frameCount = 8;          // Solo dos cuadros de animación
+		frameCount = 8;          // Solo dos cuadros de animaciï¿½n
 		currentFrame = 0;
-		animationSpeed = 0.11f;   // Control de velocidad de la animación
+		animationSpeed = 0.11f;   // Control de velocidad de la animaciï¿½n
 		frameTimer = 0.0f;
 		scale = 1.2f; 
 	}
@@ -227,7 +227,7 @@ public:
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
 
-		// Avanza el temporizador de animación
+		// Avanza el temporizador de animaciï¿½n
 		frameTimer += animationSpeed;
 		if (frameTimer >= 1.0f)
 		{
@@ -236,19 +236,19 @@ public:
 			frameTimer = 0.0f;
 		}
 
-		// Calcula el rectángulo de origen para el cuadro actual
+		// Calcula el rectï¿½ngulo de origen para el cuadro actual
 		Rectangle source = { currentFrame * 64.0f, 0.0f, 64.0f, 48.0f };
 		Rectangle dest = { position.x, position.y, 64.0f * scale, 48.0f * scale };
 		Vector2 origin = { 259.0f * scale, -302.0f * scale}; // Centro del cuadro de 48x48
 
-		// Dibuja el cuadro actual sin aplicar rotación
+		// Dibuja el cuadro actual sin aplicar rotaciï¿½n
 		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 	}
 private:
 	Texture2D texture;
-	int currentFrame;       // Cuadro actual de la animación
-	int frameCount;         // Número total de cuadros en la animación (2 en este caso)
-	float animationSpeed;   // Control de velocidad de la animación
+	int currentFrame;       // Cuadro actual de la animaciï¿½n
+	int frameCount;         // Nï¿½mero total de cuadros en la animaciï¿½n (2 en este caso)
+	float animationSpeed;   // Control de velocidad de la animaciï¿½n
 	float frameTimer;       // Temporizador para cambiar de cuadro
 	float scale;
 };
@@ -906,18 +906,39 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionTwelve, 52), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = DEFAULT;
+		frameCount = 2;
+		currentFrame = 0;
+		animationSpeed = 0.02f;
+		frameTimer = 0.0f;
+		scale = 1.3f;
 	}
-
 	void Update() override
 	{
 		int x, y;
 		body->GetPhysicPosition(x, y);
-		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
-	}
+		Vector2 position{ (float)x, (float)y };
 
+		frameTimer += animationSpeed;
+		if (frameTimer >= 1.0f)
+		{
+			currentFrame = (currentFrame + 1) % frameCount;
+			frameTimer = 0.0f;
+		}
+
+		Rectangle source = { currentFrame * 80.0f, 0.0f, 80.0f, 80.0f };
+		Rectangle dest = { position.x, position.y, 80.0f * scale, 80.0f * scale };
+		Vector2 origin = { -430, -435 };
+
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+	}
 private:
 	Texture2D texture;
+	int currentFrame;
+	int frameCount;
+	float animationSpeed;
+	float frameTimer;
+	float scale;
 };
 
 class Collision13 : public PhysicEntity
@@ -1002,6 +1023,8 @@ bool ModuleGame::Start()
 
 	cyndaquil = LoadTexture("Assets/cyndaquil.png");
 
+	sharpedo = LoadTexture("Assets/sharpedo.png");
+
 	box = LoadTexture("Assets/crate.png");
 	//rick = LoadTexture("Assets/rick_head.png");
 	
@@ -1029,7 +1052,8 @@ bool ModuleGame::Start()
 	//entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9));
 	//entities.emplace_back(new Collision10(App->physics, 0, 0, this, collision10));
 	//entities.emplace_back(new Collision11(App->physics, 0, 0, this, collision11));
-	entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12)); //Abajo derecha chinchous
+	entities.emplace_back(new Collision12(App->physics, 0, 0, this, sharpedo)); //Abajo derecha chinchous
+
 	entities.emplace_back(new Collision13(App->physics, 0, 0, this, collision13)); //Tiburon
 	return ret;
 }
