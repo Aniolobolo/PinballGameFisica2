@@ -371,6 +371,50 @@ private:
 	float scale;
 };
 
+class Nuzleaf : public PhysicEntity {
+public:
+	Nuzleaf(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
+	{
+		collisionType = NUZLEAF;
+		frameCount = 3;          // Solo dos cuadros de animaci�n
+		currentFrame = 0;
+		animationSpeed = 0.085f;   // Control de velocidad de la animaci�n
+		frameTimer = 0.0f;
+		scale = 1.25f;
+	}
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		Vector2 position{ (float)x, (float)y };
+
+		// Avanza el temporizador de animaci�n
+		frameTimer += animationSpeed;
+		if (frameTimer >= 1.0f)
+		{
+			// Cambia al siguiente cuadro y reinicia el temporizador
+			currentFrame = (currentFrame + 1) % frameCount;
+			frameTimer = 0.0f;
+		}
+
+		// Calcula el rect�ngulo de origen para el cuadro actual
+		Rectangle source = { currentFrame * 64.0f, 0.0f, 64.0f, 80.0f };
+		Rectangle dest = { position.x, position.y, 64.0f * scale, 80.0f * scale };
+		Vector2 origin = { -98.0f * scale, -244.0f * scale }; // Centro del cuadro de 48x48
+
+		// Dibuja el cuadro actual sin aplicar rotaci�n
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+	}
+private:
+	Texture2D texture;
+	int currentFrame;       // Cuadro actual de la animaci�n
+	int frameCount;         // N�mero total de cuadros en la animaci�n (2 en este caso)
+	float animationSpeed;   // Control de velocidad de la animaci�n
+	float frameTimer;       // Temporizador para cambiar de cuadro
+	float scale;
+};
+
 class Collision1 : public PhysicEntity
 {
 public:
@@ -1139,6 +1183,10 @@ bool ModuleGame::Start()
 
 	gulpin = LoadTexture("Assets/GulpinAnim.png");
 
+	nuzleaf = LoadTexture("Assets/nuzleaf.png");
+
+	wishcash = LoadTexture("Assets/wishcash.png");
+
 	cyndaquil = LoadTexture("Assets/cyndaquil.png");
 
 	sharpedo = LoadTexture("Assets/sharpedo.png");
@@ -1165,6 +1213,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Pichu(App->physics, 107, 944, this, pichu));
 	entities.emplace_back(new Gulpin(App->physics, 358, 320, this, gulpin)); 
 	entities.emplace_back(new Wishcash(App->physics, 358, 320, this, wishcash));
+	entities.emplace_back(new Nuzleaf(App->physics, 358, 320, this, nuzleaf));
 
 	entities.emplace_back(new Collision1(App->physics, 0, 0, this, collision1)); //Mapa
 	entities.emplace_back(new Collision2(App->physics, 0, 0, this, collision2)); //L azul abajo izquierda
