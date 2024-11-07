@@ -327,6 +327,50 @@ private:
 	float scale;
 };
 
+class Wishcash : public PhysicEntity {
+public:
+	Wishcash(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
+	{
+		collisionType = WISHCASH;
+		frameCount = 6;          // Solo dos cuadros de animaci�n
+		currentFrame = 0;
+		animationSpeed = 0.085f;   // Control de velocidad de la animaci�n
+		frameTimer = 0.0f;
+		scale = 1.25f;
+	}
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		Vector2 position{ (float)x, (float)y };
+
+		// Avanza el temporizador de animaci�n
+		frameTimer += animationSpeed;
+		if (frameTimer >= 1.0f)
+		{
+			// Cambia al siguiente cuadro y reinicia el temporizador
+			currentFrame = (currentFrame + 1) % frameCount;
+			frameTimer = 0.0f;
+		}
+
+		// Calcula el rect�ngulo de origen para el cuadro actual
+		Rectangle source = { currentFrame * 96.0f, 0.0f, 96.0f, 96.0f };
+		Rectangle dest = { position.x, position.y, 96.0f * scale, 96.0f * scale };
+		Vector2 origin = { -32.0f * scale, 182.0f * scale }; // Centro del cuadro de 48x48
+
+		// Dibuja el cuadro actual sin aplicar rotaci�n
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+	}
+private:
+	Texture2D texture;
+	int currentFrame;       // Cuadro actual de la animaci�n
+	int frameCount;         // N�mero total de cuadros en la animaci�n (2 en este caso)
+	float animationSpeed;   // Control de velocidad de la animaci�n
+	float frameTimer;       // Temporizador para cambiar de cuadro
+	float scale;
+};
+
 class Collision1 : public PhysicEntity
 {
 public:
@@ -1103,6 +1147,8 @@ bool ModuleGame::Start()
 
 	pichu = LoadTexture("Assets/pichu.png");
 
+	wishcash = LoadTexture("Assets/wishcash.png");
+
 	box = LoadTexture("Assets/crate.png");
 	//rick = LoadTexture("Assets/rick_head.png");
 	
@@ -1118,6 +1164,8 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Pikachu(App->physics, 528, 940, this, pikachu));
 	entities.emplace_back(new Pichu(App->physics, 107, 944, this, pichu));
 	entities.emplace_back(new Gulpin(App->physics, 358, 320, this, gulpin)); 
+	entities.emplace_back(new Wishcash(App->physics, 358, 320, this, wishcash));
+
 
 	entities.emplace_back(new Collision1(App->physics, 0, 0, this, collision1)); //Mapa
 	entities.emplace_back(new Collision2(App->physics, 0, 0, this, collision2)); //L azul abajo izquierda
