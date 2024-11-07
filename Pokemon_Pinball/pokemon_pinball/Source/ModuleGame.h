@@ -17,7 +17,8 @@ enum CollisionType
 	DEFAULT,
 	CHINCHOU,
 	GULPIN,
-	WISHCASH
+	WISHCASH,
+	NUZLEAF
 };
 
 enum BodyType {
@@ -53,6 +54,7 @@ public:
 	Texture2D gulpin;
 
 
+	Texture2D nuzleaf;
 	Texture2D wishcash;
 
 	Texture2D circle;
