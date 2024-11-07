@@ -530,38 +530,51 @@ class GreenEvoD : public PhysicEntity
 {
 public:
 	// Pivot 0, 0
-	static constexpr int GreenEvoDerechaCollision[52] = {
-	162, 650,
-	155, 644,
-	147, 635,
-	140, 625,
-	132, 615,
-	122, 602,
-	113, 584,
-	103, 565,
-	95, 547,
-	89, 528,
-	84, 510,
-	81, 494,
-	78, 477,
-	88, 488,
-	96, 496,
-	105, 505,
-	118, 517,
-	130, 527,
-	140, 533,
-	148, 538,
-	152, 549,
-	160, 569,
-	167, 586,
-	177, 605,
-	188, 620,
-	188, 624
+	static constexpr int GreenEvoDerechaCollision[78] = {
+	188, 621,
+	161, 648,
+	145, 635,
+	134, 621,
+	126, 607,
+	114, 588,
+	102, 563,
+	94, 540,
+	85, 514,
+	79, 495,
+	74, 472,
+	72, 450,
+	73, 425,
+	75, 400,
+	79, 377,
+	84, 354,
+	89, 332,
+	95, 316,
+	102, 300,
+	110, 288,
+	122, 272,
+	137, 260,
+	138, 266,
+	130, 274,
+	121, 295,
+	116, 315,
+	113, 336,
+	112, 361,
+	112, 388,
+	114, 409,
+	118, 430,
+	121, 450,
+	125, 474,
+	130, 499,
+	138, 526,
+	149, 554,
+	160, 581,
+	171, 601,
+	182, 617
 
 	};
 
 	GreenEvoD(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, GreenEvoDerechaCollision, 52), _listener)
+		: PhysicEntity(physics->CreateChain(0, 0, GreenEvoDerechaCollision, 78), _listener)
 		, texture(_texture)
 	{
 
@@ -581,37 +594,25 @@ class GreenOneI : public PhysicEntity
 {
 public:
 	// Pivot 0, 0
-	static constexpr int GreenOneIzquierdaCollision[50] = {
-	126, 458,
-	116, 449,
-	107, 440,
-	100, 431,
-	94, 420,
-	88, 409,
-	83, 398,
-	78, 385,
-	82, 366,
-	87, 343,
-	92, 323,
-	98, 310,
-	105, 297,
-	115, 281,
-	124, 269,
-	133, 260,
-	138, 260,
-	138, 264,
-	131, 277,
-	123, 301,
-	118, 335,
-	118, 360,
-	118, 391,
-	120, 418,
-	126, 447
+	static constexpr int GreenOneIzquierdaCollision[26] = {
+	398, 234,
+	414, 243,
+	424, 251,
+	433, 259,
+	442, 267,
+	450, 275,
+	454, 285,
+	450, 289,
+	440, 286,
+	427, 275,
+	412, 266,
+	398, 259,
+	398, 241
 
 	};
 
 	GreenOneI(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, GreenOneIzquierdaCollision, 50), _listener)
+		: PhysicEntity(physics->CreateChain(0, 0, GreenOneIzquierdaCollision, 26), _listener)
 		, texture(_texture)
 	{
 
@@ -807,44 +808,33 @@ class Collision12 : public PhysicEntity
 {
 public:
 	// Pivot 0, 0
-	static constexpr int CollisionTwelve[66] = {
-	399, 234,
-	410, 240,
-	426, 252,
-	438, 262,
-	452, 277,
-	454, 292,
-	456, 303,
-	455, 319,
-	451, 341,
-	447, 363,
-	440, 396,
-	430, 418,
-	417, 446,
-	400, 478,
+	static constexpr int CollisionTwelve[44] = {
+	369, 491,
+	376, 478,
+	384, 465,
+	393, 452,
+	400, 437,
+	408, 421,
+	414, 406,
+	420, 394,
+	426, 383,
+	432, 375,
+	439, 377,
+	440, 383,
+	436, 394,
+	432, 405,
+	427, 416,
+	424, 425,
+	418, 440,
+	410, 456,
+	400, 474,
+	393, 487,
 	386, 501,
-	370, 493,
-	370, 489,
-	376, 483,
-	388, 468,
-	400, 450,
-	411, 429,
-	421, 408,
-	432, 383,
-	441, 360,
-	449, 336,
-	452, 323,
-	453, 309,
-	452, 297,
-	446, 287,
-	435, 278,
-	422, 270,
-	412, 264,
-	399, 259
+	375, 496
 	};
 
 	Collision12(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, CollisionTwelve, 66), _listener)
+		: PhysicEntity(physics->CreateChain(0, 0, CollisionTwelve, 44), _listener)
 		, texture(_texture)
 	{
 
@@ -865,46 +855,43 @@ class Collision13 : public PhysicEntity
 {
 public:
 	// Pivot 0, 0
-	static constexpr int CollisionThirteen[70] = {
-	416, 547,
-	416, 539,
-	434, 509,
-	456, 470,
-	471, 434,
-	481, 408,
-	486, 385,
-	489, 367,
-	487, 339,
-	496, 365,
-	500, 393,
-	503, 418,
-	505, 447,
-	503, 481,
-	496, 516,
-	486, 545,
-	479, 560,
-	467, 583,
-	459, 594,
-	459, 584,
-	466, 572,
-	475, 550,
-	481, 533,
-	487, 511,
-	491, 496,
-	492, 483,
-	486, 473,
-	478, 467,
-	470, 467,
-	460, 469,
-	453, 479,
-	445, 500,
-	439, 513,
-	429, 530,
-	423, 540
+	static constexpr int CollisionThirteen[64] = { 
+	415, 544,
+	422, 528,
+	431, 512,
+	437, 502,
+	446, 484,
+	453, 470,
+	461, 458,
+	473, 447,
+	488, 446,
+	493, 451,
+	500, 458,
+	500, 465,
+	497, 478,
+	493, 497,
+	488, 520,
+	481, 542,
+	475, 557,
+	469, 568,
+	462, 581,
+	458, 588,
+	463, 571,
+	469, 554,
+	473, 543,
+	476, 532,
+	477, 524,
+	478, 514,
+	471, 506,
+	459, 501,
+	450, 502,
+	441, 507,
+	430, 521,
+	420, 537
 	};
 
 	Collision13(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, CollisionThirteen, 70), _listener)
+		: PhysicEntity(physics->CreateChain(0, 0, CollisionThirteen, 64), _listener)
 		, texture(_texture)
 	{
 
@@ -955,21 +942,21 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Chinchou(App->physics, 306, 371, this, chinchou));
 	entities.emplace_back(new Chinchou(App->physics, 377, 392, this, chinchou));
 
-	entities.emplace_back(new Collision1(App->physics, 0, 0, this, collision1));
-	entities.emplace_back(new Collision2(App->physics, 0, 0, this, collision2));
-	entities.emplace_back(new Collision3(App->physics, 0, 0, this, collision3));
-	entities.emplace_back(new Collision4(App->physics, 0, 0, this, collision4));
-	entities.emplace_back(new Collision5(App->physics, 0, 0, this, collision5));
-	entities.emplace_back(new Collision6(App->physics, 0, 0, this, collision6));
+	entities.emplace_back(new Collision1(App->physics, 0, 0, this, collision1)); //Mapa
+	entities.emplace_back(new Collision2(App->physics, 0, 0, this, collision2)); //L azul abajo izquierda
+	entities.emplace_back(new Collision3(App->physics, 0, 0, this, collision3)); //L azul abajo derecha
+	entities.emplace_back(new Collision4(App->physics, 0, 0, this, collision4)); //Triangulo der rojo
+	entities.emplace_back(new Collision5(App->physics, 0, 0, this, collision5)); //Triangulo izq rojo
+	entities.emplace_back(new Collision6(App->physics, 0, 0, this, collision6)); //Piedra grande y pokemon verde
 	entities.emplace_back(new GreenEvoD(App->physics, 0, 0, this, GreenEvoDer)); 
-	entities.emplace_back(new GreenOneI(App->physics, 0, 0, this, GreenOneIzq));
-	entities.emplace_back(new Collision7(App->physics, 0, 0, this, collision7));
-	entities.emplace_back(new Collision8(App->physics, 0, 0, this, collision8));
+	entities.emplace_back(new GreenOneI(App->physics, 0, 0, this, GreenOneIzq)); // Arriba derecha chinchous
+	entities.emplace_back(new Collision7(App->physics, 0, 0, this, collision7)); // Columna derecha arriba chinchous
+	entities.emplace_back(new Collision8(App->physics, 0, 0, this, collision8)); //Columna derecha arriba chinchous
 	//entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9));
 	//entities.emplace_back(new Collision10(App->physics, 0, 0, this, collision10));
 	//entities.emplace_back(new Collision11(App->physics, 0, 0, this, collision11));
-	entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12));
-	entities.emplace_back(new Collision13(App->physics, 0, 0, this, collision13));
+	entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12)); //Abajo derecha chinchous
+	entities.emplace_back(new Collision13(App->physics, 0, 0, this, collision13)); //Tiburon
 	return ret;
 }
 
