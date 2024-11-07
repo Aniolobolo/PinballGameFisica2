@@ -808,33 +808,37 @@ class Collision12 : public PhysicEntity
 {
 public:
 	// Pivot 0, 0
-	static constexpr int CollisionTwelve[44] = {
-	369, 491,
-	376, 478,
-	384, 465,
-	393, 452,
-	400, 437,
-	408, 421,
-	414, 406,
-	420, 394,
-	426, 383,
-	432, 375,
-	439, 377,
-	440, 383,
+	static constexpr int CollisionTwelve[52] = {
+	384, 501,
+	371, 492,
+	377, 486,
+	383, 478,
+	388, 469,
+	392, 461,
+	398, 453,
+	403, 442,
+	407, 434,
+	412, 421,
+	416, 412,
+	420, 404,
+	425, 395,
+	429, 386,
+	435, 376,
+	441, 378,
+	440, 385,
 	436, 394,
-	432, 405,
-	427, 416,
-	424, 425,
-	418, 440,
-	410, 456,
+	431, 405,
+	426, 417,
+	421, 430,
+	414, 447,
+	407, 461,
 	400, 474,
-	393, 487,
-	386, 501,
-	375, 496
+	393, 486,
+	387, 497
 	};
 
 	Collision12(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, CollisionTwelve, 44), _listener)
+		: PhysicEntity(physics->CreateChain(0, 0, CollisionTwelve, 52), _listener)
 		, texture(_texture)
 	{
 
