@@ -862,18 +862,39 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionTwelve, 52), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = DEFAULT;
+		frameCount = 2;
+		currentFrame = 0;
+		animationSpeed = 0.02f;
+		frameTimer = 0.0f;
+		scale = 1.3f;
 	}
-
 	void Update() override
 	{
 		int x, y;
 		body->GetPhysicPosition(x, y);
-		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
-	}
+		Vector2 position{ (float)x, (float)y };
 
+		frameTimer += animationSpeed;
+		if (frameTimer >= 1.0f)
+		{
+			currentFrame = (currentFrame + 1) % frameCount;
+			frameTimer = 0.0f;
+		}
+
+		Rectangle source = { currentFrame * 80.0f, 0.0f, 80.0f, 80.0f };
+		Rectangle dest = { position.x, position.y, 80.0f * scale, 80.0f * scale };
+		Vector2 origin = { -430, -435 };
+
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+	}
 private:
 	Texture2D texture;
+	int currentFrame;
+	int frameCount;
+	float animationSpeed;
+	float frameTimer;
+	float scale;
 };
 
 class Collision13 : public PhysicEntity
@@ -956,6 +977,8 @@ bool ModuleGame::Start()
 
 	cyndaquil = LoadTexture("Assets/cyndaquil.png");
 
+	sharpedo = LoadTexture("Assets/sharpedo.png");
+
 	box = LoadTexture("Assets/crate.png");
 	//rick = LoadTexture("Assets/rick_head.png");
 	
@@ -982,7 +1005,7 @@ bool ModuleGame::Start()
 	//entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9));
 	//entities.emplace_back(new Collision10(App->physics, 0, 0, this, collision10));
 	//entities.emplace_back(new Collision11(App->physics, 0, 0, this, collision11));
-	//entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12)); //Abajo derecha chinchous
+	entities.emplace_back(new Collision12(App->physics, 0, 0, this, sharpedo)); //Abajo derecha chinchous
 	entities.emplace_back(new Collision13(App->physics, 0, 0, this, collision13)); //Tiburon
 	return ret;
 }
