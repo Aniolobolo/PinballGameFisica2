@@ -16,7 +16,8 @@ enum CollisionType
 {
 	DEFAULT,
 	CHINCHOU,
-	GULPIN
+	GULPIN,
+	WISHCASH
 };
 
 enum BodyType {
@@ -50,6 +51,9 @@ public:
 	Texture2D cyndaquil;
 	Texture2D sharpedo;
 	Texture2D gulpin;
+
+
+	Texture2D wishcash;
 
 	Texture2D circle;
 	Texture2D box;
