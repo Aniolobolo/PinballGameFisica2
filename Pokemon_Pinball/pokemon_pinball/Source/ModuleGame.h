@@ -46,6 +46,8 @@ public:
 	int wait = 2; // time in seconds
 
 	Texture2D chinchou;
+	Texture2D cyndaquil;
+	Texture2D sharpedo;
 
 	Texture2D circle;
 	Texture2D box;
