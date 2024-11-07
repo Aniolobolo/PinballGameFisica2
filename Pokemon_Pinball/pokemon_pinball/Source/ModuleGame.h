@@ -48,6 +48,8 @@ public:
 	Texture2D chinchou;
 	Texture2D cyndaquil;
 	Texture2D sharpedo;
+	Texture2D pikachu;
+	Texture2D pichu;
 
 	Texture2D circle;
 	Texture2D box;

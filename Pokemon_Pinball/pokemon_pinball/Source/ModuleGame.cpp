@@ -171,9 +171,9 @@ public:
 		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
 	{
 		collisionType = CHINCHOU;
-		frameCount = 2;          // Solo dos cuadros de animación
+		frameCount = 2;       
 		currentFrame = 0;
-		animationSpeed = 0.03f;   // Control de velocidad de la animación
+		animationSpeed = 0.03f;
 		frameTimer = 0.0f;
 		scale = 2.5f;
 	}
@@ -183,29 +183,105 @@ public:
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
 
-		// Avanza el temporizador de animación
 		frameTimer += animationSpeed;
 		if (frameTimer >= 1.0f)
 		{
-			// Cambia al siguiente cuadro y reinicia el temporizador
 			currentFrame = (currentFrame + 1) % frameCount;
 			frameTimer = 0.0f;
 		}
 
-		// Calcula el rectángulo de origen para el cuadro actual
 		Rectangle source = { currentFrame * 32.0f, 0.0f, 32.0f, 32.0f };
 		Rectangle dest = { position.x, position.y, 32.0f*scale, 32.0f*scale };
-		Vector2 origin = { 16.0f*scale, 22.0f*scale }; // Centro del cuadro de 48x48
+		Vector2 origin = { 16.0f*scale, 22.0f*scale }; 
 
-		// Dibuja el cuadro actual sin aplicar rotación
 		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 	}
 private:
 	Texture2D texture;
-	int currentFrame;       // Cuadro actual de la animación
-	int frameCount;         // Número total de cuadros en la animación (2 en este caso)
-	float animationSpeed;   // Control de velocidad de la animación
-	float frameTimer;       // Temporizador para cambiar de cuadro
+	int currentFrame; 
+	int frameCount;      
+	float animationSpeed;   
+	float frameTimer;     
+	float scale;
+};
+
+class Pikachu : public PhysicEntity {
+public:
+	Pikachu(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 1, STATIC), listener), texture(texture)
+	{
+		collisionType = DEFAULT;
+		frameCount = 9;       
+		currentFrame = 0;
+		animationSpeed = 0.05f; 
+		frameTimer = 0.0f;
+		scale = 1.3f;
+	}
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		Vector2 position{ (float)x, (float)y };
+
+		frameTimer += animationSpeed;
+		if (frameTimer >= 1.0f)
+		{
+			currentFrame = (currentFrame + 1) % frameCount;
+			frameTimer = 0.0f;
+		}
+
+		Rectangle source = { currentFrame * 64.0f, 0.0f, 64.0f, 64.0f };
+		Rectangle dest = { position.x, position.y, 64.0f * scale, 64.0f * scale };
+		Vector2 origin = { 70.0f , 70.0f  }; 
+
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+	}
+private:
+	Texture2D texture;
+	int currentFrame;     
+	int frameCount;       
+	float animationSpeed;
+	float frameTimer;    
+	float scale;
+};
+
+class Pichu : public PhysicEntity {
+public:
+	Pichu(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 1, STATIC), listener), texture(texture)
+	{
+		collisionType = DEFAULT;
+		frameCount = 7;
+		currentFrame = 0;
+		animationSpeed = 0.05f;
+		frameTimer = 0.0f;
+		scale = 1.2f;
+	}
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		Vector2 position{ (float)x, (float)y };
+
+		frameTimer += animationSpeed;
+		if (frameTimer >= 1.0f)
+		{
+			currentFrame = (currentFrame + 1) % frameCount;
+			frameTimer = 0.0f;
+		}
+
+		Rectangle source = { currentFrame * 64.0f, 0.0f, 64.0f, 64.0f };
+		Rectangle dest = { position.x, position.y, 64.0f * scale, 64.0f * scale };
+		Vector2 origin = { 70.0f , 70.0f };
+
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+	}
+private:
+	Texture2D texture;
+	int currentFrame;
+	int frameCount;
+	float animationSpeed;
+	float frameTimer;
 	float scale;
 };
 
@@ -214,7 +290,7 @@ class Collision1 : public PhysicEntity
 public:
 	// Pivot 0, 0
 	static constexpr int CollisionOne[140] = {
-336, 1018,
+	336, 1018,
 	337, 1007,
 	341, 1000,
 	411, 965,
@@ -979,6 +1055,10 @@ bool ModuleGame::Start()
 
 	sharpedo = LoadTexture("Assets/sharpedo.png");
 
+	pikachu = LoadTexture("Assets/pikachu.png");
+
+	pichu = LoadTexture("Assets/pichu.png");
+
 	box = LoadTexture("Assets/crate.png");
 	//rick = LoadTexture("Assets/rick_head.png");
 	
@@ -991,6 +1071,8 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Chinchou(App->physics, 358, 320, this, chinchou));
 	entities.emplace_back(new Chinchou(App->physics, 306, 371, this, chinchou));
 	entities.emplace_back(new Chinchou(App->physics, 377, 392, this, chinchou));
+	entities.emplace_back(new Pikachu(App->physics, 528, 940, this, pikachu));
+	entities.emplace_back(new Pichu(App->physics, 107, 944, this, pichu));
 
 	entities.emplace_back(new Collision1(App->physics, 0, 0, this, collision1)); //Mapa
 	entities.emplace_back(new Collision2(App->physics, 0, 0, this, collision2)); //L azul abajo izquierda
