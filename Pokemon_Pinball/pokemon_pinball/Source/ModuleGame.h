@@ -15,7 +15,9 @@ class PhysicEntity;
 enum CollisionType
 {
 	DEFAULT,
-	CHINCHOU
+	CHINCHOU,
+	GULPIN,
+	WISHCASH
 };
 
 enum BodyType {
@@ -50,6 +52,8 @@ public:
 	Texture2D sharpedo;
 	Texture2D pikachu;
 	Texture2D pichu;
+	Texture2D gulpin;
+	Texture2D wishcash;
 
 	Texture2D circle;
 	Texture2D box;
