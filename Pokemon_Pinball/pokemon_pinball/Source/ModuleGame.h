@@ -15,7 +15,8 @@ class PhysicEntity;
 enum CollisionType
 {
 	DEFAULT,
-	CHINCHOU
+	CHINCHOU,
+	GULPIN
 };
 
 enum BodyType {
@@ -48,6 +49,7 @@ public:
 	Texture2D chinchou;
 	Texture2D cyndaquil;
 	Texture2D sharpedo;
+	Texture2D gulpin;
 
 	Texture2D circle;
 	Texture2D box;

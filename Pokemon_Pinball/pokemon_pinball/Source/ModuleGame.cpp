@@ -209,6 +209,50 @@ private:
 	float scale;
 };
 
+class Gulpin : public PhysicEntity {
+public:
+	Gulpin(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
+	{
+		collisionType = GULPIN;
+		frameCount = 8;          // Solo dos cuadros de animación
+		currentFrame = 0;
+		animationSpeed = 0.11f;   // Control de velocidad de la animación
+		frameTimer = 0.0f;
+		scale = 1.2f; 
+	}
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		Vector2 position{ (float)x, (float)y };
+
+		// Avanza el temporizador de animación
+		frameTimer += animationSpeed;
+		if (frameTimer >= 1.0f)
+		{
+			// Cambia al siguiente cuadro y reinicia el temporizador
+			currentFrame = (currentFrame + 1) % frameCount;
+			frameTimer = 0.0f;
+		}
+
+		// Calcula el rectángulo de origen para el cuadro actual
+		Rectangle source = { currentFrame * 64.0f, 0.0f, 64.0f, 48.0f };
+		Rectangle dest = { position.x, position.y, 64.0f * scale, 48.0f * scale };
+		Vector2 origin = { 259.0f * scale, -302.0f * scale}; // Centro del cuadro de 48x48
+
+		// Dibuja el cuadro actual sin aplicar rotación
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+	}
+private:
+	Texture2D texture;
+	int currentFrame;       // Cuadro actual de la animación
+	int frameCount;         // Número total de cuadros en la animación (2 en este caso)
+	float animationSpeed;   // Control de velocidad de la animación
+	float frameTimer;       // Temporizador para cambiar de cuadro
+	float scale;
+};
+
 class Collision1 : public PhysicEntity
 {
 public:
@@ -954,6 +998,8 @@ bool ModuleGame::Start()
 
 	chinchou = LoadTexture("Assets/chinchouAnim2.png");
 
+	gulpin = LoadTexture("Assets/GulpinAnim.png");
+
 	cyndaquil = LoadTexture("Assets/cyndaquil.png");
 
 	box = LoadTexture("Assets/crate.png");
@@ -968,6 +1014,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Chinchou(App->physics, 358, 320, this, chinchou));
 	entities.emplace_back(new Chinchou(App->physics, 306, 371, this, chinchou));
 	entities.emplace_back(new Chinchou(App->physics, 377, 392, this, chinchou));
+	entities.emplace_back(new Gulpin(App->physics, 358, 320, this, gulpin)); 
 
 	entities.emplace_back(new Collision1(App->physics, 0, 0, this, collision1)); //Mapa
 	entities.emplace_back(new Collision2(App->physics, 0, 0, this, collision2)); //L azul abajo izquierda
@@ -982,7 +1029,7 @@ bool ModuleGame::Start()
 	//entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9));
 	//entities.emplace_back(new Collision10(App->physics, 0, 0, this, collision10));
 	//entities.emplace_back(new Collision11(App->physics, 0, 0, this, collision11));
-	//entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12)); //Abajo derecha chinchous
+	entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12)); //Abajo derecha chinchous
 	entities.emplace_back(new Collision13(App->physics, 0, 0, this, collision13)); //Tiburon
 	return ret;
 }
