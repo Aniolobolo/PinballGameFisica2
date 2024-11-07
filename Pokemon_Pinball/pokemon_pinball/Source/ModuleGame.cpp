@@ -1166,7 +1166,6 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Gulpin(App->physics, 358, 320, this, gulpin)); 
 	entities.emplace_back(new Wishcash(App->physics, 358, 320, this, wishcash));
 
-
 	entities.emplace_back(new Collision1(App->physics, 0, 0, this, collision1)); //Mapa
 	entities.emplace_back(new Collision2(App->physics, 0, 0, this, collision2)); //L azul abajo izquierda
 	entities.emplace_back(new Collision3(App->physics, 0, 0, this, collision3)); //L azul abajo derecha
@@ -1181,7 +1180,6 @@ bool ModuleGame::Start()
 	//entities.emplace_back(new Collision10(App->physics, 0, 0, this, collision10));
 	//entities.emplace_back(new Collision11(App->physics, 0, 0, this, collision11));
 	entities.emplace_back(new Collision12(App->physics, 0, 0, this, sharpedo)); //Abajo derecha chinchous
-
 	entities.emplace_back(new Collision13(App->physics, 0, 0, this, collision13)); //Tiburon
 	return ret;
 }
