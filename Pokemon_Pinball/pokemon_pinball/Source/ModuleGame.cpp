@@ -24,6 +24,9 @@ public:
 	{
 		return 0;
 	}
+
+	virtual void ActivateHit() {
+	}
 	
 	CollisionType GetCollisionType() const { return collisionType; }
 
@@ -1068,32 +1071,16 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionTwelve, 52), _listener)
 		, texture(_texture)
 	{
-		collisionType = DEFAULT;
-		frameCount = 2;
-		currentFrame = 0;
-		animationSpeed = 0.02f;
-		frameTimer = 0.0f;
-		scale = 1.3f;
+
 	}
+
 	void Update() override
 	{
 		int x, y;
 		body->GetPhysicPosition(x, y);
-		Vector2 position{ (float)x, (float)y };
-
-		frameTimer += animationSpeed;
-		if (frameTimer >= 1.0f)
-		{
-			currentFrame = (currentFrame + 1) % frameCount;
-			frameTimer = 0.0f;
-		}
-
-		Rectangle source = { currentFrame * 80.0f, 0.0f, 80.0f, 80.0f };
-		Rectangle dest = { position.x, position.y, 80.0f * scale, 80.0f * scale };
-		Vector2 origin = { -430, -435 };
-
-		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
 	}
+
 private:
 	Texture2D texture;
 	int currentFrame;
@@ -1141,14 +1128,102 @@ public:
 	430, 521,
 	420, 537
 	};
-
 	Collision13(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionThirteen, 64), _listener)
 		, texture(_texture)
-	{
 
+	{
+		collisionType = SHARPEDO;
+		frameCountIdle = 2;      
+		currentFrame = 0;
+		animationSpeed = 0.05f;   
+		frameTimer = 0.0f;
+		scale = 1.2f;
+		isHit = false;
+		hitTimer = 0.0f;
 	}
 
+	void ActivateHit() override {
+		OnHit();  
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		Vector2 position{ (float)x, (float)y };
+
+		
+		if (!isHit) {  //idle anim
+			frameTimer += animationSpeed;
+			if (frameTimer >= 1.0f)
+			{
+				currentFrame = (currentFrame + 1) % frameCountIdle; 
+				frameTimer = 0.0f;
+			}
+		}
+
+		if (isHit) // activate attack anim
+		{
+			hitTimer += GetFrameTime();
+			if (hitTimer >= 0.4f) //after 0,4 second return to idle anim
+			{
+				isHit = false;
+				hitTimer = 0.0f;
+				currentFrame = 0; //reset frame
+			}
+		}
+
+		Rectangle source;
+		if (isHit)
+		{
+			source = { 2 * 96.0f, 0.0f, 96.0f, 96.0f }; //attack
+		}
+		else
+		{
+			source = { currentFrame * 96.0f, 0.0f, 96.0f, 96.0f }; //idle
+		}
+
+		Rectangle dest = { position.x, position.y, 96.0f * scale, 96.0f * scale };
+		Vector2 origin = { -415, -420 };
+
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+	}
+
+	void OnHit()
+	{
+		isHit = true;
+		currentFrame = 0;
+		hitTimer = 0.0f;
+	}
+
+private:
+	Texture2D texture;
+	int currentFrame;
+	int frameCountIdle;
+	float animationSpeed;
+	float frameTimer;
+	float scale;
+	bool isHit;       
+	float hitTimer;   //attack timer  
+};
+class Collision14 : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int CollisionThirteen[8] = {
+	168, 650,
+	182, 636,
+	185, 643,
+	175, 652
+	};
+
+	Collision14(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, CollisionThirteen, 8), _listener)
+		, texture(_texture)
+	{
+		collisionType = BOTTON1;
+	}
 	void Update() override
 	{
 		int x, y;
@@ -1158,6 +1233,7 @@ public:
 
 private:
 	Texture2D texture;
+
 };
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -1228,8 +1304,9 @@ bool ModuleGame::Start()
 	//entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9));
 	//entities.emplace_back(new Collision10(App->physics, 0, 0, this, collision10));
 	//entities.emplace_back(new Collision11(App->physics, 0, 0, this, collision11));
-	entities.emplace_back(new Collision12(App->physics, 0, 0, this, sharpedo)); //Abajo derecha chinchous
-	entities.emplace_back(new Collision13(App->physics, 0, 0, this, collision13)); //Tiburon
+	entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12)); //Abajo derecha chinchous
+	entities.emplace_back(new Collision13(App->physics, 0, 0, this, sharpedo)); //Tiburon
+	entities.emplace_back(new Collision14(App->physics, 0, 0, this, botton1));
 	return ret;
 }
 
@@ -1315,6 +1392,8 @@ update_status ModuleGame::Update()
 void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
 	bool hascollisionedwithchinchou = false;
+	bool hascollisionedwithbotton1 = false;
+	bool hascollisionedwithsharpedos = false;
 
 	int length = entities.size();
 	for (int i = 0; i < length; ++i) {
@@ -1322,9 +1401,19 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			hascollisionedwithchinchou = true;
 		    break;
 		}
+		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == BOTTON1) {
+			hascollisionedwithbotton1 = true;
+			break;
+		}
+		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == SHARPEDO) {
+			hascollisionedwithsharpedos = true;
+			entities[i]->ActivateHit();
+			break;
+		}
 	}
 	if (hascollisionedwithchinchou) suma += 500;
-
+	if (hascollisionedwithbotton1) suma += 1000;
+	if (hascollisionedwithsharpedos) suma += 2000;
 	
 
 

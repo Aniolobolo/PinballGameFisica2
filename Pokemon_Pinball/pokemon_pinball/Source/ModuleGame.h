@@ -15,10 +15,12 @@ class PhysicEntity;
 enum CollisionType
 {
 	DEFAULT,
+	BOTTON1,
 	CHINCHOU,
 	GULPIN,
 	WISHCASH,
-	NUZLEAF
+	NUZLEAF,
+	SHARPEDO
 };
 
 enum BodyType {
@@ -76,6 +78,7 @@ public:
 	//Texture2D collision11;
 	Texture2D collision12;
 	Texture2D collision13;
+	Texture2D botton1;
 
 	uint32 bonus_fx;
 	Music backgroundMusic;
