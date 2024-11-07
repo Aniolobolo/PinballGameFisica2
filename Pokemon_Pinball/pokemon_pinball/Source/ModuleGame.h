@@ -20,7 +20,8 @@ enum CollisionType
 	GULPIN,
 	WISHCASH,
 	NUZLEAF,
-	SHARPEDO
+	SHARPEDO,
+	PUERTAROTANTE
 };
 
 enum BodyType {
@@ -56,10 +57,10 @@ public:
 	Texture2D pikachu;
 	Texture2D pichu;
 	Texture2D gulpin;
-
-
 	Texture2D nuzleaf;
 	Texture2D wishcash;
+
+	Texture2D puertarotante;
 
 	Texture2D circle;
 	Texture2D box;

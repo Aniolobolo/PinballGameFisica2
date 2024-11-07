@@ -27,6 +27,8 @@ public:
 
 	virtual void ActivateHit() {
 	}
+	virtual void ActivateRotation() {
+	}
 	
 	CollisionType GetCollisionType() const { return collisionType; }
 
@@ -1236,6 +1238,80 @@ private:
 
 };
 
+class Collision15 : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int CollisionThirteen[8] = {
+	168, 650,
+	182, 636,
+	185, 643,
+	175, 652
+	};
+
+	Collision15(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateRectangleSensor(x, y, 40, 0), listener), texture(texture)
+	{
+		collisionType = PUERTAROTANTE;
+		frameCountIdle = 1;      
+		frameCountRotating = 15; 
+		currentFrame = 0;
+		animationSpeed = 0.3f;   
+		frameTimer = 0.0f;
+		isRotating = false;
+		scale = 1.3f;
+	}
+
+	void ActivateRotation() override {
+		isRotating = true;
+		currentFrame = 0; 
+	}
+
+	void Update() override {
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		Vector2 position{ (float)x, (float)y };
+
+		if (isRotating) {
+
+			frameTimer += animationSpeed;
+			if (frameTimer >= 1.0f) {
+				currentFrame++;
+				frameTimer = 0.0f;
+
+				if (currentFrame >= frameCountRotating) {
+					isRotating = false;
+					currentFrame = 0;
+				}
+			}
+		}
+
+
+		Rectangle source;
+		if (isRotating) {
+			source = { currentFrame * 48.0f, 0.0f, 48.0f, 48.0f };
+		}
+		else {
+			source = { 0.0f, 0.0f, 48.0f, 48.0f };  
+		}
+
+		Rectangle dest = { position.x, position.y, 48.0f * scale, 48.0f * scale };
+		Vector2 origin = { 24.0f * scale, 24.0f * scale };
+
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+	int currentFrame;
+	int frameCountIdle;
+	int frameCountRotating;
+	float animationSpeed;
+	float frameTimer;
+	bool isRotating;
+	float scale;
+};
+
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	ray_on = false;
@@ -1273,6 +1349,8 @@ bool ModuleGame::Start()
 
 	wishcash = LoadTexture("Assets/wishcash.png");
 
+	puertarotante = LoadTexture("Assets/puertarotante.png");
+
 	box = LoadTexture("Assets/crate.png");
 	//rick = LoadTexture("Assets/rick_head.png");
 	
@@ -1291,6 +1369,8 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Wishcash(App->physics, 358, 320, this, wishcash));
 	entities.emplace_back(new Nuzleaf(App->physics, 358, 320, this, nuzleaf));
 
+	entities.emplace_back(new Collision15(App->physics, 520, 500, this, puertarotante));
+
 	entities.emplace_back(new Collision1(App->physics, 0, 0, this, collision1)); //Mapa
 	entities.emplace_back(new Collision2(App->physics, 0, 0, this, collision2)); //L azul abajo izquierda
 	entities.emplace_back(new Collision3(App->physics, 0, 0, this, collision3)); //L azul abajo derecha
@@ -1307,6 +1387,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12)); //Abajo derecha chinchous
 	entities.emplace_back(new Collision13(App->physics, 0, 0, this, sharpedo)); //Tiburon
 	entities.emplace_back(new Collision14(App->physics, 0, 0, this, botton1));
+	
 	return ret;
 }
 
@@ -1394,6 +1475,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	bool hascollisionedwithchinchou = false;
 	bool hascollisionedwithbotton1 = false;
 	bool hascollisionedwithsharpedos = false;
+	bool hascollisionedwithpuertarotante = false;
 
 	int length = entities.size();
 	for (int i = 0; i < length; ++i) {
@@ -1410,10 +1492,16 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			entities[i]->ActivateHit();
 			break;
 		}
+		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUERTAROTANTE) {
+			hascollisionedwithpuertarotante = true;
+			entities[i]->ActivateRotation();
+			break;
+		}
 	}
 	if (hascollisionedwithchinchou) suma += 500;
 	if (hascollisionedwithbotton1) suma += 1000;
 	if (hascollisionedwithsharpedos) suma += 2000;
+	if (hascollisionedwithpuertarotante) suma += 1000;
 	
 
 
