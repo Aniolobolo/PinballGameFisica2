@@ -83,7 +83,7 @@ class Box : public PhysicEntity
 {
 public:
 	Box(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 50,STATIC), _listener)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 50), _listener)
 		, texture(_texture)
 	{
 
@@ -112,7 +112,7 @@ class LeftPad : public PhysicEntity
 {
 public:
 	LeftPad(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20,STATIC), _listener)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20), _listener)
 		, texture(_texture)
 	{
 	}
@@ -144,7 +144,7 @@ class RightPad : public PhysicEntity
 {
 public:
 	RightPad(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20,STATIC), _listener)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20), _listener)
 		, texture(_texture)
 	{
 	}
@@ -176,7 +176,7 @@ private:
 class Chinchou : public PhysicEntity {
 public:
 	Chinchou(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
-		: PhysicEntity(physics->CreateRectangle(x, y, 18, 18, STATIC), listener), texture(texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
 	{
 	collisionType = CHINCHOU;
 	pokemons = CHINCHOU1;

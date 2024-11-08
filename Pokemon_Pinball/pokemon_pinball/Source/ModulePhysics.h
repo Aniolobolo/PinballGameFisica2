@@ -51,7 +51,7 @@ public:
 	bool CleanUp();
 
 	PhysBody* CreateCircle(int x, int y, int radius, BodyType bodyType);
-	PhysBody* CreateRectangle(int x, int y, int width, int height, BodyType bodyType);
+	PhysBody* CreateRectangle(int x, int y, int width, int height);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
 	PhysBody* CreateChain(int x, int y, const int* points, int size);
 	void CreateFlippers();
