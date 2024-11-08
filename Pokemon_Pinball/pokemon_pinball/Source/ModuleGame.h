@@ -21,7 +21,8 @@ enum CollisionType
 	WISHCASH,
 	NUZLEAF,
 	SHARPEDO,
-	PUERTAROTANTE
+	PUERTAROTANTE,
+	SENSOR
 };
 
 enum Pokemons {
@@ -38,6 +39,11 @@ enum BodyType {
 enum CircleType {
 	POKEBALL,
 	ELSE
+};
+
+enum SensorType {
+	DELETE,
+	NORMAL
 };
 
 class ModuleGame : public Module
@@ -61,6 +67,8 @@ public:
 
 	int suma = 0;
 	int wait = 2; // time in seconds
+	bool deleteCircles = false;
+
 
 	Texture2D chinchou;
 	Texture2D cyndaquil;

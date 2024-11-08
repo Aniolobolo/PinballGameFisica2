@@ -34,6 +34,8 @@ public:
 
 	Pokemons GetPokemon() const { return pokemons; }
 
+	SensorType GetSensor() const { return sensors; }
+
 	PhysBody* body;
 
 protected:
@@ -41,6 +43,7 @@ protected:
 	Module* listener;
 	CollisionType collisionType;
 	Pokemons pokemons;
+	SensorType sensors;
 
 };
 
@@ -502,25 +505,44 @@ private:
 	bool isMarkedForDeletion;
 };
 
+class DeleteSensor : public PhysicEntity {
+public:
+	DeleteSensor(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateRectangleSensor(x, y, SCREEN_WIDTH,50), listener), texture(texture)
+	{
+		collisionType = SENSOR;
+		sensors = DELETE;
+
+	}
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+
+private:
+	Texture2D texture;
+};
 
 class Collision1 : public PhysicEntity
 {
 public:
 	// Pivot 0, 0
 	static constexpr int CollisionOne[140] = {
-	336, 1018,
+	337, 1058,
 	337, 1007,
 	341, 1000,
 	411, 965,
 	480, 920,
-	503, 906,
-	520, 896,
+	519, 897,
 	520, 777,
-	509, 758,
+	511, 761,
+	501, 755,
 	480, 755,
 	467, 750,
 	462, 740,
-	461, 684,
+	462, 686,
 	479, 665,
 	501, 631,
 	519, 598,
@@ -576,8 +598,9 @@ public:
 	170, 969,
 	233, 1001,
 	239, 1006,
-	239, 1019,
-	334, 1019
+	239, 1058,
+	288, 1058
+
 
 
 
@@ -1285,6 +1308,8 @@ private:
 	float scale;
 };
 
+
+
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	ray_on = false;
@@ -1327,7 +1352,7 @@ bool ModuleGame::Start()
 	bonus_fx = App->audio->LoadFx("Assets/Po.wav");
 	backgroundMusic = LoadMusicStream("Assets/19-Red-Table.ogg");
 
-	sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT, SCREEN_WIDTH, 50);
+	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT+25, SCREEN_WIDTH, 50);
 	PlayMusicStream(backgroundMusic);
 
 	entities.emplace_back(new Chinchou(App->physics, 358, 320, this, chinchou));
@@ -1338,6 +1363,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Gulpin(App->physics, 358, 320, this, gulpin)); 
 	entities.emplace_back(new Wishcash(App->physics, 358, 320, this, wishcash));
 	entities.emplace_back(new Nuzleaf(App->physics, 358, 320, this, nuzleaf));
+	entities.emplace_back(new DeleteSensor(App->physics, SCREEN_WIDTH / 2, SCREEN_HEIGHT + 25, this, collision1));
 
 
 	entities.emplace_back(new Collision15(App->physics, 520, 500, this, puertarotante));
@@ -1494,6 +1520,8 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	bool hascollisionedwithsharpedos = false;
 	bool hascollisionedwithpuertarotante = false;
 
+	deleteCircles = false;
+
 	int length = entities.size();
 	for (int i = 0; i < length; ++i) {
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == CHINCHOU ){
@@ -1515,6 +1543,28 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			entities[i]->ActivateRotation();
 			break;
 		}
+		if (bodyA == entities[i]->body &&  entities[i]->GetCollisionType() == SENSOR && entities[i]->GetSensor() == DELETE) {
+			deleteCircles = true;
+			break;
+		}
+
+	}
+	if (deleteCircles) {
+
+		for (auto it = entities.begin(); it != entities.end(); )
+		{
+			// Verificamos si el tipo es Circle usando dynamic_cast
+			if (dynamic_cast<Circle*>(*it) != nullptr)
+			{
+				it = entities.erase(it); // Eliminar instancia de Circle
+			}
+			else
+			{
+				++it; // Continuar con el siguiente elemento
+			}
+		}
+
+
 	}
 	if (hascollisionedwithchinchou) suma += 500;
 	if (hascollisionedwithbotton1) suma += 1000;
