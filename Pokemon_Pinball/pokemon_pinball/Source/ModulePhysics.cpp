@@ -128,12 +128,18 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, BodyType bodyTyp
 }
 
 
-PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
+PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, BodyType bodyType)
 {
 	PhysBody* pbody = new PhysBody();
 
 	b2BodyDef body;
-	body.type = b2_dynamicBody;
+	// Configura el tipo de cuerpo en función del parámetro bodyType
+	if (bodyType == STATIC) {
+		body.type = b2_staticBody;  // Cuerpo estático
+	}
+	else {
+		body.type = b2_dynamicBody; // Cuerpo dinámico
+	}
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
 
@@ -235,8 +241,8 @@ void ModulePhysics::CreateFlippers()
 	b2Body* rightAnchor = world->CreateBody(&anchorDef);
 
 	// Crear las palas
-	leftFlipper = CreateRectangle(METERS_TO_PIXELS(anchorLeft.x), METERS_TO_PIXELS(anchorLeft.y), 60, 10);
-	rightFlipper = CreateRectangle(METERS_TO_PIXELS(anchorRight.x), METERS_TO_PIXELS(anchorRight.y), 60, 10);
+	leftFlipper = CreateRectangle(METERS_TO_PIXELS(anchorLeft.x), METERS_TO_PIXELS(anchorLeft.y), 60, 10, DYNAMIC);
+	rightFlipper = CreateRectangle(METERS_TO_PIXELS(anchorRight.x), METERS_TO_PIXELS(anchorRight.y), 60, 10,DYNAMIC);
 
 	// Configurar las revolute joints para las palas
 	b2RevoluteJointDef jointDef;
@@ -270,7 +276,7 @@ PhysBody* ModulePhysics::CreateSpring(int x, int y, int width, int height)
 	springBase = world->CreateBody(&baseDef);
 
 	// Crear el cuerpo dinámico (el "pistón" del muelle)
-	springPiston = CreateRectangle(x, y + height / 2, width, height);
+	springPiston = CreateRectangle(x, y + height / 2, width, height,DYNAMIC);
 
 	// Configurar el prismatic joint
 	b2PrismaticJointDef prismaticJointDef;

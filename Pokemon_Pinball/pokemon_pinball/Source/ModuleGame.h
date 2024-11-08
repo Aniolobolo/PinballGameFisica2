@@ -24,6 +24,12 @@ enum CollisionType
 	PUERTAROTANTE
 };
 
+enum Pokemons {
+	CHINCHOU1,
+	CHINCHOU2,
+	CHINCHOU3
+};
+
 enum BodyType {
 	STATIC,
 	DYNAMIC

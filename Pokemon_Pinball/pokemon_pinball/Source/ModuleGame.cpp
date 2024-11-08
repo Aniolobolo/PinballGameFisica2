@@ -32,12 +32,15 @@ public:
 	
 	CollisionType GetCollisionType() const { return collisionType; }
 
+	Pokemons GetPokemon() const { return pokemons; }
+
 	PhysBody* body;
 
 protected:
 
 	Module* listener;
 	CollisionType collisionType;
+	Pokemons pokemons;
 
 };
 
@@ -80,7 +83,7 @@ class Box : public PhysicEntity
 {
 public:
 	Box(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 50), _listener)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 50,STATIC), _listener)
 		, texture(_texture)
 	{
 
@@ -109,7 +112,7 @@ class LeftPad : public PhysicEntity
 {
 public:
 	LeftPad(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20), _listener)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20,STATIC), _listener)
 		, texture(_texture)
 	{
 	}
@@ -141,7 +144,7 @@ class RightPad : public PhysicEntity
 {
 public:
 	RightPad(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20), _listener)
+		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20,STATIC), _listener)
 		, texture(_texture)
 	{
 	}
@@ -173,41 +176,90 @@ private:
 class Chinchou : public PhysicEntity {
 public:
 	Chinchou(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
-		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
+		: PhysicEntity(physics->CreateRectangle(x, y, 18, 18, STATIC), listener), texture(texture)
 	{
-		collisionType = CHINCHOU;
-		frameCount = 2;       
-		currentFrame = 0;
-		animationSpeed = 0.03f;
-		frameTimer = 0.0f;
-		scale = 2.5f;
+	collisionType = CHINCHOU;
+	pokemons = CHINCHOU1;
+	frameCountIdle = 2;
+	frameCountHit = 2;
+	currentFrame = 0;
+	animationSpeed = 0.03f;
+	frameTimer = 0.0f;
+	scale = 2.5f;
+	isHit = false;
+	hitTimer = 0.0f;
 	}
-	void Update() override
-	{
-		int x, y;
-		body->GetPhysicPosition(x, y);
-		Vector2 position{ (float)x, (float)y };
 
+void ActivateHit() override {
+	OnHit();
+}
+
+void Update() override
+{
+	int x, y;
+	body->GetPhysicPosition(x, y);
+	Vector2 position{ (float)x, (float)y };
+
+
+	if (!isHit) {  //idle anim
 		frameTimer += animationSpeed;
 		if (frameTimer >= 1.0f)
 		{
-			currentFrame = (currentFrame + 1) % frameCount;
+			currentFrame = (currentFrame + 1) % frameCountIdle;
 			frameTimer = 0.0f;
 		}
-
-		Rectangle source = { currentFrame * 32.0f, 0.0f, 32.0f, 32.0f };
-		Rectangle dest = { position.x, position.y, 32.0f*scale, 32.0f*scale };
-		Vector2 origin = { 16.0f*scale, 22.0f*scale }; 
-
-		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 	}
+
+	if (isHit) // activate attack anim
+	{
+		hitTimer += GetFrameTime();
+		if (hitTimer >= 0.4f) //after 0,4 second return to idle anim
+		{
+			frameTimer += animationSpeed;
+			if (frameTimer >= 1.0f)
+			{
+				currentFrame = (currentFrame + 1) % frameCountHit;
+				isHit = false;
+				frameTimer = 0.0f;
+				hitTimer = 0.0f;
+				currentFrame = 0; 
+			}
+		}
+	}
+
+	Rectangle source;
+	if (isHit)
+	{
+		source = { currentFrame * 32.0f, 0.0f, 32.0f, 32.0f }; //attack
+	}
+	else
+	{
+		source = { currentFrame * 32.0f, 0.0f, 32.0f, 32.0f }; //idle
+	}
+
+	Rectangle dest = { position.x, position.y, 32.0f * scale, 32.0f * scale };
+	Vector2 origin = { 16.0f*scale, 22.0f*scale };
+
+	DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+}
+
+void OnHit()
+{
+	isHit = true;
+	currentFrame = 2;
+	hitTimer = 0.0f;
+}
+
 private:
 	Texture2D texture;
-	int currentFrame; 
-	int frameCount;      
-	float animationSpeed;   
-	float frameTimer;     
+	int currentFrame;
+	int frameCountIdle;
+	int frameCountHit;
+	float animationSpeed;
+	float frameTimer;
 	float scale;
+	bool isHit;
+	float hitTimer;   //attack timer  
 };
 
 class Pikachu : public PhysicEntity {
@@ -1481,6 +1533,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	for (int i = 0; i < length; ++i) {
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == CHINCHOU ){
 			hascollisionedwithchinchou = true;
+			entities[i]->ActivateHit();
 		    break;
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == BOTTON1) {
