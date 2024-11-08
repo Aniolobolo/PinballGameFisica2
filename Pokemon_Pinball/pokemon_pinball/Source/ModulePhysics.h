@@ -35,6 +35,7 @@ public:
 	b2Body* body;
 	Module* listener;
 	BodyType bodyType;
+	CircleType circleType;
 
 };
 
@@ -50,7 +51,7 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	PhysBody* CreateCircle(int x, int y, int radius, BodyType bodyType);
+	PhysBody* CreateCircle(int x, int y, int radius, BodyType bodyType, CircleType circleType);
 	PhysBody* CreateRectangle(int x, int y, int width, int height);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
 	PhysBody* CreateChain(int x, int y, const int* points, int size);
@@ -81,5 +82,4 @@ private:
 	PhysBody* rightFlipper;
 	b2Body* springBase;
 	b2PrismaticJoint* springJoint;
-
 };

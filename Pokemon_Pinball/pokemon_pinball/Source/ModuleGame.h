@@ -29,6 +29,11 @@ enum BodyType {
 	DYNAMIC
 };
 
+enum CircleType {
+	POKEBALL,
+	ELSE
+};
+
 class ModuleGame : public Module
 {
 public:

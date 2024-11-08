@@ -90,7 +90,7 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, BodyType bodyType)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, BodyType bodyType, CircleType circleType)
 {
 	PhysBody* pbody = new PhysBody();
 
@@ -103,6 +103,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, BodyType bodyTyp
 	else {
 		body.type = b2_dynamicBody; // Cuerpo dinámico
 	}
+
 
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.userData.pointer = reinterpret_cast<uintptr_t>(pbody);
@@ -123,6 +124,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, BodyType bodyTyp
 
 	// Asigna el tipo de cuerpo al PhysBody
 	pbody->bodyType = bodyType;
+	pbody->circleType = circleType;
 
 	return pbody;
 }
@@ -339,6 +341,44 @@ update_status ModulePhysics::PostUpdate()
 		springJoint->SetMotorSpeed(-500.0f); // Usa una velocidad positiva para regresar
 	}
 	DrawSpring();
+
+	if (IsKeyPressed(KEY_TWO))
+	{
+		// Usamos una lista auxiliar para eliminar los cuerpos después de la iteración
+		std::vector<b2Body*> bodiesToDestroy;
+
+		for (b2Body* b = world->GetBodyList(); b != nullptr; b = b->GetNext())
+		{
+			bool isCirclePOKEBALL = false; // Indicador para detectar el tipo POKEBALL
+
+			for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
+			{
+				if (f->GetType() == b2Shape::e_circle)
+				{
+					// Verificamos si es del tipo POKEBALL
+					PhysBody* pbody = (PhysBody*)b->GetUserData().pointer;
+
+					if (pbody && pbody->circleType == POKEBALL)  // Accede correctamente a circleType
+					{
+						isCirclePOKEBALL = true;  // Establece la bandera si es un POKEBALL
+					}
+					break; // Salimos del bucle de fixtures si encontramos el círculo
+				}
+			}
+
+			if (isCirclePOKEBALL)
+			{
+				bodiesToDestroy.push_back(b); // Agregamos el cuerpo a la lista para eliminarlo más tarde
+			}
+		}
+
+		// Destruimos los cuerpos fuera de la iteración
+		for (b2Body* b : bodiesToDestroy)
+		{
+			world->DestroyBody(b);
+		}
+	}
+
 
 
 	// Bonus code: this will iterate all objects in the world and draw the circles

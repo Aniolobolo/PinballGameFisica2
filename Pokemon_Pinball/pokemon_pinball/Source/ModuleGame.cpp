@@ -45,7 +45,7 @@ class Circle : public PhysicEntity
 {
 public:
 	Circle(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateCircle(_x, _y, 15, DYNAMIC), _listener)
+		: PhysicEntity(physics->CreateCircle(_x, _y, 15, DYNAMIC, POKEBALL), _listener)
 		, texture(_texture)
 	{
 		frameCount = 16;
@@ -173,7 +173,7 @@ private:
 class Chinchou : public PhysicEntity {
 public:
 	Chinchou(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
-		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC, ELSE), listener), texture(texture)
 	{
 		collisionType = CHINCHOU;
 		frameCount = 2;       
@@ -213,7 +213,7 @@ private:
 class Pikachu : public PhysicEntity {
 public:
 	Pikachu(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
-		: PhysicEntity(physics->CreateCircle(x, y, 1, STATIC), listener), texture(texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 1, STATIC, ELSE), listener), texture(texture)
 	{
 		collisionType = DEFAULT;
 		frameCount = 9;       
@@ -253,7 +253,7 @@ public:
 class Gulpin : public PhysicEntity {
 public:
 	Gulpin(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
-		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC, ELSE), listener), texture(texture)
 	{
 		collisionType = GULPIN;
 		frameCount = 8;          // Solo dos cuadros de animaci�n
@@ -295,7 +295,7 @@ private:
 class Pichu : public PhysicEntity {
 public:
 	Pichu(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
-		: PhysicEntity(physics->CreateCircle(x, y, 1, STATIC), listener), texture(texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 1, STATIC, ELSE), listener), texture(texture)
 	{
 		collisionType = DEFAULT;
 		frameCount = 7;
@@ -335,7 +335,7 @@ private:
 class Wishcash : public PhysicEntity {
 public:
 	Wishcash(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
-		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC, ELSE), listener), texture(texture)
 	{
 		collisionType = WISHCASH;
 		frameCount = 6;          // Solo dos cuadros de animaci�n
@@ -379,7 +379,7 @@ private:
 class Nuzleaf : public PhysicEntity {
 public:
 	Nuzleaf(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
-		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC), listener), texture(texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC, ELSE), listener), texture(texture)
 	{
 		collisionType = NUZLEAF;
 		frameCount = 3;          // Solo dos cuadros de animaci�n
@@ -1418,10 +1418,21 @@ update_status ModuleGame::Update()
 	}
 
 
-	//if(IsKeyPressed(KEY_TWO))
-	//{
-	//	entities.emplace_back(new Box(App->physics, GetMouseX(), GetMouseY(), this, box));
-	//}
+	if (IsKeyPressed(KEY_TWO))
+	{
+		for (auto it = entities.begin(); it != entities.end(); )
+		{
+			// Verificamos si el tipo es Circle usando dynamic_cast
+			if (dynamic_cast<Circle*>(*it) != nullptr)
+			{
+				it = entities.erase(it); // Eliminar instancia de Circle
+			}
+			else
+			{
+				++it; // Continuar con el siguiente elemento
+			}
+		}
+	}
 
 
 	// Prepare for raycast ------------------------------------------------------
