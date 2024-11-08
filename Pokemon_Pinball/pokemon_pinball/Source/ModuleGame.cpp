@@ -108,10 +108,10 @@ private:
 
 };
 
-class LeftPad : public PhysicEntity
+class Pads : public PhysicEntity
 {
 public:
-	LeftPad(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+	Pads(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
 		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20), _listener)
 		, texture(_texture)
 	{
@@ -140,39 +140,6 @@ private:
 	Texture2D texture;
 };
 
-class RightPad : public PhysicEntity
-{
-public:
-	RightPad(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20), _listener)
-		, texture(_texture)
-	{
-	}
-
-	void Update() override
-	{
-		// Rotaci�n controlada por el teclado
-		if (IsKeyDown(KEY_D)) {
-			body->Rotate(-5.0f * DEG2RAD);
-		}
-		else {
-			body->Rotate(5.0f * DEG2RAD);
-		}
-
-		// Posici�n de la pala en el espacio de juego
-		int x, y;
-		body->GetPhysicPosition(x, y);
-		DrawTexturePro(texture,
-			Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
-			Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
-			Vector2{ (float)texture.width / 2, (float)texture.height / 2 },
-			body->GetRotation() * RAD2DEG, WHITE);
-	}
-
-private:
-	Texture2D texture;
-};
-
 class Chinchou : public PhysicEntity {
 public:
 	Chinchou(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
@@ -182,7 +149,7 @@ public:
 	pokemons = CHINCHOU1;
 	frameCountIdle = 2;
 	frameCountHit = 2;
-	currentFrame = 0;
+  	currentFrame = 0;
 	animationSpeed = 0.03f;
 	frameTimer = 0.0f;
 	scale = 2.5f;
@@ -471,6 +438,70 @@ private:
 	float frameTimer;       // Temporizador para cambiar de cuadro
 	float scale;
 };
+
+class Latios : public PhysicEntity {
+public:
+	Latios(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture, float speedX)
+		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC, ELSE), listener), texture(texture), speedX(speedX)
+	{
+		scale = 1.25f;
+		isMarkedForDeletion = false;
+	}
+
+	bool hasToSpawnBall = false;
+	bool pokeballSpawned = false;
+
+	bool ShouldSpawnBall() const {
+		return hasToSpawnBall;
+	}
+
+	void TriggerBallSpawn() {
+		hasToSpawnBall = true;
+	}
+
+	void Update() override
+	{
+		// Actualiza la posición horizontal usando `posX`
+		posX += speedX;
+
+		// Comprueba si la posición supera la anchura de la ventana y marca para eliminación
+		if (posX > GetScreenWidth() + 50) {
+			isMarkedForDeletion = true;
+			return; // No seguir dibujando si está marcado para eliminar
+		}
+		if (posX > GetScreenWidth() - 45) {
+			hasToSpawnBall = true;
+		}
+		else {
+			hasToSpawnBall = false;
+		}
+
+		// Obtiene la posición física de `y` para mantener el valor actual
+		int x, y;
+		body->GetPhysicPosition(x, y);
+
+		// Usa `posX` en lugar de `x` para el dibujado
+		Vector2 position{ posX, (float)y };
+
+		Rectangle source = { 0.0f, 0.0f, 126.0f, 99.0f };
+		Rectangle dest = { position.x, position.y, 126.0f * scale, 99.0f * scale };
+		Vector2 origin = { 126.0f * scale / 2, 99.0f * scale / 2 }; // Centro de la imagen
+
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+	}
+
+	bool IsMarkedForDeletion() const {
+		return isMarkedForDeletion;
+	}
+
+private:
+	Texture2D texture;
+	float scale;
+	float speedX;
+	float posX;
+	bool isMarkedForDeletion;
+};
+
 
 class Collision1 : public PhysicEntity
 {
@@ -978,116 +1009,6 @@ private:
 	Texture2D texture;
 };
 
-//class Collision9 : public PhysicEntity
-//{
-//public:
-//	// Pivot 0, 0
-//	static constexpr int CollisionNine[22] = {
-//295, 392,
-//	285, 389,
-//	282, 381,
-//	279, 371,
-//	275, 348,
-//	288, 362,
-//	304, 367,
-//	316, 369,
-//	323, 377,
-//	323, 386,
-//	313, 389
-//
-//
-//
-//
-//
-//
-//	};
-//
-//	Collision9(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-//		: PhysicEntity(physics->CreateChain(0, 0, CollisionNine, 22), _listener), texture(_texture)
-//	{
-//		collisionType = CHINCHOU;
-//	}
-//
-//	void Update() override
-//	{
-//		int x, y;
-//		body->GetPhysicPosition(x, y);
-//		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
-//	}
-//
-//private:
-//	Texture2D texture;
-//};
-//class Collision10 : public PhysicEntity
-//{
-//public:
-//	// Pivot 0, 0
-//	static constexpr int CollisionTen[22] = {
-//	352, 340,
-//	343, 337,
-//	340, 328,
-//	343, 319,
-//	351, 313,
-//	363, 313,
-//	372, 316,
-//	377, 323,
-//	377, 330,
-//	371, 337,
-//	364, 340
-//	};
-//
-//	Collision10(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-//		: PhysicEntity(physics->CreateChain(0, 0, CollisionTen, 22), _listener)
-//		, texture(_texture)
-//	{
-//		collisionType = CHINCHOU;
-//	}
-//
-//	void Update() override
-//	{
-//		int x, y;
-//		body->GetPhysicPosition(x, y);
-//		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
-//	}
-//
-//private:
-//	Texture2D texture;
-//};
-//class Collision11 : public PhysicEntity
-//{
-//public:
-//	// Pivot 0, 0
-//	static constexpr int CollisionEleven[20] = {
-//	372, 410,
-//	364, 408,
-//	359, 400,
-//	361, 393,
-//	368, 387,
-//	380, 385,
-//	387, 388,
-//	391, 394,
-//	388, 402,
-//	380, 409
-//	};
-//
-//	Collision11(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-//		: PhysicEntity(physics->CreateChain(0, 0, CollisionEleven, 20), _listener)
-//		, texture(_texture)
-//	{
-//		collisionType = CHINCHOU;
-//	}
-//
-//	void Update() override
-//	{
-//		int x, y;
-//		body->GetPhysicPosition(x, y);
-//		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
-//	}
-//
-//private:
-//	Texture2D texture;
-//};
-
 class Collision12 : public PhysicEntity
 {
 public:
@@ -1399,12 +1320,9 @@ bool ModuleGame::Start()
 
 	pichu = LoadTexture("Assets/pichu.png");
 
-	wishcash = LoadTexture("Assets/wishcash.png");
+	latios = LoadTexture("Assets/Latios.png");
 
 	puertarotante = LoadTexture("Assets/puertarotante.png");
-
-	box = LoadTexture("Assets/crate.png");
-	//rick = LoadTexture("Assets/rick_head.png");
 	
 	bonus_fx = App->audio->LoadFx("Assets/Po.wav");
 	backgroundMusic = LoadMusicStream("Assets/19-Red-Table.ogg");
@@ -1421,6 +1339,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Wishcash(App->physics, 358, 320, this, wishcash));
 	entities.emplace_back(new Nuzleaf(App->physics, 358, 320, this, nuzleaf));
 
+
 	entities.emplace_back(new Collision15(App->physics, 520, 500, this, puertarotante));
 
 	entities.emplace_back(new Collision1(App->physics, 0, 0, this, collision1)); //Mapa
@@ -1433,9 +1352,6 @@ bool ModuleGame::Start()
 	entities.emplace_back(new GreenOneI(App->physics, 0, 0, this, GreenOneIzq)); // Arriba derecha chinchous
 	entities.emplace_back(new Collision7(App->physics, 0, 0, this, collision7)); // Columna derecha arriba chinchous
 	entities.emplace_back(new Collision8(App->physics, 0, 0, this, collision8)); //Columna derecha arriba chinchous
-	//entities.emplace_back(new Collision9(App->physics, 0, 0, this, collision9));
-	//entities.emplace_back(new Collision10(App->physics, 0, 0, this, collision10));
-	//entities.emplace_back(new Collision11(App->physics, 0, 0, this, collision11));
 	entities.emplace_back(new Collision12(App->physics, 0, 0, this, collision12)); //Abajo derecha chinchous
 	entities.emplace_back(new Collision13(App->physics, 0, 0, this, sharpedo)); //Tiburon
 	entities.emplace_back(new Collision14(App->physics, 0, 0, this, botton1));
@@ -1447,7 +1363,17 @@ bool ModuleGame::Start()
 bool ModuleGame::CleanUp()
 {
 	LOG("Unloading Intro scene");
-
+	UnloadTexture(circle);
+	UnloadTexture(chinchou);
+	UnloadTexture(gulpin);
+	UnloadTexture(nuzleaf);
+	UnloadTexture(wishcash);
+	UnloadTexture(cyndaquil);
+	UnloadTexture(sharpedo);
+	UnloadTexture(pikachu);
+	UnloadTexture(pichu);
+	UnloadTexture(puertarotante);
+	UnloadTexture(latios);
 	return true;
 }
 
@@ -1463,11 +1389,35 @@ update_status ModuleGame::Update()
 		ray.y = GetMouseY();
 	}
 
-	if(IsKeyPressed(KEY_ONE))
+	/*
+	aqui quiero hacer que si la variable de la clase latios hasToSpawnBall es true, spawnee una bola en su posición
+	if()
 	{
-		entities.emplace_back(new Circle(App->physics, GetMousePosition().x, GetMousePosition().y, this, circle));
+		entities.emplace_back(new Circle(App->physics, x, y, this, circle));
 		
 	}
+	*/
+
+
+	std::vector<PhysicEntity*> newEntities;
+
+	for (auto it = entities.begin(); it != entities.end(); ++it) {
+		Latios* latios = dynamic_cast<Latios*>(*it);
+
+		if (latios != nullptr) {
+			if (latios->hasToSpawnBall && !latios->pokeballSpawned) {
+				// Agrega la Pokeball solo si aún no ha sido creada
+				newEntities.emplace_back(new Circle(App->physics, SCREEN_WIDTH - 45, 790, this, circle));
+
+				// Marcar como creada para evitar más spawns
+				latios->pokeballSpawned = true;
+			}
+		}
+	}
+
+	// Agrega todas las nuevas entidades después del bucle principal
+	entities.insert(entities.end(), newEntities.begin(), newEntities.end());
+
 
 
 	if (IsKeyPressed(KEY_TWO))
@@ -1484,6 +1434,10 @@ update_status ModuleGame::Update()
 				++it; // Continuar con el siguiente elemento
 			}
 		}
+	}
+
+	if (IsKeyPressed(KEY_THREE)) {
+		entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
 	}
 
 

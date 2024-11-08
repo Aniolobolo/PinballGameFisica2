@@ -70,6 +70,7 @@ public:
 	Texture2D gulpin;
 	Texture2D nuzleaf;
 	Texture2D wishcash;
+	Texture2D latios;
 
 	Texture2D puertarotante;
 
