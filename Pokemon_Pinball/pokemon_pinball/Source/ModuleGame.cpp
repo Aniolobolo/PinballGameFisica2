@@ -767,12 +767,10 @@ public:
 	{
 		collisionType = DEFAULT;
 		frameCountIdle = 2;
-		frameCountHit = 2;
-		currentFrame = 0;
-		animationSpeed = 0.03f;
+		animationSpeed = 0.05f;
 		frameTimer = 0.0f;
-		scale = 2.5f;
-		isHit = false;
+		scale = 1.2f;
+		Hit = false;
 		hitTimer = 0.0f;
 	}
 
@@ -784,53 +782,48 @@ public:
 	{
 		int x, y;
 		body->GetPhysicPosition(x, y);
-		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
 		Vector2 position{ (float)x, (float)y };
 
-		if (!isHit) {
-			frameTimer += animationSpeed;
-			if (frameTimer >= 1.0f) {
-				currentFrame = (currentFrame + 1) % frameCountIdle;  // Alterna entre frame 0 y 1
-				frameTimer = 0.0f;
-			}
-		}
 
-		// Animación hit
-		if (isHit) {
+		if (Hit) // activate attack anim
+		{
 			hitTimer += GetFrameTime();
-			if (hitTimer < 1.4f) {  // Duración de la animación de golpe
-				frameTimer += animationSpeed;
-			}
-			else {  // Después de 0.4 segundos, vuelve a la animación idle
-				isHit = false;
+			if (hitTimer >= 0.4f) //after 0,4 second return to idle anim
+			{
+				Hit = false;
 				hitTimer = 0.0f;
-				currentFrame = 0;  // Reinicia la animación idle al primer frame
 			}
 		}
 
-		Rectangle source = { currentFrame * 80.0f, 0.0f, 80.0f, 80.0f };
+		Rectangle source;
+		if (Hit)
+		{
+			source = { 80.0f, 0.0f, 80.0f, 80.0f }; //attack
+		}
+		else
+		{
+			source = { 0.0f, 0.0f, 80.0f, 80.0f }; //idle
+		}
+
+		
 		Rectangle dest = { position.x, position.y, 80.0f * scale, 80.0f * scale };
-		Vector2 origin = { 16.0f * scale, 22.0f * scale };
+		Vector2 origin = { -155.0f , -778.0f};
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 	}
 
 	void OnHit()
 	{
-		if (!isHit) {  // Solo activa el golpe si no está ya activo
-			isHit = true;
-			currentFrame = 2;  // Inicia la animación de golpe en el frame 2
-			hitTimer = 0.0f;
-		}
+		Hit = true;
+		hitTimer = 0.0f;
 	}
 
 private:
 	Texture2D texture;
-	int currentFrame;
+	//int currentFrame;
 	int frameCountIdle;
-	int frameCountHit;
 	float animationSpeed;
 	float frameTimer;
 	float scale;
-	bool isHit;
 	float hitTimer;   //attack timer  
 };
 
@@ -1002,7 +995,6 @@ public:
 		body->GetPhysicPosition(x, y);
 		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
 	}
-
 private:
 	Texture2D texture;
 };
@@ -1546,7 +1538,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Chinchou(App->physics, 358, 320, this, chinchou));
 	entities.emplace_back(new Chinchou(App->physics, 306, 371, this, chinchou));
 	entities.emplace_back(new Chinchou(App->physics, 377, 392, this, chinchou));
-	entities.emplace_back(new TrianguloIzq(App->physics, 358, 320, this, trianguloizq)); 
+	entities.emplace_back(new TrianguloIzq(App->physics, 358, 320, this, botton1));
 	entities.emplace_back(new Pikachu(App->physics, 528, 940, this, pikachu));
 	entities.emplace_back(new Pichu(App->physics, 107, 944, this, pichu));
 	entities.emplace_back(new Gulpin(App->physics, 358, 320, this, gulpin)); 
@@ -1563,7 +1555,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Collision2(App->physics, 0, 0, this, collision2)); //L azul abajo izquierda
 	entities.emplace_back(new Collision3(App->physics, 0, 0, this, collision3)); //L azul abajo derecha
 	entities.emplace_back(new Collision4(App->physics, 0, 0, this, collision4)); //Triangulo der rojo
-	entities.emplace_back(new Collision5(App->physics, 0, 0, this, collision5)); //Triangulo izq rojo
+	entities.emplace_back(new Collision5(App->physics, 0, 0, this, trianguloizq)); //Triangulo izq rojo
 	entities.emplace_back(new Collision6(App->physics, 0, 0, this, cyndaquil)); //Piedra grande y pokemon verde
 	entities.emplace_back(new GreenEvoD(App->physics, 0, 0, this, GreenEvoDer)); 
 	entities.emplace_back(new GreenOneI(App->physics, 0, 0, this, GreenOneIzq)); // Arriba derecha chinchous
@@ -1759,6 +1751,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == TRIANGULOIZQ) {
 			hascollisionedwithtrianguloizq = true; 
+			entities[i]->ActivateHit();
 			break;
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == SHARPEDO) {
@@ -1789,6 +1782,14 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			else
 			{
 				++it; // Continuar con el siguiente elemento
+			}
+		}
+	}
+	if (hascollisionedwithtrianguloizq) {
+		for (int i = 0; i < entities.size(); ++i) {
+			Collision5* collision5 = dynamic_cast<Collision5*>(entities[i]);
+			if (collision5 != nullptr) {
+				collision5->ActivateHit();  
 			}
 		}
 	}
