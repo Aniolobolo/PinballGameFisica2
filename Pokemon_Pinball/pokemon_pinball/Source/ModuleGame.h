@@ -22,7 +22,12 @@ enum CollisionType
 	NUZLEAF,
 	SHARPEDO,
 	PUERTAROTANTE,
-	SENSOR
+	SENSOR,
+	CYNDAQUIL,
+	BOTTONCENTRAL,
+	BOTTONDERECHO,
+	TRIANGULOIZQ,
+	TRIANGULODER
 };
 
 enum Pokemons {
@@ -81,6 +86,7 @@ public:
 	Texture2D latios;
 
 	Texture2D puertarotante;
+	Texture2D trianguloizq;
 
 	Texture2D circle;
 	Texture2D box;
