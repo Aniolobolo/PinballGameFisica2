@@ -171,53 +171,46 @@ void Update() override
 	Vector2 position{ (float)x, (float)y };
 
 
-	if (!isHit) {  //idle anim
+	// Animación idle
+	if (!isHit) {
 		frameTimer += animationSpeed;
-		if (frameTimer >= 1.0f)
-		{
-			currentFrame = (currentFrame + 1) % frameCountIdle;
+		if (frameTimer >= 1.0f) {
+			currentFrame = (currentFrame + 1) % frameCountIdle;  // Alterna entre frame 0 y 1
 			frameTimer = 0.0f;
 		}
 	}
 
-	if (isHit) // activate attack anim
-	{
+	// Animación hit
+	if (isHit) {
 		hitTimer += GetFrameTime();
-		if (hitTimer >= 0.4f) //after 0,4 second return to idle anim
-		{
+		if (hitTimer < 1.4f) {  // Duración de la animación de golpe
 			frameTimer += animationSpeed;
-			if (frameTimer >= 1.0f)
-			{
-				currentFrame = (currentFrame + 1) % frameCountHit;
-				isHit = false;
+			if (frameTimer >= 1.0f) {
+				currentFrame = 2 + (currentFrame + 1) % frameCountHit;  // Alterna entre frame 2 y 3
 				frameTimer = 0.0f;
-				hitTimer = 0.0f;
-				currentFrame = 0; 
 			}
+		}
+		else {  // Después de 0.4 segundos, vuelve a la animación idle
+			isHit = false;
+			hitTimer = 0.0f;
+			currentFrame = 0;  // Reinicia la animación idle al primer frame
 		}
 	}
 
-	Rectangle source;
-	if (isHit)
-	{
-		source = { currentFrame * 32.0f, 0.0f, 32.0f, 32.0f }; //attack
-	}
-	else
-	{
-		source = { currentFrame * 32.0f, 0.0f, 32.0f, 32.0f }; //idle
-	}
-
+	Rectangle source = { currentFrame * 32.0f, 0.0f, 32.0f, 32.0f };
 	Rectangle dest = { position.x, position.y, 32.0f * scale, 32.0f * scale };
-	Vector2 origin = { 16.0f*scale, 22.0f*scale };
+	Vector2 origin = { 16.0f * scale, 22.0f * scale };
 
 	DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 }
 
 void OnHit()
 {
-	isHit = true;
-	currentFrame = 2;
-	hitTimer = 0.0f;
+	if (!isHit) {  // Solo activa el golpe si no está ya activo
+		isHit = true;
+		currentFrame = 2;  // Inicia la animación de golpe en el frame 2
+		hitTimer = 0.0f;
+	}
 }
 
 private:
@@ -610,7 +603,7 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionOne, 140), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = DEFAULT;
 	}
 
 	void Update() override
@@ -647,7 +640,7 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionTwo, 24), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = DEFAULT;
 	}
 	void Update() override
 	{
@@ -683,7 +676,7 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionTree, 24), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = DEFAULT;
 	}
 
 	void Update() override
@@ -727,7 +720,7 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionFour, 38), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = DEFAULT;
 	}
 
 	void Update() override
@@ -772,7 +765,7 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionFive, 40), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = DEFAULT;
 	}
 
 	void Update() override
@@ -915,7 +908,7 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, GreenEvoDerechaCollision, 78), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = DEFAULT;
 	}
 
 	void Update() override
@@ -953,7 +946,7 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, GreenOneIzquierdaCollision, 26), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = DEFAULT;
 	}
 
 	void Update() override
@@ -985,7 +978,7 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionSeven, 16), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = DEFAULT;
 	}
 
 	void Update() override
@@ -1018,7 +1011,7 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionEight, 16), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = DEFAULT;
 	}
 
 	void Update() override
@@ -1069,7 +1062,7 @@ public:
 		: PhysicEntity(physics->CreateChain(0, 0, CollisionTwelve, 52), _listener)
 		, texture(_texture)
 	{
-
+		collisionType = DEFAULT;
 	}
 
 	void Update() override
@@ -1363,7 +1356,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Gulpin(App->physics, 358, 320, this, gulpin)); 
 	entities.emplace_back(new Wishcash(App->physics, 358, 320, this, wishcash));
 	entities.emplace_back(new Nuzleaf(App->physics, 358, 320, this, nuzleaf));
-	entities.emplace_back(new DeleteSensor(App->physics, SCREEN_WIDTH / 2, SCREEN_HEIGHT + 25, this, collision1));
+	entities.emplace_back(new DeleteSensor(App->physics, SCREEN_WIDTH / 2, SCREEN_HEIGHT + 35, this, collision1));
 
 
 	entities.emplace_back(new Collision15(App->physics, 520, 500, this, puertarotante));
@@ -1467,6 +1460,10 @@ update_status ModuleGame::Update()
 	}
 
 
+	if (deleteCircles) {
+		entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
+	}
+
 	// Prepare for raycast ------------------------------------------------------
 	
 	vec2i mouse;
@@ -1524,6 +1521,13 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 	int length = entities.size();
 	for (int i = 0; i < length; ++i) {
+		
+
+		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == DEFAULT) {
+			App->audio->PlayFx(bonus_fx);
+			break;
+		}
+
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == CHINCHOU ){
 			hascollisionedwithchinchou = true;
 			entities[i]->ActivateHit();
@@ -1573,5 +1577,5 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	
 
 
-    App->audio->PlayFx(bonus_fx);  // Reproduce el sonido
+  // Reproduce el sonido
 }
