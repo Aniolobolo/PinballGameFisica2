@@ -13,6 +13,7 @@ ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app,
 	world = NULL;
 	mouse_joint = NULL;
 	debug = true;
+	
 }
 
 // Destructor
@@ -26,6 +27,7 @@ bool ModulePhysics::Start()
 
 	world = new b2World(b2Vec2(GRAVITY_X, -GRAVITY_Y));
 	world->SetContactListener(this);
+	
 
 	// needed to create joints like mouse joint
 	b2BodyDef bd;
@@ -49,21 +51,7 @@ bool ModulePhysics::Start()
 	fixture.shape = &shape;
 	//big_ball->CreateFixture(&fixture);
 
-	// Crear el cuerpo base para las `joints`
-	ground = world->CreateBody(&bd);
-
-	lFlipper = nullptr;
-	rFlipper = nullptr;
-	lJoint = nullptr;
-	rJoint = nullptr;
-
-	leftFlipperTexture = LoadTexture("Assets/leftFlipper.png");
-	rightFlipperTexture = LoadTexture("Assets/rightFlipper.png");
-	muelle = LoadTexture("Assets/muelle1.png");
-	// Llama a la función de creación de las palas
-	CreateFlippers();
-
-	CreateSpring(SCREEN_WIDTH - 30, SCREEN_HEIGHT - 100, 30, 50);
+	
 
 
 	return true;
@@ -222,88 +210,99 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size)
 	return pbody;
 }
 
-void ModulePhysics::CreateFlippers()
+PhysBody* ModulePhysics::CreateLeftFlipper(int x,int y)
 {
-	// Posiciones de los anclajes de las palas
-	b2Vec2 anchorLeft(PIXEL_TO_METERS(215), PIXEL_TO_METERS(940));  // Anclaje de la pala izquierda
-	b2Vec2 anchorRight(PIXEL_TO_METERS(360), PIXEL_TO_METERS(940)); // Anclaje de la pala derecha
+	// Crear y configurar la pala izquierda como PhysBody
+	PhysBody* leftFlipper = new PhysBody();
 
-	// Crear anclajes estáticos para las palas
+	// Posición del anclaje de la pala izquierda
+	b2Vec2 anchorLeft(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y)); // Anclaje de la pala izquierda
+
+	// Crear anclaje estático para la pala izquierda
 	b2BodyDef anchorDef;
 	anchorDef.type = b2_staticBody;
-
-	// Crear cuerpos de los anclajes
 	anchorDef.position = anchorLeft;
 	b2Body* leftAnchor = world->CreateBody(&anchorDef);
 
-	anchorDef.position = anchorRight;
-	b2Body* rightAnchor = world->CreateBody(&anchorDef);
+	// Crear cuerpo para la pala izquierda
+	leftFlipper->body = CreateRectangle(METERS_TO_PIXELS(anchorLeft.x), METERS_TO_PIXELS(anchorLeft.y), 60, 10)->body;
 
-	// Crear las palas
-	leftFlipper = CreateRectangle(METERS_TO_PIXELS(anchorLeft.x), METERS_TO_PIXELS(anchorLeft.y), 60, 10);
-	rightFlipper = CreateRectangle(METERS_TO_PIXELS(anchorRight.x), METERS_TO_PIXELS(anchorRight.y), 60, 10);
-
-	// Configurar las revolute joints para las palas
+	// Configurar la revolute joint para la pala izquierda
 	b2RevoluteJointDef jointDef;
 	jointDef.enableMotor = true;
-	jointDef.maxMotorTorque = 1000.0f;  // Torque máximo del motor
+	jointDef.maxMotorTorque = 1000.0f; // Torque máximo del motor
 	jointDef.enableLimit = true;
 	jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;
 	jointDef.upperAngle = 30.0f * b2_pi / 180.0f;
 
-	// Conectar la pala izquierda
 	jointDef.bodyA = leftAnchor;
 	jointDef.bodyB = leftFlipper->body;
 	jointDef.localAnchorA.SetZero();
-	jointDef.localAnchorB.Set(-PIXEL_TO_METERS(30), 0);  // Punto de anclaje en la pala
+	jointDef.localAnchorB.Set(-PIXEL_TO_METERS(30), 0); // Punto de anclaje en la pala
 	lJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
 
-	// Conectar la pala derecha
+	// Configurar ancho y alto de la pala izquierda en PhysBody
+	leftFlipper->width = 60;
+	leftFlipper->height = 10;
+
+	return leftFlipper;
+}
+
+PhysBody* ModulePhysics::CreateRightFlipper(int x, int y)
+{
+	// Crear y configurar la pala derecha como PhysBody
+	PhysBody* rightFlipper = new PhysBody();
+
+	// Posición del anclaje de la pala derecha (utilizando la posición x, y del parámetro)
+	b2Vec2 anchorRight(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y)); // Anclaje de la pala derecha
+
+	// Crear anclaje estático para la pala derecha
+	b2BodyDef anchorDef;
+	anchorDef.type = b2_staticBody;
+	anchorDef.position = anchorRight;
+	b2Body* rightAnchor = world->CreateBody(&anchorDef);
+
+	// Crear cuerpo para la pala derecha
+	rightFlipper->body = CreateRectangle(METERS_TO_PIXELS(anchorRight.x), METERS_TO_PIXELS(anchorRight.y), 60, 10)->body;
+
+	// Configurar la revolute joint para la pala derecha
+	b2RevoluteJointDef jointDef;
+	jointDef.enableMotor = true;
+	jointDef.maxMotorTorque = 1000.0f; // Torque máximo del motor
+	jointDef.enableLimit = true;
+
+	// Ajustar límites de ángulo para la pala derecha (inversión de límites)
+	jointDef.lowerAngle = 30.0f * b2_pi / 180.0f;  // Invertido respecto a la pala izquierda
+	jointDef.upperAngle = -30.0f * b2_pi / 180.0f;
+
 	jointDef.bodyA = rightAnchor;
 	jointDef.bodyB = rightFlipper->body;
 	jointDef.localAnchorA.SetZero();
-	jointDef.localAnchorB.Set(PIXEL_TO_METERS(30), 0);  // Punto de anclaje en la pala
+
+	// Cambiar el punto de anclaje en la pala derecha
+	jointDef.localAnchorB.Set(PIXEL_TO_METERS(30), 0); // Punto de anclaje en el extremo opuesto
+
+	// Crear el joint para la pala derecha
 	rJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
+
+	// Configurar ancho y alto de la pala derecha en PhysBody
+	rightFlipper->width = 60;
+	rightFlipper->height = 10;
+
+	return rightFlipper;
 }
 
-PhysBody* ModulePhysics::CreateSpring(int x, int y, int width, int height)
+PhysBody* ModulePhysics::CreateSpringBase(int x, int y, int width, int height)
 {
-	// Crear el cuerpo base estático del muelle
 	b2BodyDef baseDef;
 	baseDef.type = b2_staticBody;
 	baseDef.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
-	springBase = world->CreateBody(&baseDef);
 
-	// Crear el cuerpo dinámico (el "pistón" del muelle)
-	springPiston = CreateRectangle(x, y + height / 2, width, height);
+	PhysBody* springBase = new PhysBody();
+	springBase->body = world->CreateBody(&baseDef);
 
-	// Configurar el prismatic joint
-	b2PrismaticJointDef prismaticJointDef;
-	prismaticJointDef.bodyA = springBase;
-	prismaticJointDef.bodyB = springPiston->body;
-	prismaticJointDef.collideConnected = false;
-	prismaticJointDef.localAnchorA.Set(0, 0);
-	prismaticJointDef.localAnchorB.Set(0, -PIXEL_TO_METERS(height) / 2);
-
-	// Configurar la dirección de movimiento (solo en el eje Y)
-	prismaticJointDef.localAxisA.Set(0, 1);
-
-	// Configurar los límites del movimiento
-	prismaticJointDef.enableLimit = true;
-	prismaticJointDef.lowerTranslation = -PIXEL_TO_METERS(height * 0.3f); // Distancia máxima hacia abajo
-	prismaticJointDef.upperTranslation = PIXEL_TO_METERS(height * 0.3f);  // Distancia máxima hacia arriba
-
-	// Configurar el resorte para simular el muelle
-	prismaticJointDef.enableMotor = true;
-	prismaticJointDef.maxMotorForce = 1000.0f; // Fuerza del motor
-	prismaticJointDef.motorSpeed = 0.0f;       // Velocidad inicial del motor
-
-	// Crear el muelle
-	springJoint = (b2PrismaticJoint*)world->CreateJoint(&prismaticJointDef);
-
-	return springPiston;
+	return springBase;
 }
-
 // 
 update_status ModulePhysics::PostUpdate()
 {
@@ -316,34 +315,6 @@ update_status ModulePhysics::PostUpdate()
 	{
 		return UPDATE_CONTINUE;
 	}
-
-	if (IsKeyDown(KEY_A))
-	{
-		lJoint->SetMotorSpeed(-20.0f); // Rotar a la izquierda
-	}
-	else {
-		lJoint->SetMotorSpeed(20.0f); // Detener
-	}
-
-	if (IsKeyDown(KEY_D))
-	{
-		rJoint->SetMotorSpeed(20.0f); // Rotar a la derecha
-	}
-	else
-	{
-		rJoint->SetMotorSpeed(-20.0f); // Detener
-	}
-
-	if (IsKeyDown(KEY_S))
-	{
-		springJoint->SetMotorSpeed(1.0f); // Usa una velocidad menor si es necesario
-		springJoint->SetMaxMotorForce(1500.0f); // Ajusta la fuerza según lo necesario
-	}
-	else
-	{
-		springJoint->SetMotorSpeed(-500.0f); // Usa una velocidad positiva para regresar
-	}
-	DrawSpring();
 	if(App->scene_intro->deleteCircles) //si es true
 	{
 		// Usamos una lista auxiliar para eliminar los cuerpos después de la iteración
@@ -499,15 +470,7 @@ update_status ModulePhysics::PostUpdate()
 			Vector2 texturePosition = { (float)(METERS_TO_PIXELS(pos.x) - 30), (float)(METERS_TO_PIXELS(pos.y) - 5) };
 
 
-			if (b == leftFlipper->body)
-			{
-				DrawFlipper(leftFlipperTexture, leftFlipper, lJoint);
-				
-			}
-			else if (b == rightFlipper->body)
-			{
-				DrawFlipper(rightFlipperTexture, rightFlipper, rJoint);
-			}
+			
 
 			
 		}

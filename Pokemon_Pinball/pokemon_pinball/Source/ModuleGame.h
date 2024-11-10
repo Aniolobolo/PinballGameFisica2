@@ -74,7 +74,7 @@ public:
 	int wait = 2; // time in seconds
 	bool deleteCircles = false;
 
-
+	
 	Texture2D chinchou;
 	Texture2D cyndaquil;
 	Texture2D sharpedo;
@@ -91,6 +91,7 @@ public:
 	Texture2D circle;
 	Texture2D box;
 	Texture2D leftPad;
+	Texture2D spring;
 	Texture2D rightPad;
 	Texture2D collision1;
 	Texture2D collision2;

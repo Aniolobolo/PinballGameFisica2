@@ -111,23 +111,45 @@ private:
 
 };
 
-class Pads : public PhysicEntity
+class LeftPad : public PhysicEntity
 {
 public:
-	Pads(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateRectangle(_x, _y, 100, 20), _listener)
+	LeftPad(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateLeftFlipper(_x, _y), _listener)
 		, texture(_texture)
+		, leftAnchor(nullptr)
+		, leftJoint(nullptr)
 	{
+		// Crear anclaje estático para la pala izquierda
+		b2Vec2 anchorLeft(PIXEL_TO_METERS(_x), PIXEL_TO_METERS(_y));
+		b2BodyDef anchorDef;
+		anchorDef.type = b2_staticBody;
+		anchorDef.position = anchorLeft;
+		leftAnchor = physics->GetWorld()->CreateBody(&anchorDef);
+
+		// Configurar la revolute joint para la pala izquierda
+		b2RevoluteJointDef jointDef;
+		jointDef.bodyA = leftAnchor;
+		jointDef.bodyB = body->body;
+		jointDef.localAnchorA.SetZero();
+		jointDef.localAnchorB.Set(-PIXEL_TO_METERS(30), 0); // Punto de anclaje en la pala
+		jointDef.enableMotor = true;
+		jointDef.maxMotorTorque = 1000.0f;
+		jointDef.enableLimit = true;
+		jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;
+		jointDef.upperAngle = 30.0f * b2_pi / 180.0f;
+
+		leftJoint = (b2RevoluteJoint*)physics->GetWorld()->CreateJoint(&jointDef);
 	}
 
 	void Update() override
 	{
-		// Rotaci�n controlada por el teclado
+		// Control de rotación de la pala izquierda con el teclado
 		if (IsKeyDown(KEY_A)) {
-			body->Rotate(-5.0f * DEG2RAD);
+			leftJoint->SetMotorSpeed(-30.0f); // Rotación en sentido horario
 		}
 		else {
-			body->Rotate(5.0f * DEG2RAD);
+			leftJoint->SetMotorSpeed(20.0f); // Retorno en sentido antihorario
 		}
 
 		int x, y;
@@ -141,7 +163,129 @@ public:
 
 private:
 	Texture2D texture;
+	b2Body* leftAnchor;
+	b2RevoluteJoint* leftJoint;
 };
+
+class RightPad : public PhysicEntity
+{
+public:
+	RightPad(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateRightFlipper(_x, _y), _listener)
+		, texture(_texture)
+		, rightAnchor(nullptr)
+		, rightJoint(nullptr)
+	{
+		// Crear anclaje estático para la pala derecha
+		b2Vec2 anchorRight(PIXEL_TO_METERS(_x), PIXEL_TO_METERS(_y));
+		b2BodyDef anchorDef;
+		anchorDef.type = b2_staticBody;
+		anchorDef.position = anchorRight;
+		rightAnchor = physics->GetWorld()->CreateBody(&anchorDef);
+
+		// Configurar la revolute joint para la pala derecha
+		b2RevoluteJointDef jointDef;
+		jointDef.bodyA = rightAnchor;
+		jointDef.bodyB = body->body;
+		jointDef.localAnchorA.SetZero();
+		jointDef.localAnchorB.Set(-PIXEL_TO_METERS(30), 0); // Ajuste de anclaje para pivote en el lado izquierdo
+		jointDef.enableMotor = true;
+		jointDef.maxMotorTorque = 1000.0f;
+		jointDef.enableLimit = true;
+		jointDef.lowerAngle = 30.0f * b2_pi / 180.0f;  // Límite inferior (mirando hacia abajo)
+		jointDef.upperAngle = -30.0f * b2_pi / 180.0f; // Límite superior (hacia arriba)
+
+		rightJoint = (b2RevoluteJoint*)physics->GetWorld()->CreateJoint(&jointDef);
+	}
+
+	void Update() override
+	{
+		// Control de rotación de la pala derecha con el teclado
+		if (IsKeyDown(KEY_D)) {
+			rightJoint->SetMotorSpeed(30.0f); // Rotación en sentido horario (hacia arriba)
+		}
+		else {
+			rightJoint->SetMotorSpeed(-20.0f); // Retorno en sentido antihorario (hacia abajo)
+		}
+
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTexturePro(texture,
+			Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
+			Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
+			Vector2{ (float)texture.width / 2, (float)texture.height / 2 },
+			body->GetRotation() * RAD2DEG, WHITE);
+	}
+
+private:
+	Texture2D texture;
+	b2Body* rightAnchor;
+	b2RevoluteJoint* rightJoint;
+};
+
+class Spring : public PhysicEntity
+{
+public:
+	Spring(ModulePhysics* physics, int _x, int _y, int _width, int _height, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateSpringBase(_x, _y, _width, _height), _listener)
+		, texture(_texture)
+		, springPiston(nullptr)
+		, springJoint(nullptr)
+	{
+		// Crear el pistón dinámico del resorte
+		springPiston = physics->CreateRectangle(_x, _y + _height / 2, _width, _height);
+
+		// Crear el prismatic joint que conecta el cuerpo base con el pistón
+		b2PrismaticJointDef prismaticJointDef;
+		prismaticJointDef.bodyA = body->body;  // Cuerpo base estático
+		prismaticJointDef.bodyB = springPiston->body;
+		prismaticJointDef.collideConnected = false;
+		prismaticJointDef.localAnchorA.Set(0, 0);
+		prismaticJointDef.localAnchorB.Set(0, -PIXEL_TO_METERS(_height) / 2);
+		prismaticJointDef.localAxisA.Set(0, 1);  // Movimiento en el eje Y
+
+		// Configurar límites de movimiento
+		prismaticJointDef.enableLimit = true;
+		prismaticJointDef.lowerTranslation = -PIXEL_TO_METERS(_height * 0.3f); // Límite inferior
+		prismaticJointDef.upperTranslation = PIXEL_TO_METERS(_height * 0.3f);  // Límite superior
+
+		// Configurar propiedades del motor (resorte)
+		prismaticJointDef.enableMotor = true;
+		prismaticJointDef.maxMotorForce = 1000.0f; // Fuerza del resorte
+		prismaticJointDef.motorSpeed = 0.0f;       // Velocidad inicial
+
+		// Crear el prismatic joint en el mundo de física
+		springJoint = (b2PrismaticJoint*)physics->GetWorld()->CreateJoint(&prismaticJointDef);  // Usamos el puntero `world`
+	}
+
+	void Update() override
+	{
+		// Control de movimiento del resorte con el teclado
+		if (IsKeyDown(KEY_S)) {
+			springJoint->SetMotorSpeed(3.0f); // Comprimir resorte
+		}
+		else {
+			springJoint->SetMotorSpeed(-20.0f);  // Soltar resorte
+		}
+
+		// Obtener la posición del pistón del resorte
+		int x, y;
+		springPiston->GetPhysicPosition(x, y);
+
+		// Dibujar la textura del resorte
+		DrawTexturePro(texture,
+			Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
+			Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
+			Vector2{ (float)texture.width / 2, (float)texture.height / 2 },
+			springPiston->GetRotation() * RAD2DEG, WHITE);
+	}
+
+private:
+	Texture2D texture;
+	PhysBody* springPiston;
+	b2PrismaticJoint* springJoint;
+};
+
 
 class Chinchou : public PhysicEntity {
 public:
@@ -1507,6 +1651,12 @@ bool ModuleGame::Start()
 
 	circle = LoadTexture("Assets/pokeballAnim.png"); 
 
+	spring = LoadTexture("Assets/muelle1.png");
+
+	leftPad=LoadTexture("Assets/leftFlipper.png");
+
+	rightPad = LoadTexture("Assets/RightFlipper.png");
+
 	chinchou = LoadTexture("Assets/chinchouAnim2.png");
 
 	trianguloizq = LoadTexture("Assets/TrianguloIzqAnim.png");  
@@ -1534,7 +1684,9 @@ bool ModuleGame::Start()
 
 	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT+25, SCREEN_WIDTH, 50);
 	PlayMusicStream(backgroundMusic);
-
+	entities.emplace_back(new LeftPad(App->physics,215,940, this, leftPad));
+	entities.emplace_back(new RightPad(App->physics,355,940, this, rightPad));
+	entities.emplace_back(new Spring(App->physics,SCREEN_WIDTH - 30, SCREEN_HEIGHT - 100, 30, 50, this, spring));
 	entities.emplace_back(new Chinchou(App->physics, 358, 320, this, chinchou));
 	entities.emplace_back(new Chinchou(App->physics, 306, 371, this, chinchou));
 	entities.emplace_back(new Chinchou(App->physics, 377, 392, this, chinchou));

@@ -55,10 +55,14 @@ public:
 	PhysBody* CreateRectangle(int x, int y, int width, int height);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
 	PhysBody* CreateChain(int x, int y, const int* points, int size);
-	void CreateFlippers();
+	PhysBody* CreateLeftFlipper(int x, int y);
+	PhysBody* CreateRightFlipper(int x, int y);
 	void DrawFlipper(Texture2D flipperTexture, PhysBody* flipper, b2RevoluteJoint* joint);
 	void DrawSpring();
-	PhysBody* ModulePhysics::CreateSpring(int x, int y, int width, int height);
+	PhysBody* ModulePhysics::CreateSpringBase(int x, int y, int width, int height);
+	b2World* GetWorld() { return world; };
+
+
 	
 
 	PhysBody* springPiston;
@@ -66,7 +70,7 @@ public:
 	void BeginContact(b2Contact* contact);
 
 private:
-
+	
 	bool debug;
 	b2World* world;
 	b2MouseJoint* mouse_joint;
