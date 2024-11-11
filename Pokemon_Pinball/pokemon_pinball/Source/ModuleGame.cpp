@@ -1884,7 +1884,9 @@ bool ModuleGame::Start()
 
 	puertarotante = LoadTexture("Assets/puertarotante.png");
 	
-	bonus_fx = App->audio->LoadFx("Assets/Po.wav");
+	default_fx = App->audio->LoadFx("Assets/Po.wav");
+	bonus_fx = App->audio->LoadFx("Assets/Diri.WAV");
+	saver_fx = App->audio->LoadFx("Assets/Saver.WAV");
 	backgroundMusic = LoadMusicStream("Assets/19-Red-Table.ogg");
 
 	App->fontsModule->LoadFontTexture("Assets/fonts16x32.png", '0',16);
@@ -2085,52 +2087,62 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		
 
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == DEFAULT) {
-			App->audio->PlayFx(bonus_fx);
+			App->audio->PlayFx(default_fx);
 			break;
 		}
 
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == CHINCHOU ){
+			App->audio->PlayFx(bonus_fx);
 			hascollisionedwithchinchou = true;
 			entities[i]->ActivateHit();
 		    break;
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == BOTTON1) {
+			App->audio->PlayFx(bonus_fx);
 			hascollisionedwithbotton1 = true;
 			break;
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == BOTTONDERECHO) { 
+			App->audio->PlayFx(bonus_fx);
 			hascollisionedwithbotonderecho = true;
 			break;
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == BOTTONCENTRAL) {
+			App->audio->PlayFx(bonus_fx);
 			hascollisionedwithbotoncentral = true; 
 			break;
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == CYNDAQUIL) {
+			App->audio->PlayFx(bonus_fx);
 			hascollisionedwithcyndaquil = true; 
 			break;
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == TRIANGULOIZQ) {
+			App->audio->PlayFx(bonus_fx);
 			hascollisionedwithtrianguloizq = true; 
 			entities[i]->ActivateHit();
 			break;
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == TRIANGULODER) {
+			App->audio->PlayFx(bonus_fx);
 			hascollisionedwithtrianguloder = true;
 			entities[i]->ActivateHit();
 			break;
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == SHARPEDO) {
+			App->audio->PlayFx(bonus_fx);
 			hascollisionedwithsharpedos = true;
 			entities[i]->ActivateHit();
 			break;
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUERTAROTANTE) {
+			App->audio->PlayFx(bonus_fx);
 			hascollisionedwithpuertarotante = true;
 			entities[i]->ActivateRotation();
 			break;
 		}
 		if (bodyA == entities[i]->body &&  entities[i]->GetCollisionType() == SENSOR && entities[i]->GetSensor() == DELETE) {
+			App->audio->PlayFx(saver_fx);
 			deleteCircles = true;
 			for (int i = 0; i < entities.size(); ++i) {
 				EVO_E* evoESensor = dynamic_cast<EVO_E*>(entities[i]);
