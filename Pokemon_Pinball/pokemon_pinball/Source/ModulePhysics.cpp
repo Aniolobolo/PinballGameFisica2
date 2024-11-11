@@ -501,32 +501,64 @@ update_status ModulePhysics::PostUpdate()
 				}
 				break;
 			}
-
+			b2Body* mouseSelect = nullptr;
+			Vector2 mousePosition = GetMousePosition();
+			b2Vec2 pMousePosition = b2Vec2(PIXEL_TO_METERS(mousePosition.x), PIXEL_TO_METERS(mousePosition.y));
 			b2Vec2 pos = b->GetPosition();
+
 			float angle = b->GetAngle() * 180.0f / b2_pi;
 
 			Vector2 texturePosition = { (float)(METERS_TO_PIXELS(pos.x) - 30), (float)(METERS_TO_PIXELS(pos.y) - 5) };
 
+			if (mouse_joint == nullptr && mouseSelect == nullptr && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 
-			
+				if (f->TestPoint(pMousePosition)) {
+					mouseSelect = b;
+				
+				}
+			}
+			if (mouseSelect) {
+				b2MouseJointDef def;
 
-			
+				def.bodyA = ground;
+				def.bodyB = mouseSelect;
+				def.target = pMousePosition;
+				def.damping = 0.5f;
+				def.stiffness = 20.f;
+				def.maxForce = 100.f * mouseSelect->GetMass();
+
+				mouse_joint = (b2MouseJoint*)world->CreateJoint(&def);
+			}
+
+			// TODO 3: If the player keeps pressing the mouse button, update
+			// target position and draw a red line between both anchor points
+			else if (mouse_joint && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+				mouse_joint->SetTarget(pMousePosition);
+				b2Vec2 anchorPosition = mouse_joint->GetBodyB()->GetPosition();
+				anchorPosition.x = METERS_TO_PIXELS(anchorPosition.x);
+				anchorPosition.y = METERS_TO_PIXELS(anchorPosition.y);
+
+				DrawLine(anchorPosition.x, anchorPosition.y, mousePosition.x, mousePosition.y, RED);
+			}
+
+			// TODO 4: If the player releases the mouse button, destroy the joint
+			else if (mouse_joint && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+				world->DestroyJoint(mouse_joint);
+				mouse_joint = nullptr;
+			}
 		}
+
 	}
 
-	// If a body was selected we will attach a mouse joint to it
-	// so we can pull it around
-	// TODO 2: If a body was selected, create a mouse joint
-	// using mouse_joint class property
+
 	
-
-	// TODO 3: If the player keeps pressing the mouse button, update
-	// target position and draw a red line between both anchor points
-
-	// TODO 4: If the player releases the mouse button, destroy the joint
 
 	return UPDATE_CONTINUE;
 }
+
+			
+			
+			
 
 void ModulePhysics::DrawFlipper(Texture2D flipperTexture, PhysBody* flipper, b2RevoluteJoint* joint)
 {
