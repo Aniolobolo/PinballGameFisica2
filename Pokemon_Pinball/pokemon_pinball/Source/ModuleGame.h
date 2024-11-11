@@ -28,7 +28,9 @@ enum CollisionType
 	BOTTONDERECHO,
 	TRIANGULOIZQ,
 	TRIANGULODER,
-	PUNTOROJO
+	PUNTOROJO,
+	PUNTOROJO2,
+	PUNTOROJO3
 };
 
 enum Pokemons {
@@ -68,6 +70,9 @@ public:
 
 	std::vector<PhysicEntity*> entities;
 	
+	bool lifeAdded = false;
+	bool allConditionsMet = false;
+
 	PhysBody* sensor;
 	bool sensed;
 

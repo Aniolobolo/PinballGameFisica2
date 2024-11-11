@@ -41,6 +41,8 @@ public:
 
 	PhysBody* body;
 
+	bool letterVisible, letterVisible2, letterVisible3 = false;
+
 protected:
 
 	Module* listener;
@@ -48,6 +50,7 @@ protected:
 	Pokemons pokemons;
 	SensorType sensors;
 	bool Hit;
+	
 };
 
 class Circle : public PhysicEntity
@@ -1796,11 +1799,11 @@ private:
 	float scale;
 };
 
-class EVO_E : public PhysicEntity
+class PR1 : public PhysicEntity
 {
 public:
-	EVO_E(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
-		: PhysicEntity(physics->CreateRectangleSensor(x, y, 20, 20), listener), texture(texture), letterVisible(false)
+	PR1(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateRectangleSensor(x, y, 20, 20), listener), texture(texture)
 	{
 		collisionType = PUNTOROJO;
 		sensors = NORMAL;
@@ -1827,11 +1830,79 @@ public:
 
 private:
 	Texture2D texture;
-	bool letterVisible; // Indica si la letra está visible
+	/*bool letterVisible;*/ // Indica si la letra está visible
 	float scale = 1.3f;
 };
 
+class PR2 : public PhysicEntity
+{
+public:
+	PR2(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateRectangleSensor(x, y, 20, 20), listener), texture(texture)
+	{
+		collisionType = PUNTOROJO2;
+		sensors = NORMAL;
+	}
 
+	void ActivateLetter() override {
+		letterVisible2 = true; // Activa la letra de forma permanente
+	}
+
+	void Update() override {
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		Vector2 position{ (float)x, (float)y };
+
+		// Dibuja la letra solo si está activada
+		if (letterVisible2) {
+			Rectangle source = { 0.0f, 0.0f, 16.0f, 16.0f };
+			Rectangle dest = { position.x, position.y, 16.0f * scale, 16.0f * scale };
+			Vector2 origin = { 8.0f * scale, 8.0f * scale };
+
+			DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+		}
+	}
+
+private:
+	Texture2D texture;
+/*	bool letterVisible;*/ // Indica si la letra está visible
+	float scale = 1.3f;
+};
+
+class PR3 : public PhysicEntity
+{
+public:
+	PR3(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateRectangleSensor(x, y, 20, 20), listener), texture(texture)
+	{
+		collisionType = PUNTOROJO3;
+		sensors = NORMAL;
+	}
+
+	void ActivateLetter() override {
+		letterVisible3 = true; // Activa la letra de forma permanente
+	}
+
+	void Update() override {
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		Vector2 position{ (float)x, (float)y };
+
+		// Dibuja la letra solo si está activada
+		if (letterVisible3) {
+			Rectangle source = { 0.0f, 0.0f, 16.0f, 16.0f };
+			Rectangle dest = { position.x, position.y, 16.0f * scale, 16.0f * scale };
+			Vector2 origin = { 8.0f * scale, 8.0f * scale };
+
+			DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+		}
+	}
+
+private:
+	Texture2D texture;
+	/*bool letterVisible;*/ // Indica si la letra está visible
+	float scale = 1.3f;
+};
 
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -1907,8 +1978,9 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Wishcash(App->physics, 358, 320, this, wishcash));
 	entities.emplace_back(new Nuzleaf(App->physics, 358, 320, this, nuzleaf));
 	entities.emplace_back(new DeleteSensor(App->physics, SCREEN_WIDTH / 2, SCREEN_HEIGHT + 35, this, collision1));
-	entities.emplace_back(new EVO_E(App->physics, 382, 243, this, puntorojo));
-
+	entities.emplace_back(new PR1(App->physics, 382, 243, this, puntorojo));
+	entities.emplace_back(new PR2(App->physics, 331, 243, this, puntorojo));
+	entities.emplace_back(new PR3(App->physics, 281, 243, this, puntorojo));
 
 	entities.emplace_back(new Collision15(App->physics, 520, 500, this, puertarotante));
 	entities.emplace_back(new TrianguloIzqColPunt(App->physics, 520, 500, this, botton1)); 
@@ -1985,7 +2057,19 @@ update_status ModuleGame::Update()
 	}
 	entities.insert(entities.end(), newEntities.begin(), newEntities.end());
 
+	//bool allConditionsMet = true;
 
+	for (PhysicEntity* entity : entities) {
+		if (entity->letterVisible && entity->letterVisible2 && entity->letterVisible3) {
+			allConditionsMet = true; 
+			break; 
+		}
+	}
+
+	if (allConditionsMet && !lifeAdded) {
+		lives += 1;
+		lifeAdded = true; // Marca que ya se ha añadido una vida
+	}
 
 	if (IsKeyPressed(KEY_TWO))
 	{
@@ -2144,18 +2228,19 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		if (bodyA == entities[i]->body &&  entities[i]->GetCollisionType() == SENSOR && entities[i]->GetSensor() == DELETE) {
 			App->audio->PlayFx(saver_fx);
 			deleteCircles = true;
-			for (int i = 0; i < entities.size(); ++i) {
-				EVO_E* evoESensor = dynamic_cast<EVO_E*>(entities[i]);
-				if (evoESensor && (bodyA == entities[i]->body || bodyB == entities[i]->body)) {
-					evoESensor->ActivateLetter();
-					break;
-				}
-			}
 			break;
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO && entities[i]->GetSensor() == NORMAL) {
 				entities[i]->ActivateLetter(); // Activa la letra de forma permanente
 				break;
+		}
+		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO2 && entities[i]->GetSensor() == NORMAL) {
+			entities[i]->ActivateLetter(); // Activa la letra de forma permanente
+			break;
+		}
+		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO3 && entities[i]->GetSensor() == NORMAL) {
+			entities[i]->ActivateLetter(); // Activa la letra de forma permanente
+			break;
 		}
 	}
 	if (deleteCircles) {
