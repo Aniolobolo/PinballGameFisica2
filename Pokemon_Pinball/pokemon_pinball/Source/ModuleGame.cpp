@@ -134,7 +134,7 @@ public:
 		jointDef.localAnchorA.SetZero();
 		jointDef.localAnchorB.Set(-PIXEL_TO_METERS(30), 0); // Punto de anclaje en la pala
 		jointDef.enableMotor = true;
-		jointDef.maxMotorTorque = 1000.0f;
+		jointDef.maxMotorTorque = 2000.0f;
 		jointDef.enableLimit = true;
 		jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;
 		jointDef.upperAngle = 30.0f * b2_pi / 180.0f;
@@ -188,12 +188,12 @@ public:
 		jointDef.bodyA = rightAnchor;
 		jointDef.bodyB = body->body;
 		jointDef.localAnchorA.SetZero();
-		jointDef.localAnchorB.Set(-PIXEL_TO_METERS(30), 0); // Ajuste de anclaje para pivote en el lado izquierdo
+		jointDef.localAnchorB.Set(PIXEL_TO_METERS(30), 0); // Ajuste de anclaje para pivote en el lado izquierdo
 		jointDef.enableMotor = true;
 		jointDef.maxMotorTorque = 1000.0f;
 		jointDef.enableLimit = true;
-		jointDef.lowerAngle = 30.0f * b2_pi / 180.0f;  // Límite inferior (mirando hacia abajo)
-		jointDef.upperAngle = -30.0f * b2_pi / 180.0f; // Límite superior (hacia arriba)
+		jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;  // Límite inferior (mirando hacia abajo)
+		jointDef.upperAngle = 30.0f * b2_pi / 180.0f; // Límite superior (hacia arriba)
 
 		rightJoint = (b2RevoluteJoint*)physics->GetWorld()->CreateJoint(&jointDef);
 	}

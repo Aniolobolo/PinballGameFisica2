@@ -272,8 +272,8 @@ PhysBody* ModulePhysics::CreateRightFlipper(int x, int y)
 	jointDef.enableLimit = true;
 
 	// Ajustar límites de ángulo para la pala derecha (inversión de límites)
-	jointDef.lowerAngle = 30.0f * b2_pi / 180.0f;  // Invertido respecto a la pala izquierda
-	jointDef.upperAngle = -30.0f * b2_pi / 180.0f;
+	jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;  // Invertido respecto a la pala izquierda
+	jointDef.upperAngle = 30.0f * b2_pi / 180.0f;
 
 	jointDef.bodyA = rightAnchor;
 	jointDef.bodyB = rightFlipper->body;
