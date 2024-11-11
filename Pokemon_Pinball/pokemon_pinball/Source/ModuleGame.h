@@ -27,7 +27,8 @@ enum CollisionType
 	BOTTONCENTRAL,
 	BOTTONDERECHO,
 	TRIANGULOIZQ,
-	TRIANGULODER
+	TRIANGULODER,
+	PUNTOROJO
 };
 
 enum Pokemons {
@@ -84,6 +85,7 @@ public:
 	Texture2D nuzleaf;
 	Texture2D wishcash;
 	Texture2D latios;
+	Texture2D puntorojo;
 	/*Texture2D livesTexture;*/
 
 	Texture2D puertarotante;

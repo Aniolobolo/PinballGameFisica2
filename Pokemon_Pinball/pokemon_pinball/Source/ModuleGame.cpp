@@ -30,6 +30,8 @@ public:
 	}
 	virtual void ActivateRotation() {
 	}
+	virtual void ActivateLetter() {
+	}
 	
 	CollisionType GetCollisionType() const { return collisionType; }
 
@@ -1794,6 +1796,43 @@ private:
 	float scale;
 };
 
+class EVO_E : public PhysicEntity
+{
+public:
+	EVO_E(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateRectangleSensor(x, y, 20, 20), listener), texture(texture), letterVisible(false)
+	{
+		collisionType = PUNTOROJO;
+		sensors = NORMAL;
+	}
+
+	void ActivateLetter() override {
+		letterVisible = true; // Activa la letra de forma permanente
+	}
+
+	void Update() override {
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		Vector2 position{ (float)x, (float)y };
+
+		// Dibuja la letra solo si está activada
+		if (letterVisible) {
+			Rectangle source = { 0.0f, 0.0f, 16.0f, 16.0f };
+			Rectangle dest = { position.x, position.y, 16.0f * scale, 16.0f * scale };
+			Vector2 origin = { 8.0f * scale, 8.0f * scale };
+
+			DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
+		}
+	}
+
+private:
+	Texture2D texture;
+	bool letterVisible; // Indica si la letra está visible
+	float scale = 1.3f;
+};
+
+
+
 ModuleGame::ModuleGame(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	ray_on = false;
@@ -1841,6 +1880,8 @@ bool ModuleGame::Start()
 
 	latios = LoadTexture("Assets/Latios.png");
 
+	puntorojo = LoadTexture("Assets/redCircle.png");
+
 	puertarotante = LoadTexture("Assets/puertarotante.png");
 	
 	bonus_fx = App->audio->LoadFx("Assets/Po.wav");
@@ -1864,6 +1905,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Wishcash(App->physics, 358, 320, this, wishcash));
 	entities.emplace_back(new Nuzleaf(App->physics, 358, 320, this, nuzleaf));
 	entities.emplace_back(new DeleteSensor(App->physics, SCREEN_WIDTH / 2, SCREEN_HEIGHT + 35, this, collision1));
+	entities.emplace_back(new EVO_E(App->physics, 382, 243, this, puntorojo));
 
 
 	entities.emplace_back(new Collision15(App->physics, 520, 500, this, puertarotante));
@@ -2034,6 +2076,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	bool hascollisionedwithbotonderecho = false; 
 	bool hascollisionedwithtrianguloizq = false;
 	bool hascollisionedwithtrianguloder = false;
+	bool hascollisionedwithEVO_E = false;
 
 	deleteCircles = false;
 
@@ -2089,9 +2132,19 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		}
 		if (bodyA == entities[i]->body &&  entities[i]->GetCollisionType() == SENSOR && entities[i]->GetSensor() == DELETE) {
 			deleteCircles = true;
+			for (int i = 0; i < entities.size(); ++i) {
+				EVO_E* evoESensor = dynamic_cast<EVO_E*>(entities[i]);
+				if (evoESensor && (bodyA == entities[i]->body || bodyB == entities[i]->body)) {
+					evoESensor->ActivateLetter();
+					break;
+				}
+			}
 			break;
 		}
-
+		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO && entities[i]->GetSensor() == NORMAL) {
+				entities[i]->ActivateLetter(); // Activa la letra de forma permanente
+				break;
+		}
 	}
 	if (deleteCircles) {
 
