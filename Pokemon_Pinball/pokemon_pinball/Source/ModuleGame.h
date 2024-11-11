@@ -109,7 +109,9 @@ public:
 	Texture2D collision13;
 	Texture2D botton1;
 
+	uint32 default_fx;
 	uint32 bonus_fx;
+	uint32 saver_fx;
 	Music backgroundMusic;
 	vec2<int> ray;
 	bool ray_on;
