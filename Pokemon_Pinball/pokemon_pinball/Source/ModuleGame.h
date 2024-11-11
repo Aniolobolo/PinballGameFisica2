@@ -73,7 +73,7 @@ public:
 	int suma = 0;
 	int wait = 2; // time in seconds
 	bool deleteCircles = false;
-	int lives = 3;
+	int lives = 4;
 	
 	Texture2D chinchou;
 	Texture2D cyndaquil;

@@ -224,15 +224,22 @@ private:
 	b2RevoluteJoint* rightJoint;
 };
 
-class Spring : public PhysicEntity
-{
+class Spring : public PhysicEntity {
 public:
 	Spring(ModulePhysics* physics, int _x, int _y, int _width, int _height, Module* _listener, Texture2D _texture)
 		: PhysicEntity(physics->CreateSpringBase(_x, _y, _width, _height), _listener)
 		, texture(_texture)
 		, springPiston(nullptr)
 		, springJoint(nullptr)
+		, currentFrame(0)
+		, animationTimer(0.0f)
 	{
+		// Configuración de animación
+		frameCount = 7; // Total de frames de la animación
+		frameWidth = 48; // Ancho de cada frame en la imagen
+		frameHeight = 80; // Altura de cada frame en la imagen
+		frameSpeed = 0.2f; // Velocidad de animación en segundos por frame
+
 		// Crear el pistón dinámico del resorte
 		springPiston = physics->CreateRectangle(_x, _y + _height / 2, _width, _height);
 
@@ -256,36 +263,59 @@ public:
 		prismaticJointDef.motorSpeed = 0.0f;       // Velocidad inicial
 
 		// Crear el prismatic joint en el mundo de física
-		springJoint = (b2PrismaticJoint*)physics->GetWorld()->CreateJoint(&prismaticJointDef);  // Usamos el puntero `world`
+		springJoint = (b2PrismaticJoint*)physics->GetWorld()->CreateJoint(&prismaticJointDef);
 	}
 
-	void Update() override
-	{
-		// Control de movimiento del resorte con el teclado
+	void Update() override {
+		// Control de animación y movimiento del resorte con la tecla S
 		if (IsKeyDown(KEY_S)) {
 			springJoint->SetMotorSpeed(3.0f); // Comprimir resorte
+
+			// Temporizador para controlar la velocidad de la animación
+			animationTimer += GetFrameTime();
+			if (animationTimer >= frameSpeed) {
+				// Bucle en los últimos tres frames de la animación a una velocidad más lenta
+				if (currentFrame < frameCount - 3 || currentFrame > frameCount - 1) {
+					currentFrame = frameCount - 3; // Inicia el bucle en los tres últimos frames
+				}
+				else {
+					currentFrame++;
+					if (currentFrame > frameCount - 1) {
+						currentFrame = frameCount - 3; // Vuelve al inicio del bucle de los tres últimos frames
+					}
+				}
+				animationTimer = 0.0f; // Reinicia el temporizador
+			}
 		}
 		else {
 			springJoint->SetMotorSpeed(-20.0f);  // Soltar resorte
+			currentFrame = 0; // Vuelve al primer frame cuando no se presiona la tecla
 		}
 
 		// Obtener la posición del pistón del resorte
 		int x, y;
 		springPiston->GetPhysicPosition(x, y);
 
-		// Dibujar la textura del resorte
-		DrawTexturePro(texture,
-			Rectangle{ 0, 0, (float)texture.width, (float)texture.height },
-			Rectangle{ (float)x, (float)y, (float)texture.width, (float)texture.height },
-			Vector2{ (float)texture.width / 2, (float)texture.height / 2 },
-			springPiston->GetRotation() * RAD2DEG, WHITE);
+		// Dibujar la textura del resorte en el frame actual
+		Rectangle source = { currentFrame * frameWidth, 0, frameWidth, frameHeight };
+		Rectangle dest = { (float)x, (float)y + 2, frameWidth, frameHeight };
+		DrawTexturePro(texture, source, dest, Vector2{ frameWidth / 2.0f, frameHeight / 2.0f }, 0.0f, WHITE);
 	}
 
 private:
 	Texture2D texture;
 	PhysBody* springPiston;
 	b2PrismaticJoint* springJoint;
+	int currentFrame;
+	int frameCount;
+	int frameWidth;
+	int frameHeight;
+	float animationTimer;
+	float frameSpeed; // Tiempo en segundos para cambiar de frame (velocidad de animación)
 };
+
+
+
 
 
 class Chinchou : public PhysicEntity {
@@ -1783,7 +1813,7 @@ bool ModuleGame::Start()
 
 	circle = LoadTexture("Assets/pokeballAnim.png"); 
 
-	spring = LoadTexture("Assets/muelle1.png");
+	spring = LoadTexture("Assets/animMuelle.png");
 
 	leftPad=LoadTexture("Assets/leftFlipper.png");
 
@@ -1944,7 +1974,6 @@ update_status ModuleGame::Update()
 		}
 	}
 	
-
 	// Prepare for raycast ------------------------------------------------------
 	
 	vec2i mouse;
