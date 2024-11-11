@@ -866,20 +866,66 @@ public:
 		, texture(_texture)
 	{
 		collisionType = DEFAULT;
+		frameCountIdle = 2;
+		animationSpeed = 0.05f;
+		frameTimer = 0.0f;
+		scale = 1.2f;
+		Hit = false;
+		hitTimer = 0.0f;
+	}
+
+	void ActivateHit() override {
+		OnHit();
 	}
 
 	void Update() override
 	{
 		int x, y;
 		body->GetPhysicPosition(x, y);
-		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+		Vector2 position{ (float)x, (float)y };
+
+		if (Hit) // activate attack anim
+		{
+			hitTimer += GetFrameTime();
+			if (hitTimer >= 0.3f) //after 0,4 second return to idle anim
+			{
+				Hit = false;
+				hitTimer = 0.0f;
+			}
+		}
+
+		Rectangle source;
+		if (Hit)
+		{
+			source = { 80.0f, 0.0f, 80.0f, 80.0f }; //attack
+		}
+		else
+		{
+			source = { 0.0f, 0.0f, 80.0f, 80.0f }; //idle
+		}
+
+		Rectangle dest = { position.x, position.y, 80.0f * scale, 80.0f * scale };
+		Vector2 origin = { -364.0f , -778.0f };
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE); 
+	
+	}
+
+	void OnHit()
+	{
+		Hit = true;
+		hitTimer = 0.0f;
 	}
 
 private:
 	Texture2D texture;
+	int frameCountIdle;
+	float animationSpeed;
+	float frameTimer;
+	float scale;
+	float hitTimer;   //attack timer 
 };
 
-class Collision5 : public PhysicEntity
+class Collision5 : public PhysicEntity	// TRiangulo der
 {
 public:
 	// Pivot 0, 0
@@ -933,7 +979,7 @@ public:
 		if (Hit) // activate attack anim
 		{
 			hitTimer += GetFrameTime();
-			if (hitTimer >= 0.4f) //after 0,4 second return to idle anim
+			if (hitTimer >= 0.3f) //after 0,4 second return to idle anim
 			{
 				Hit = false;
 				hitTimer = 0.0f;
@@ -1071,7 +1117,7 @@ public:
 	75, 400,
 	79, 377,
 	84, 354,
-	89, 332,
+	89, 332,	
 	95, 316,
 	102, 300,
 	110, 288,
@@ -1119,16 +1165,23 @@ class TrianguloIzqColPunt : public PhysicEntity
 {
 public:
 	// Pivot 0, 0
-	static constexpr int TICP[8] = {
-	164, 795,
-	210, 860,
-	208, 862,
-	161, 797
+	static constexpr int TICP[22] = {
+	156, 797,
+	158, 794,
+	165, 794,
+	170, 802,
+	178, 814,
+	185, 824,
+	191, 834,
+	198, 844,
+	204, 853,
+	211, 864,
+	159, 802
 
 	};
 
 	TrianguloIzqColPunt(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, TICP, 8), _listener)
+		: PhysicEntity(physics->CreateChain(0, 0, TICP, 22), _listener)
 		, texture(_texture)
 	{
 		collisionType = TRIANGULOIZQ; 
@@ -1161,6 +1214,55 @@ public:
 private:
 	Texture2D texture;
 	  //attack timer  
+};
+
+class TrianguloDerColPunt : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int TDCP[10] = {
+	365, 866,
+	365, 860,
+	410, 794,
+	416, 794,
+	370, 863
+
+	};
+
+	TrianguloDerColPunt(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, TDCP, 10), _listener)
+		, texture(_texture)
+	{
+		collisionType = TRIANGULODER; 
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+private:
+	Texture2D texture;
+};
+
+class TrianguloDer : public PhysicEntity {
+public:
+	TrianguloDer(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
+		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC, ELSE), listener), texture(texture)
+	{
+		collisionType = TRIANGULODER; 
+		/*pokemons = CHINCHOU1;*/
+	}
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		Vector2 position{ (float)x, (float)y };
+	}
+private:
+	Texture2D texture;
+	//attack timer  
 };
 
 class GreenOneI : public PhysicEntity
@@ -1366,13 +1468,13 @@ public:
 		, texture(_texture)
 
 	{
-		collisionType = SHARPEDO;
+		collisionType = DEFAULT; 
 		frameCountIdle = 2;      
 		currentFrame = 0;
 		animationSpeed = 0.05f;   
 		frameTimer = 0.0f;
 		scale = 1.2f;
-		isHit = false;
+		Hit = false;
 		hitTimer = 0.0f;
 	}
 
@@ -1386,8 +1488,7 @@ public:
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
 
-		
-		if (!isHit) {  //idle anim
+		if (!Hit) {  //idle anim
 			frameTimer += animationSpeed;
 			if (frameTimer >= 1.0f)
 			{
@@ -1396,19 +1497,19 @@ public:
 			}
 		}
 
-		if (isHit) // activate attack anim
+		if (Hit) // activate attack anim
 		{
 			hitTimer += GetFrameTime();
 			if (hitTimer >= 0.4f) //after 0,4 second return to idle anim
 			{
-				isHit = false;
+				Hit = false;
 				hitTimer = 0.0f;
 				currentFrame = 0; //reset frame
 			}
 		}
 
 		Rectangle source;
-		if (isHit)
+		if (Hit)
 		{
 			source = { 2 * 96.0f, 0.0f, 96.0f, 96.0f }; //attack
 		}
@@ -1425,7 +1526,7 @@ public:
 
 	void OnHit()
 	{
-		isHit = true;
+		Hit = true;
 		currentFrame = 0;
 		hitTimer = 0.0f;
 	}
@@ -1437,9 +1538,39 @@ private:
 	float animationSpeed;
 	float frameTimer;
 	float scale;
-	bool isHit;       
+	bool Hit;       
 	float hitTimer;   //attack timer  
 };
+
+class SharpedosColPunt : public PhysicEntity
+{
+public:
+	// Pivot 0, 0
+	static constexpr int SCP[8] = {
+	449, 505,
+	465, 506,
+	478, 518,
+	449, 510
+
+	};
+
+	SharpedosColPunt(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
+		: PhysicEntity(physics->CreateChain(0, 0, SCP, 8), _listener) 
+		, texture(_texture)
+	{
+		collisionType = SHARPEDO;	
+	}
+
+	void Update() override
+	{
+		int x, y;
+		body->GetPhysicPosition(x, y);
+		DrawTextureEx(texture, Vector2{ (float)x, (float)y }, body->GetRotation() * RAD2DEG, 1.0f, WHITE);
+	}
+private:
+	Texture2D texture;
+};
+
 class Collision14 : public PhysicEntity
 {
 public:
@@ -1662,6 +1793,8 @@ bool ModuleGame::Start()
 
 	trianguloizq = LoadTexture("Assets/TrianguloIzqAnim.png");  
 
+	trianguloder = LoadTexture("Assets/TrianguloDerAnim.png");
+
 	gulpin = LoadTexture("Assets/GulpinAnim.png");
 
 	nuzleaf = LoadTexture("Assets/nuzleaf.png");
@@ -1694,6 +1827,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Chinchou(App->physics, 306, 371, this, chinchou));
 	entities.emplace_back(new Chinchou(App->physics, 377, 392, this, chinchou));
 	entities.emplace_back(new TrianguloIzq(App->physics, 358, 320, this, botton1));
+	entities.emplace_back(new TrianguloDer(App->physics, 358, 320, this, botton1)); 
 	entities.emplace_back(new Pikachu(App->physics, 528, 940, this, pikachu));
 	entities.emplace_back(new Pichu(App->physics, 107, 944, this, pichu));
 	entities.emplace_back(new Gulpin(App->physics, 358, 320, this, gulpin)); 
@@ -1704,12 +1838,13 @@ bool ModuleGame::Start()
 
 	entities.emplace_back(new Collision15(App->physics, 520, 500, this, puertarotante));
 	entities.emplace_back(new TrianguloIzqColPunt(App->physics, 520, 500, this, botton1)); 
-
+	entities.emplace_back(new TrianguloDerColPunt(App->physics, 600, 550, this, botton1)); 
+	entities.emplace_back(new SharpedosColPunt(App->physics, 0, 0, this, botton1));
 
 	entities.emplace_back(new Collision1(App->physics, 0, 0, this, collision1)); //Mapa
 	entities.emplace_back(new Collision2(App->physics, 0, 0, this, collision2)); //L azul abajo izquierda
 	entities.emplace_back(new Collision3(App->physics, 0, 0, this, collision3)); //L azul abajo derecha
-	entities.emplace_back(new Collision4(App->physics, 0, 0, this, collision4)); //Triangulo der rojo
+	entities.emplace_back(new Collision4(App->physics, 0, 0, this, trianguloder)); //Triangulo der rojo
 	entities.emplace_back(new Collision5(App->physics, 0, 0, this, trianguloizq)); //Triangulo izq rojo
 	entities.emplace_back(new Collision6(App->physics, 0, 0, this, cyndaquil)); //Piedra grande y pokemon verde
 	entities.emplace_back(new GreenEvoD(App->physics, 0, 0, this, GreenEvoDer)); 
@@ -1872,6 +2007,7 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 	bool hascollisionedwithbotoncentral = false;
 	bool hascollisionedwithbotonderecho = false; 
 	bool hascollisionedwithtrianguloizq = false;
+	bool hascollisionedwithtrianguloder = false;
 
 	deleteCircles = false;
 
@@ -1907,6 +2043,11 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		}
 		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == TRIANGULOIZQ) {
 			hascollisionedwithtrianguloizq = true; 
+			entities[i]->ActivateHit();
+			break;
+		}
+		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == TRIANGULODER) {
+			hascollisionedwithtrianguloder = true;
 			entities[i]->ActivateHit();
 			break;
 		}
@@ -1949,10 +2090,27 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			}
 		}
 	}
+	if (hascollisionedwithtrianguloder) {
+		for (int i = 0; i < entities.size(); ++i) {
+			Collision4* collision4 = dynamic_cast<Collision4*>(entities[i]);
+			if (collision4 != nullptr) {
+				collision4->ActivateHit();
+			}
+		}
+	}
+	if (hascollisionedwithsharpedos) {
+		for (int i = 0; i < entities.size(); ++i) {
+			Collision13* collision13 = dynamic_cast<Collision13*>(entities[i]); 
+			if (collision13 != nullptr) {
+				collision13->ActivateHit();
+			}
+		}
+	}
 	if (hascollisionedwithchinchou) suma += 500;
 	if (hascollisionedwithbotton1) suma += 1000;
 	if (hascollisionedwithbotonderecho) suma += 2000; 
 	if (hascollisionedwithtrianguloizq) suma += 2000; 
+	if (hascollisionedwithtrianguloder) suma += 2000; 
 	if (hascollisionedwithbotoncentral) suma += 1000; 
 	if (hascollisionedwithcyndaquil) suma += 5000; 
 	if (hascollisionedwithsharpedos) suma += 2000;

@@ -86,7 +86,7 @@ public:
 	Texture2D latios;
 
 	Texture2D puertarotante;
-	Texture2D trianguloizq;
+	Texture2D trianguloizq, trianguloder;
 
 	Texture2D circle;
 	Texture2D box;
