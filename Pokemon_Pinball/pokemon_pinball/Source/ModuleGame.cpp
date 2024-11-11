@@ -4,6 +4,7 @@
 #include "ModuleGame.h"
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
+#include "ModuleFonts.h"
 
 class PhysicEntity
 {
@@ -134,7 +135,7 @@ public:
 		jointDef.localAnchorA.SetZero();
 		jointDef.localAnchorB.Set(-PIXEL_TO_METERS(30), 0); // Punto de anclaje en la pala
 		jointDef.enableMotor = true;
-		jointDef.maxMotorTorque = 2000.0f;
+		jointDef.maxMotorTorque = 1000.0f;
 		jointDef.enableLimit = true;
 		jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;
 		jointDef.upperAngle = 30.0f * b2_pi / 180.0f;
@@ -1682,6 +1683,8 @@ bool ModuleGame::Start()
 	bonus_fx = App->audio->LoadFx("Assets/Po.wav");
 	backgroundMusic = LoadMusicStream("Assets/19-Red-Table.ogg");
 
+	App->fontsModule->LoadFontTexture("Assets/fonts16x32.png", '0',16);
+
 	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT+25, SCREEN_WIDTH, 50);
 	PlayMusicStream(backgroundMusic);
 	entities.emplace_back(new LeftPad(App->physics,215,940, this, leftPad));
@@ -1839,9 +1842,9 @@ update_status ModuleGame::Update()
 	
 
 	// ray -----------------
-	if(ray_on == true)
+	if (ray_on == true)
 	{
-		vec2f destination((float)(mouse.x-ray.x), (float)(mouse.y-ray.y));
+		vec2f destination((float)(mouse.x - ray.x), (float)(mouse.y - ray.y));
 		destination.Normalize();
 		destination *= (float)ray_hit;
 
@@ -1852,8 +1855,9 @@ update_status ModuleGame::Update()
 			DrawLine((int)(ray.x + destination.x), (int)(ray.y + destination.y), (int)(ray.x + destination.x + normal.x * 25.0f), (int)(ray.y + destination.y + normal.y * 25.0f), Color{ 100, 255, 100, 255 });
 		}
 	}
-
-	DrawText(TextFormat("Score: %d",suma), 10, 10, 30, WHITE);
+	App->fontsModule->DrawText(10, 10, TextFormat("%d", suma), WHITE);
+	//App->fontsModule->DrawText(10, 10, TextFormat("Score: %d", suma), WHITE);
+	//DrawText(TextFormat("Score: %d",suma), 10, 10, 30, WHITE);
 
 	return UPDATE_CONTINUE;
 }

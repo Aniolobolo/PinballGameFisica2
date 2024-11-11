@@ -2,30 +2,32 @@
 #define __MODULEFONTS_H__
 
 #include "Module.h"
+#include "raylib.h"
+#include <string>
 
 class ModuleFonts : public Module
 {
 public:
+    ModuleFonts(Application* app);
+    virtual ~ModuleFonts();
 
-	ModuleFonts();
+    // Método para inicializar la fuente personalizada
+    bool LoadFontTexture(const std::string& file_path, char first_character, int character_size);
 
-	// Destructor
-	virtual ~ModuleFonts();
+    // Método para dibujar texto
+    void DrawText(int x, int y, const std::string& text, const Color& col = WHITE) const;
 
-	// Called before render is available
-	bool Awake();
-
-	// Called before quitting
-	bool CleanUp();
-
-    Font GetFont() const;
-    int GetFontHeight(Font font) const;
-	bool GetTextSize(const char* text, int& width, int& height, int spacing = 0) const;
+    bool CleanUp();
 
 private:
+    // Método para dibujar un solo carácter
+    void DrawCharacter(int x, int y, char c, const Color& col = WHITE) const;
 
-    Font font;
+    char first_character;
+    int character_size;
+    int columns;
+    int rows;
+    Texture2D font_texture;  // Textura de la fuente
 };
-
 
 #endif // __MODULEFONTS_H__

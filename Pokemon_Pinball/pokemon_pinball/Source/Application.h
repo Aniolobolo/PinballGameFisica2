@@ -10,6 +10,7 @@ class ModuleRender;
 class ModuleAudio;
 class ModulePhysics;
 class ModuleGame;
+class ModuleFonts;
 
 class Application
 {
@@ -21,6 +22,7 @@ public:
 	ModulePhysics* physics;
 	ModuleGame* scene_intro;
 	ModuleGame* game;
+	ModuleFonts* fontsModule;
 
 private:
 

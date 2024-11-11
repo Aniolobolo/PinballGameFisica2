@@ -313,6 +313,44 @@ update_status ModulePhysics::PostUpdate()
 
 	if (!debug)
 	{
+		if (App->scene_intro->deleteCircles) //si es true
+		{
+			// Usamos una lista auxiliar para eliminar los cuerpos después de la iteración
+			std::vector<b2Body*> bodiesToDestroy;
+
+			for (b2Body* b = world->GetBodyList(); b != nullptr; b = b->GetNext())
+			{
+				bool isCirclePOKEBALL = false; // Indicador para detectar el tipo POKEBALL
+
+				for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
+				{
+					if (f->GetType() == b2Shape::e_circle)
+					{
+						// Verificamos si es del tipo POKEBALL
+						PhysBody* pbody = (PhysBody*)b->GetUserData().pointer;
+
+						if (pbody && pbody->circleType == POKEBALL)  // Accede correctamente a circleType
+						{
+							isCirclePOKEBALL = true;  // Establece la bandera si es un POKEBALL
+						}
+						break; // Salimos del bucle de fixtures si encontramos el círculo
+					}
+				}
+
+				if (isCirclePOKEBALL)
+				{
+					bodiesToDestroy.push_back(b); // Agregamos el cuerpo a la lista para eliminarlo más tarde
+				}
+			}
+
+			// Destruimos los cuerpos fuera de la iteración
+			for (b2Body* b : bodiesToDestroy)
+			{
+				world->DestroyBody(b);
+			}
+
+			App->scene_intro->deleteCircles = false;
+		}
 		return UPDATE_CONTINUE;
 	}
 	if(App->scene_intro->deleteCircles) //si es true
