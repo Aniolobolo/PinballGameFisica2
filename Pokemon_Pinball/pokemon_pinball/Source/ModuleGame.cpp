@@ -147,10 +147,10 @@ public:
 	{
 		// Control de rotación de la pala izquierda con el teclado
 		if (IsKeyDown(KEY_A)) {
-			leftJoint->SetMotorSpeed(-30.0f); // Rotación en sentido horario
+			leftJoint->SetMotorSpeed(-60.0f); // Rotación en sentido horario
 		}
 		else {
-			leftJoint->SetMotorSpeed(20.0f); // Retorno en sentido antihorario
+			leftJoint->SetMotorSpeed(60.0f); // Retorno en sentido antihorario
 		}
 
 		int x, y;
@@ -203,10 +203,10 @@ public:
 	{
 		// Control de rotación de la pala derecha con el teclado
 		if (IsKeyDown(KEY_D)) {
-			rightJoint->SetMotorSpeed(30.0f); // Rotación en sentido horario (hacia arriba)
+			rightJoint->SetMotorSpeed(60.0f); // Rotación en sentido horario (hacia arriba)
 		}
 		else {
-			rightJoint->SetMotorSpeed(-20.0f); // Retorno en sentido antihorario (hacia abajo)
+			rightJoint->SetMotorSpeed(-60.0f); // Retorno en sentido antihorario (hacia abajo)
 		}
 
 		int x, y;
@@ -1688,7 +1688,7 @@ bool ModuleGame::Start()
 	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT+25, SCREEN_WIDTH, 50);
 	PlayMusicStream(backgroundMusic);
 	entities.emplace_back(new LeftPad(App->physics,215,940, this, leftPad));
-	entities.emplace_back(new RightPad(App->physics,355,940, this, rightPad));
+	entities.emplace_back(new RightPad(App->physics,360,940, this, rightPad));
 	entities.emplace_back(new Spring(App->physics,SCREEN_WIDTH - 30, SCREEN_HEIGHT - 100, 30, 50, this, spring));
 	entities.emplace_back(new Chinchou(App->physics, 358, 320, this, chinchou));
 	entities.emplace_back(new Chinchou(App->physics, 306, 371, this, chinchou));
@@ -1756,15 +1756,6 @@ update_status ModuleGame::Update()
 		ray.y = GetMouseY();
 	}
 
-	/*
-	aqui quiero hacer que si la variable de la clase latios hasToSpawnBall es true, spawnee una bola en su posición
-	if()
-	{
-		entities.emplace_back(new Circle(App->physics, x, y, this, circle));
-		
-	}
-	*/
-
 	if (IsKeyPressed(KEY_ONE)) {
 		entities.emplace_back(new Circle(App->physics, GetMousePosition().x, GetMousePosition().y, this, circle));
 	}
@@ -1776,7 +1767,6 @@ update_status ModuleGame::Update()
 
 		if (latios != nullptr) {
 			if (latios->hasToSpawnBall && !latios->pokeballSpawned) {
-				// Agrega la Pokeball solo si aún no ha sido creada
 				newEntities.emplace_back(new Circle(App->physics, SCREEN_WIDTH - 45, 790, this, circle));
 
 				// Marcar como creada para evitar más spawns
@@ -1784,8 +1774,6 @@ update_status ModuleGame::Update()
 			}
 		}
 	}
-
-	// Agrega todas las nuevas entidades después del bucle principal
 	entities.insert(entities.end(), newEntities.begin(), newEntities.end());
 
 
@@ -1810,10 +1798,17 @@ update_status ModuleGame::Update()
 		entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
 	}
 
+	if (lives > 0) {
+		if (deleteCircles) {
+			lives--;
+			entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
+		}
 
-	if (deleteCircles) {
-		entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
+		if (lives <= 0) {
+			lives = 0;
+		}
 	}
+	
 
 	// Prepare for raycast ------------------------------------------------------
 	
@@ -1855,9 +1850,11 @@ update_status ModuleGame::Update()
 			DrawLine((int)(ray.x + destination.x), (int)(ray.y + destination.y), (int)(ray.x + destination.x + normal.x * 25.0f), (int)(ray.y + destination.y + normal.y * 25.0f), Color{ 100, 255, 100, 255 });
 		}
 	}
-	App->fontsModule->DrawText(10, 10, TextFormat("%d", suma), WHITE);
-	//App->fontsModule->DrawText(10, 10, TextFormat("Score: %d", suma), WHITE);
-	//DrawText(TextFormat("Score: %d",suma), 10, 10, 30, WHITE);
+	/*App->fontsModule->DrawText(10, 10, TextFormat("%d", suma), WHITE);*/
+	/*App->fontsModule->DrawText(10, 30, TextFormat("Lives: %d", lives), WHITE);*/
+
+	DrawText(TextFormat("Score: %d", suma), 10, 10, 30, BLACK);
+	DrawText(TextFormat("Lives: %d", lives), 10, 40, 30, BLACK);
 
 	return UPDATE_CONTINUE;
 }
