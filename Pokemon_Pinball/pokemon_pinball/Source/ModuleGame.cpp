@@ -681,7 +681,7 @@ private:
 class DeleteSensor : public PhysicEntity {
 public:
 	DeleteSensor(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
-		: PhysicEntity(physics->CreateRectangleSensor(x, y, SCREEN_WIDTH,50), listener), texture(texture)
+		: PhysicEntity(physics->CreateRectangleSensor(x, y, 90, 20), listener), texture(texture)
 	{
 		collisionType = SENSOR;
 		sensors = DELETE;
@@ -1925,7 +1925,7 @@ bool ModuleGame::Start()
 
 	spring = LoadTexture("Assets/animMuelle.png");
 
-	leftPad=LoadTexture("Assets/leftFlipper.png");
+	leftPad = LoadTexture("Assets/leftFlipper.png");
 
 	rightPad = LoadTexture("Assets/RightFlipper.png");
 
@@ -1955,6 +1955,10 @@ bool ModuleGame::Start()
 
 	puertarotante = LoadTexture("Assets/puertarotante.png");
 	
+	gameOverTexture = LoadTexture("Assets/Gameover.png");
+
+	recuadroTexture = LoadTexture("Assets/recuadro.png");
+
 	default_fx = App->audio->LoadFx("Assets/Po.wav");
 	bonus_fx = App->audio->LoadFx("Assets/Diri.WAV");
 	saver_fx = App->audio->LoadFx("Assets/Saver.WAV");
@@ -1977,7 +1981,7 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Gulpin(App->physics, 358, 320, this, gulpin)); 
 	entities.emplace_back(new Wishcash(App->physics, 358, 320, this, wishcash));
 	entities.emplace_back(new Nuzleaf(App->physics, 358, 320, this, nuzleaf));
-	entities.emplace_back(new DeleteSensor(App->physics, SCREEN_WIDTH / 2, SCREEN_HEIGHT + 35, this, collision1));
+	entities.emplace_back(new DeleteSensor(App->physics, (SCREEN_WIDTH / 2) - 19, SCREEN_HEIGHT + 20, this, collision1));
 	entities.emplace_back(new PR1(App->physics, 382, 243, this, puntorojo));
 	entities.emplace_back(new PR2(App->physics, 331, 243, this, puntorojo));
 	entities.emplace_back(new PR3(App->physics, 281, 243, this, puntorojo));
@@ -2004,6 +2008,10 @@ bool ModuleGame::Start()
 	entities.emplace_back(new Collision17(App->physics, 0, 0, this, botton1)); // Para meter colision puntuacion boton central
 	entities.emplace_back(new Collision18(App->physics, 0, 0, this, botton1)); // Para meter colision puntuacion boton derecho
 	
+	entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
+
+	
+
 	return ret;
 }
 
@@ -2028,7 +2036,6 @@ bool ModuleGame::CleanUp()
 // Update: draw background
 update_status ModuleGame::Update()
 {
-
 	UpdateMusicStream(backgroundMusic);
 	if(IsKeyPressed(KEY_SPACE))
 	{
@@ -2037,76 +2044,86 @@ update_status ModuleGame::Update()
 		ray.y = GetMouseY();
 	}
 
-	if (IsKeyPressed(KEY_ONE)) {
-		entities.emplace_back(new Circle(App->physics, GetMousePosition().x, GetMousePosition().y, this, circle));
-	}
+	DrawTexture(recuadroTexture, 10, 10, WHITE);
 
-	std::vector<PhysicEntity*> newEntities;
-
-	for (auto it = entities.begin(); it != entities.end(); ++it) {
-		Latios* latios = dynamic_cast<Latios*>(*it);
-
-		if (latios != nullptr) {
-			if (latios->hasToSpawnBall && !latios->pokeballSpawned) {
-				newEntities.emplace_back(new Circle(App->physics, SCREEN_WIDTH - 45, 790, this, circle));
-
-				// Marcar como creada para evitar más spawns
-				latios->pokeballSpawned = true;
-			}
-		}
-	}
-	entities.insert(entities.end(), newEntities.begin(), newEntities.end());
-
-	bool allLettersVisible = true;
-
-	for (PhysicEntity* entity : entities) {
-		if (entity->GetCollisionType() == PUNTOROJO && !entity->letterVisible) {
-			allLettersVisible = false;
-			break;
-		}
-		else if (entity->GetCollisionType() == PUNTOROJO2 && !entity->letterVisible2) {
-			allLettersVisible = false;
-			break;
-		}
-		else if (entity->GetCollisionType() == PUNTOROJO3 && !entity->letterVisible3) {
-			allLettersVisible = false;
-			break;
-		}
-	}
-
-	if (allLettersVisible && !lifeAdded) {
-		lives += 1;
-		lifeAdded = true; 
-	}
-
-	if (IsKeyPressed(KEY_TWO))
-	{
-		for (auto it = entities.begin(); it != entities.end(); )
-		{
-			// Verificamos si el tipo es Circle usando dynamic_cast
-			if (dynamic_cast<Circle*>(*it) != nullptr)
-			{
-				it = entities.erase(it); // Eliminar instancia de Circle
-			}
-			else
-			{
-				++it; // Continuar con el siguiente elemento
-			}
-		}
-	}
-
-	if (IsKeyPressed(KEY_THREE)) {
+	if (IsKeyPressed(KEY_R) && gameOver) {
+		lives = 3;
+		previousScore = suma; 
+		suma = 0;
 		entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
+		gameOver = false;
+	}
+
+	if (!gameOver) {
+		if (IsKeyPressed(KEY_ONE)) {
+			entities.emplace_back(new Circle(App->physics, GetMousePosition().x, GetMousePosition().y, this, circle));
+		}
+
+		std::vector<PhysicEntity*> newEntities;
+
+		for (auto it = entities.begin(); it != entities.end(); ++it) {
+			Latios* latios = dynamic_cast<Latios*>(*it);
+
+			if (latios != nullptr) {
+				if (latios->hasToSpawnBall && !latios->pokeballSpawned) {
+					newEntities.emplace_back(new Circle(App->physics, SCREEN_WIDTH - 45, 790, this, circle));
+
+					// Marcar como creada para evitar más spawns
+					latios->pokeballSpawned = true;
+				}
+			}
+		}
+		entities.insert(entities.end(), newEntities.begin(), newEntities.end());
+
+		bool allLettersVisible = true;
+
+		for (PhysicEntity* entity : entities) {
+			if (entity->GetCollisionType() == PUNTOROJO && !entity->letterVisible) {
+				allLettersVisible = false;
+				break;
+			}
+			else if (entity->GetCollisionType() == PUNTOROJO2 && !entity->letterVisible2) {
+				allLettersVisible = false;
+				break;
+			}
+			else if (entity->GetCollisionType() == PUNTOROJO3 && !entity->letterVisible3) {
+				allLettersVisible = false;
+				break;
+			}
+		}
+
+		if (allLettersVisible && !lifeAdded) {
+			lives += 1;
+			lifeAdded = true;
+		}
+
+		if (IsKeyPressed(KEY_TWO))
+		{
+			for (auto it = entities.begin(); it != entities.end(); )
+			{
+				// Verificamos si el tipo es Circle usando dynamic_cast
+				if (dynamic_cast<Circle*>(*it) != nullptr)
+				{
+					it = entities.erase(it); // Eliminar instancia de Circle
+				}
+				else
+				{
+					++it; // Continuar con el siguiente elemento
+				}
+			}
+		}
+
+		if (IsKeyPressed(KEY_THREE)) {
+			entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
+		}
 	}
 
 	if (lives > 0) {
 		if (deleteCircles) {
-			lives--;
-			entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
-		}
-
-		if (lives <= 0) {
-			lives = 0;
+			if (lives != 1) {
+				entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
+			}
+			lives--;			
 		}
 	}
 	
@@ -2150,11 +2167,27 @@ update_status ModuleGame::Update()
 			DrawLine((int)(ray.x + destination.x), (int)(ray.y + destination.y), (int)(ray.x + destination.x + normal.x * 25.0f), (int)(ray.y + destination.y + normal.y * 25.0f), Color{ 100, 255, 100, 255 });
 		}
 	}
-	App->fontsModule->DrawText(395, 9, TextFormat("%d", suma), WHITE);
-	App->fontsModule->DrawText(549, 9, TextFormat(":%d", lives), WHITE);
 
-	/*DrawText(TextFormat("Score: %d", suma), 10, 10, 30, BLACK);
-	DrawText(TextFormat("Lives: %d", lives), 10, 40, 30, BLACK);*/
+	App->fontsModule->DrawText(10, 10, TextFormat("%d", suma), WHITE);
+	App->fontsModule->DrawText(10, 30, TextFormat(":%d", lives), WHITE);
+	App->fontsModule->DrawText(100, 40, TextFormat("%d", highscore), WHITE);
+	App->fontsModule->DrawText(400, 40, TextFormat("%d", previousScore), WHITE);
+
+	if (suma > highscore) {
+		highscore = suma;
+	}
+
+	//DrawText(TextFormat("Score: %d", suma), 40, 20, 20, BLACK);
+	/*DrawText(TextFormat("Highscore: %d", highscore), 40, 40, 20, BLACK);*/
+	/*DrawText(TextFormat("Lives: %d", lives), 40, 60, 20, BLACK);*/
+
+	if (lives <= 0) {
+		lives = 0;
+		gameOver = true;
+		DrawTexture(gameOverTexture, SCREEN_WIDTH / 2 - gameOverTexture.width / 2,
+			SCREEN_HEIGHT / 2 - gameOverTexture.height / 2, WHITE);
+	}
+
 
 	return UPDATE_CONTINUE;
 }
@@ -2174,84 +2207,87 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 	deleteCircles = false;
 
-	int length = entities.size();
-	for (int i = 0; i < length; ++i) {
-		
+	if (!gameOver) {
+		int length = entities.size();
+		for (int i = 0; i < length; ++i) {
 
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == DEFAULT) {
-			App->audio->PlayFx(default_fx);
-			break;
-		}
 
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == CHINCHOU ){
-			App->audio->PlayFx(bonus_fx);
-			hascollisionedwithchinchou = true;
-			entities[i]->ActivateHit();
-		    break;
-		}
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == BOTTON1) {
-			App->audio->PlayFx(bonus_fx);
-			hascollisionedwithbotton1 = true;
-			break;
-		}
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == BOTTONDERECHO) { 
-			App->audio->PlayFx(bonus_fx);
-			hascollisionedwithbotonderecho = true;
-			break;
-		}
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == BOTTONCENTRAL) {
-			App->audio->PlayFx(bonus_fx);
-			hascollisionedwithbotoncentral = true; 
-			break;
-		}
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == CYNDAQUIL) {
-			App->audio->PlayFx(bonus_fx);
-			hascollisionedwithcyndaquil = true; 
-			break;
-		}
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == TRIANGULOIZQ) {
-			App->audio->PlayFx(bonus_fx);
-			hascollisionedwithtrianguloizq = true; 
-			entities[i]->ActivateHit();
-			break;
-		}
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == TRIANGULODER) {
-			App->audio->PlayFx(bonus_fx);
-			hascollisionedwithtrianguloder = true;
-			entities[i]->ActivateHit();
-			break;
-		}
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == SHARPEDO) {
-			App->audio->PlayFx(bonus_fx);
-			hascollisionedwithsharpedos = true;
-			entities[i]->ActivateHit();
-			break;
-		}
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUERTAROTANTE) {
-			App->audio->PlayFx(bonus_fx);
-			hascollisionedwithpuertarotante = true;
-			entities[i]->ActivateRotation();
-			break;
-		}
-		if (bodyA == entities[i]->body &&  entities[i]->GetCollisionType() == SENSOR && entities[i]->GetSensor() == DELETE) {
-			App->audio->PlayFx(saver_fx);
-			deleteCircles = true;
-			break;
-		}
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO && entities[i]->GetSensor() == NORMAL) {
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == DEFAULT) {
+				App->audio->PlayFx(default_fx);
+				break;
+			}
+
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == CHINCHOU) {
+				App->audio->PlayFx(bonus_fx);
+				hascollisionedwithchinchou = true;
+				entities[i]->ActivateHit();
+				break;
+			}
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == BOTTON1) {
+				App->audio->PlayFx(bonus_fx);
+				hascollisionedwithbotton1 = true;
+				break;
+			}
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == BOTTONDERECHO) {
+				App->audio->PlayFx(bonus_fx);
+				hascollisionedwithbotonderecho = true;
+				break;
+			}
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == BOTTONCENTRAL) {
+				App->audio->PlayFx(bonus_fx);
+				hascollisionedwithbotoncentral = true;
+				break;
+			}
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == CYNDAQUIL) {
+				App->audio->PlayFx(bonus_fx);
+				hascollisionedwithcyndaquil = true;
+				break;
+			}
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == TRIANGULOIZQ) {
+				App->audio->PlayFx(bonus_fx);
+				hascollisionedwithtrianguloizq = true;
+				entities[i]->ActivateHit();
+				break;
+			}
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == TRIANGULODER) {
+				App->audio->PlayFx(bonus_fx);
+				hascollisionedwithtrianguloder = true;
+				entities[i]->ActivateHit();
+				break;
+			}
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == SHARPEDO) {
+				App->audio->PlayFx(bonus_fx);
+				hascollisionedwithsharpedos = true;
+				entities[i]->ActivateHit();
+				break;
+			}
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUERTAROTANTE) {
+				App->audio->PlayFx(bonus_fx);
+				hascollisionedwithpuertarotante = true;
+				entities[i]->ActivateRotation();
+				break;
+			}
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == SENSOR && entities[i]->GetSensor() == DELETE) {
+				App->audio->PlayFx(saver_fx);
+				deleteCircles = true;
+				break;
+			}
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO && entities[i]->GetSensor() == NORMAL) {
 				entities[i]->ActivateLetter(); // Activa la letra de forma permanente
 				break;
-		}
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO2 && entities[i]->GetSensor() == NORMAL) {
-			entities[i]->ActivateLetter(); // Activa la letra de forma permanente
-			break;
-		}
-		if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO3 && entities[i]->GetSensor() == NORMAL) {
-			entities[i]->ActivateLetter(); // Activa la letra de forma permanente
-			break;
+			}
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO2 && entities[i]->GetSensor() == NORMAL) {
+				entities[i]->ActivateLetter(); // Activa la letra de forma permanente
+				break;
+			}
+			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO3 && entities[i]->GetSensor() == NORMAL) {
+				entities[i]->ActivateLetter(); // Activa la letra de forma permanente
+				break;
+			}
 		}
 	}
-	if (deleteCircles) {
+
+	if (deleteCircles || gameOver) {
 
 		for (auto it = entities.begin(); it != entities.end(); )
 		{

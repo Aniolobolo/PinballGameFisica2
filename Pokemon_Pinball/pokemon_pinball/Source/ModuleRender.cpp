@@ -49,8 +49,10 @@ update_status ModuleRender::PostUpdate()
 {
     int FPS = GetFPS();
     // Draw everything in our batch!
+    
     /*DrawFPS(300, 10);*/
     App->fontsModule->DrawText(305, 120, TextFormat("%d",FPS), WHITE);
+
     EndDrawing();
 
 	return UPDATE_CONTINUE;
