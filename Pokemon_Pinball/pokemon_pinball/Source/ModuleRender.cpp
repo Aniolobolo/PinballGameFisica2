@@ -19,7 +19,6 @@ bool ModuleRender::Init()
 {
 	LOG("Creating Renderer context");
 	bool ret = true;
-    /*background = LoadTexture("Assets/map1.png");*/ //mapa ajustado 
     background = LoadTexture("Assets/mapa.png");
 	return ret;
 }
@@ -50,7 +49,6 @@ update_status ModuleRender::PostUpdate()
     int FPS = GetFPS();
     // Draw everything in our batch!
     
-    /*DrawFPS(300, 10);*/
     App->fontsModule->DrawText(550, 116, TextFormat("%d",FPS), WHITE);
 
     EndDrawing();

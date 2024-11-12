@@ -1045,7 +1045,6 @@ public:
 
 private:
 	Texture2D texture;
-	//int currentFrame;
 	int frameCountIdle;
 	float animationSpeed;
 	float frameTimer;
@@ -1238,7 +1237,6 @@ public:
 		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC, ELSE), listener), texture(texture)
 	{
 		collisionType = TRIANGULOIZQ;
-		/*pokemons = CHINCHOU1;*/
 	}
 	void Update() override
 	{
@@ -1248,7 +1246,6 @@ public:
 	}
 private:
 	Texture2D texture;
-	  //attack timer  
 };
 
 class TrianguloDerColPunt : public PhysicEntity
@@ -1287,7 +1284,6 @@ public:
 		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC, ELSE), listener), texture(texture)
 	{
 		collisionType = TRIANGULODER; 
-		/*pokemons = CHINCHOU1;*/
 	}
 	void Update() override
 	{
@@ -1297,7 +1293,6 @@ public:
 	}
 private:
 	Texture2D texture;
-	//attack timer  
 };
 
 class GreenOneI : public PhysicEntity
@@ -1810,7 +1805,7 @@ public:
 	}
 
 	void ActivateLetter() override {
-		letterVisible = true; // Activa la letra de forma permanente
+		letterVisible = true;
 	}
 
 	void Update() override {
@@ -1830,7 +1825,6 @@ public:
 
 private:
 	Texture2D texture;
-	/*bool letterVisible;*/ // Indica si la letra está visible
 	float scale = 1.3f;
 };
 
@@ -1845,7 +1839,7 @@ public:
 	}
 
 	void ActivateLetter() override {
-		letterVisible2 = true; // Activa la letra de forma permanente
+		letterVisible2 = true;
 	}
 
 	void Update() override {
@@ -1853,7 +1847,6 @@ public:
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
 
-		// Dibuja la letra solo si está activada
 		if (letterVisible2) {
 			Rectangle source = { 0.0f, 0.0f, 16.0f, 16.0f };
 			Rectangle dest = { position.x, position.y, 16.0f * scale, 16.0f * scale };
@@ -1865,7 +1858,6 @@ public:
 
 private:
 	Texture2D texture;
-/*	bool letterVisible;*/ // Indica si la letra está visible
 	float scale = 1.3f;
 };
 
@@ -1880,7 +1872,7 @@ public:
 	}
 
 	void ActivateLetter() override {
-		letterVisible3 = true; // Activa la letra de forma permanente
+		letterVisible3 = true;
 	}
 
 	void Update() override {
@@ -1888,7 +1880,6 @@ public:
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
 
-		// Dibuja la letra solo si está activada
 		if (letterVisible3) {
 			Rectangle source = { 0.0f, 0.0f, 16.0f, 16.0f };
 			Rectangle dest = { position.x, position.y, 16.0f * scale, 16.0f * scale };
@@ -1900,7 +1891,6 @@ public:
 
 private:
 	Texture2D texture;
-	/*bool letterVisible;*/ // Indica si la letra está visible
 	float scale = 1.3f;
 };
 
@@ -1957,8 +1947,6 @@ bool ModuleGame::Start()
 	
 	gameOverTexture = LoadTexture("Assets/Gameover.png");
 
-	//recuadroTexture = LoadTexture("Assets/recuadro.png");
-
 	default_fx = App->audio->LoadFx("Assets/Po.wav");
 	bonus_fx = App->audio->LoadFx("Assets/Diri.WAV");
 	saver_fx = App->audio->LoadFx("Assets/Saver.WAV");
@@ -1966,7 +1954,6 @@ bool ModuleGame::Start()
 
 	App->fontsModule->LoadFontTexture("Assets/Fonts32x16.png", '0',16);
 
-	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT+25, SCREEN_WIDTH, 50);
 	PlayMusicStream(backgroundMusic);
 	entities.emplace_back(new LeftPad(App->physics,215,940, this, leftPad));
 	entities.emplace_back(new RightPad(App->physics,360,940, this, rightPad));
@@ -2081,8 +2068,6 @@ update_status ModuleGame::Update()
 			if (latios != nullptr) {
 				if (latios->hasToSpawnBall && !latios->pokeballSpawned) {
 					newEntities.emplace_back(new Circle(App->physics, SCREEN_WIDTH - 45, 790, this, circle));
-
-					// Marcar como creada para evitar más spawns
 					latios->pokeballSpawned = true;
 				}
 			}
@@ -2115,14 +2100,13 @@ update_status ModuleGame::Update()
 		{
 			for (auto it = entities.begin(); it != entities.end(); )
 			{
-				// Verificamos si el tipo es Circle usando dynamic_cast
 				if (dynamic_cast<Circle*>(*it) != nullptr)
 				{
-					it = entities.erase(it); // Eliminar instancia de Circle
+					it = entities.erase(it);
 				}
 				else
 				{
-					++it; // Continuar con el siguiente elemento
+					++it;
 				}
 			}
 		}
@@ -2134,9 +2118,7 @@ update_status ModuleGame::Update()
 
 	if (lives > 0) {
 		if (deleteCircles) {
-			if (lives != 1) {
-				entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
-			}
+			entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
 			lives--;			
 		}
 	}
@@ -2190,10 +2172,6 @@ update_status ModuleGame::Update()
 	if (suma > highscore) {
 		highscore = suma;
 	}
-
-	//DrawText(TextFormat("Score: %d", suma), 40, 20, 20, BLACK);
-	/*DrawText(TextFormat("Highscore: %d", highscore), 40, 40, 20, BLACK);*/
-	/*DrawText(TextFormat("Lives: %d", lives), 40, 60, 20, BLACK);*/
 
 	if (lives <= 0) {
 		lives = 0;
@@ -2287,15 +2265,15 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 				break;
 			}
 			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO && entities[i]->GetSensor() == NORMAL) {
-				entities[i]->ActivateLetter(); // Activa la letra de forma permanente
+				entities[i]->ActivateLetter();
 				break;
 			}
 			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO2 && entities[i]->GetSensor() == NORMAL) {
-				entities[i]->ActivateLetter(); // Activa la letra de forma permanente
+				entities[i]->ActivateLetter();
 				break;
 			}
 			if (bodyA == entities[i]->body && entities[i]->GetCollisionType() == PUNTOROJO3 && entities[i]->GetSensor() == NORMAL) {
-				entities[i]->ActivateLetter(); // Activa la letra de forma permanente
+				entities[i]->ActivateLetter();
 				break;
 			}
 		}
@@ -2305,14 +2283,14 @@ void ModuleGame::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 
 		for (auto it = entities.begin(); it != entities.end(); )
 		{
-			// Verificamos si el tipo es Circle usando dynamic_cast
+
 			if (dynamic_cast<Circle*>(*it) != nullptr)
 			{
-				it = entities.erase(it); // Eliminar instancia de Circle
+				it = entities.erase(it);
 			}
 			else
 			{
-				++it; // Continuar con el siguiente elemento
+				++it;
 			}
 		}
 	}
