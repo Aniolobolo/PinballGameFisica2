@@ -1964,7 +1964,7 @@ bool ModuleGame::Start()
 	saver_fx = App->audio->LoadFx("Assets/Saver.WAV");
 	backgroundMusic = LoadMusicStream("Assets/19-Red-Table.ogg");
 
-	App->fontsModule->LoadFontTexture("Assets/fonts16x32.png", '0',16);
+	App->fontsModule->LoadFontTexture("Assets/Fonts32x16.png", '0',16);
 
 	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT+25, SCREEN_WIDTH, 50);
 	PlayMusicStream(backgroundMusic);
@@ -2048,6 +2048,7 @@ update_status ModuleGame::Update()
 
 	if (IsKeyPressed(KEY_R) && gameOver) {
 		lives = 3;
+		previousScore = suma; 
 		suma = 0;
 		entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
 		gameOver = false;
@@ -2166,16 +2167,18 @@ update_status ModuleGame::Update()
 			DrawLine((int)(ray.x + destination.x), (int)(ray.y + destination.y), (int)(ray.x + destination.x + normal.x * 25.0f), (int)(ray.y + destination.y + normal.y * 25.0f), Color{ 100, 255, 100, 255 });
 		}
 	}
-	/*App->fontsModule->DrawText(10, 10, TextFormat("%d", suma), WHITE);*/
-	/*App->fontsModule->DrawText(10, 30, TextFormat("Lives: %d", lives), WHITE);*/
+	App->fontsModule->DrawText(10, 10, TextFormat("%d", suma), WHITE);
+	App->fontsModule->DrawText(10, 30, TextFormat(":%d", lives), WHITE);
+	App->fontsModule->DrawText(100, 40, TextFormat("%d", highscore), WHITE);
+	App->fontsModule->DrawText(400, 40, TextFormat("%d", previousScore), WHITE);
 
 	if (suma > highscore) {
 		highscore = suma;
 	}
 
-	DrawText(TextFormat("Score: %d", suma), 40, 20, 20, BLACK);
-	DrawText(TextFormat("Highscore: %d", highscore), 40, 40, 20, BLACK);
-	DrawText(TextFormat("Lives: %d", lives), 40, 60, 20, BLACK);
+	//DrawText(TextFormat("Score: %d", suma), 40, 20, 20, BLACK);
+	/*DrawText(TextFormat("Highscore: %d", highscore), 40, 40, 20, BLACK);*/
+	/*DrawText(TextFormat("Lives: %d", lives), 40, 60, 20, BLACK);*/
 
 	if (lives <= 0) {
 		lives = 0;

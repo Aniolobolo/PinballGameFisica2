@@ -78,6 +78,7 @@ public:
 
 	int suma = 0;
 	int highscore = 0;
+	int previousScore = 0;
 	int wait = 2; // time in seconds
 	bool deleteCircles = false;
 	int lives = 3;
