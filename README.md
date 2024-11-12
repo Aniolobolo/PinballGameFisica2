@@ -36,4 +36,5 @@ Debug functionalities:
   - F1: Show collisions:
   - 1: Spawn Pokéball at the mouse's current position.
   - 2: Delete all Pokéballs from the screen.
-  - 3: Spawn a Pokémon that brings a Pokéball to the spring. 
+  - 3: Spawn a Pokémon that brings a Pokéball to the spring.
+  - You can click the ball and move it with your mouse.
