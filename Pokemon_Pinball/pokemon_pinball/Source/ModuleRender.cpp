@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
+#include "ModuleFonts.h"
 #include <math.h>
 
 ModuleRender::ModuleRender(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -46,9 +47,10 @@ update_status ModuleRender::Update()
 // PostUpdate present buffer to screen
 update_status ModuleRender::PostUpdate()
 {
+    int FPS = GetFPS();
     // Draw everything in our batch!
-    DrawFPS(300, 10);
-    
+    /*DrawFPS(300, 10);*/
+    App->fontsModule->DrawText(305, 120, TextFormat("%d",FPS), WHITE);
     EndDrawing();
 
 	return UPDATE_CONTINUE;

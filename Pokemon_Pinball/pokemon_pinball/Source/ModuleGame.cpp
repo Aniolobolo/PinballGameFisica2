@@ -2150,8 +2150,8 @@ update_status ModuleGame::Update()
 			DrawLine((int)(ray.x + destination.x), (int)(ray.y + destination.y), (int)(ray.x + destination.x + normal.x * 25.0f), (int)(ray.y + destination.y + normal.y * 25.0f), Color{ 100, 255, 100, 255 });
 		}
 	}
-	App->fontsModule->DrawText(10, 10, TextFormat("%d", suma), WHITE);
-	App->fontsModule->DrawText(560, 8, TextFormat(":%d", lives), WHITE);
+	App->fontsModule->DrawText(395, 9, TextFormat("%d", suma), WHITE);
+	App->fontsModule->DrawText(549, 9, TextFormat(":%d", lives), WHITE);
 
 	/*DrawText(TextFormat("Score: %d", suma), 10, 10, 30, BLACK);
 	DrawText(TextFormat("Lives: %d", lives), 10, 40, 30, BLACK);*/
