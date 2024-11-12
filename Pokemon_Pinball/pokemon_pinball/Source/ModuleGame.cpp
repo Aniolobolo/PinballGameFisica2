@@ -151,7 +151,7 @@ public:
 	void Update() override
 	{
 
-		if (IsKeyDown(KEY_A)) {
+		if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
 			leftJoint->SetMotorSpeed(-60.0f); 
 		}
 		else {
@@ -207,7 +207,7 @@ public:
 	void Update() override
 	{
 
-		if (IsKeyDown(KEY_D)) {
+		if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
 			rightJoint->SetMotorSpeed(60.0f); 
 		}
 		else {
@@ -272,7 +272,7 @@ public:
 
 	void Update() override {
 	
-		if (IsKeyDown(KEY_S)) {
+		if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) {
 			springJoint->SetMotorSpeed(3.0f);
 
 	
@@ -695,7 +695,7 @@ private:
 	Texture2D texture;
 };
 
-class Collision1 : public PhysicEntity
+class Collision1 : public PhysicEntity //mapa
 {
 public:
 	// Pivot 0, 0
@@ -794,7 +794,7 @@ private:
 	Texture2D texture;
 };
 
-class Collision2 : public PhysicEntity
+class Collision2 : public PhysicEntity // L azul abajo iquierda colision
 {
 public:
 	// Pivot 0, 0
@@ -830,7 +830,7 @@ private:
 	Texture2D texture;
 };
 
-class Collision3 : public PhysicEntity
+class Collision3 : public PhysicEntity	// L azul abajo derecha colision
 {
 public:
 	// Pivot 0, 0
@@ -867,7 +867,7 @@ private:
 	Texture2D texture;
 };
 
-class Collision4 : public PhysicEntity
+class Collision4 : public PhysicEntity	// Triangulo der rojo
 {
 public:
 	// Pivot 0, 0
@@ -894,7 +894,7 @@ public:
 	};
 
 	Collision4(ModulePhysics* physics, int _x, int _y, Module* _listener, Texture2D _texture)
-		: PhysicEntity(physics->CreateChain(0, 0, CollisionFour, 38), _listener)
+		: PhysicEntity(physics->CreateChain(0, 0, CollisionFour, 38), _listener) 
 		, texture(_texture)
 	{
 		collisionType = DEFAULT;
@@ -957,7 +957,7 @@ private:
 	float hitTimer;   //attack timer 
 };
 
-class Collision5 : public PhysicEntity	// TRiangulo der
+class Collision5 : public PhysicEntity	// TRiangulo izq rojo
 {
 public:
 	// Pivot 0, 0
@@ -1050,7 +1050,7 @@ private:
 	float hitTimer;   //attack timer  
 };
 
-class Collision6 : public PhysicEntity
+class Collision6 : public PhysicEntity	//Piedra grande y cyndaquil
 {
 public:
 	// Pivot 0, 0
@@ -1128,7 +1128,7 @@ private:
 	float scale;
 };
 
-class GreenEvoD : public PhysicEntity
+class GreenEvoD : public PhysicEntity		// Colision de al lado de letras evo, derecha
 {
 public:
 	// Pivot 0, 0
@@ -1193,7 +1193,7 @@ private:
 	Texture2D texture;
 };
 
-class TrianguloIzqColPunt : public PhysicEntity
+class TrianguloIzqColPunt : public PhysicEntity		// Colision puntuaje triangulo izquierdo
 {
 public:
 	// Pivot 0, 0
@@ -1297,7 +1297,7 @@ private:
 	//attack timer  
 };
 
-class GreenOneI : public PhysicEntity
+class GreenOneI : public PhysicEntity		//Arriba derecha chinchous
 {
 public:
 	// Pivot 0, 0
@@ -1335,7 +1335,7 @@ public:
 private:
 	Texture2D texture;
 };
-class Collision7 : public PhysicEntity
+class Collision7 : public PhysicEntity		// Columna derecha arriba chinchous
 {
 public:
 	// Pivot 0, 0
@@ -1368,7 +1368,7 @@ private:
 	Texture2D texture;
 };
 
-class Collision8 : public PhysicEntity
+class Collision8 : public PhysicEntity		// Columna derecha arriba chinchous
 {
 public:
 	// Pivot 0, 0
@@ -1401,7 +1401,7 @@ private:
 	Texture2D texture;
 };
 
-class Collision12 : public PhysicEntity
+class Collision12 : public PhysicEntity		// Abajo derecha chinchous
 {
 public:
 	// Pivot 0, 0
@@ -1457,7 +1457,7 @@ private:
 	float scale;
 };
 
-class Collision13 : public PhysicEntity
+class Collision13 : public PhysicEntity		// Tiburon sharpedos
 {
 public:
 	// Pivot 0, 0
@@ -1631,7 +1631,7 @@ private:
 	Texture2D texture;
 };
 
-class Collision18 : public PhysicEntity
+class Collision18 : public PhysicEntity	// Para meter colision puntuacion boton derecho
 {
 public:
 	// Pivot 0, 0
@@ -1659,7 +1659,7 @@ private:
 	Texture2D texture;
 };
 
-class Collision17 : public PhysicEntity
+class Collision17 : public PhysicEntity	// Para meter colision boton central	
 {
 public:
 	// Pivot 0, 0
@@ -1687,7 +1687,7 @@ private:
 	Texture2D texture;
 };
 
-class Collision16 : public PhysicEntity
+class Collision16 : public PhysicEntity		 // Colision puntuacion cyndaquil
 {
 public:
 	// Pivot 0, 0
@@ -1722,7 +1722,7 @@ private:
 	Texture2D texture;
 };
 
-class Collision15 : public PhysicEntity
+class Collision15 : public PhysicEntity	// Puerta
 {
 public:
 	// Pivot 0, 0
@@ -1796,11 +1796,11 @@ private:
 	float scale;
 };
 
-class PR1 : public PhysicEntity
+class PR1 : public PhysicEntity		//Punto rojo
 {
 public:
 	PR1(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
-		: PhysicEntity(physics->CreateRectangleSensor(x, y, 20, 20), listener), texture(texture)
+		: PhysicEntity(physics->CreateRectangleSensor(x, y, 20, 20), listener), texture(texture) 
 	{
 		collisionType = PUNTOROJO;
 		sensors = NORMAL;
@@ -1831,7 +1831,7 @@ private:
 	float scale = 1.3f;
 };
 
-class PR2 : public PhysicEntity
+class PR2 : public PhysicEntity		// Punto rojo 2
 {
 public:
 	PR2(ModulePhysics* physics, int x, int y, Module* listener, Texture2D texture)
