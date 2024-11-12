@@ -30,6 +30,7 @@ Gameplay controls:
   - A: Movement of the left pad.
   - D: Movement of the right pad.
   - R: Restart the game after losing.
+
 Debug functionalities:
   - F1: Show collisions:
   - 1: Spawn Pokéball at the mouse's current position.
