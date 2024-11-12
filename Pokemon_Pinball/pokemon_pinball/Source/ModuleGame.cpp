@@ -126,19 +126,19 @@ public:
 		, leftAnchor(nullptr)
 		, leftJoint(nullptr)
 	{
-		// Crear anclaje estático para la pala izquierda
+	
 		b2Vec2 anchorLeft(PIXEL_TO_METERS(_x), PIXEL_TO_METERS(_y));
 		b2BodyDef anchorDef;
 		anchorDef.type = b2_staticBody;
 		anchorDef.position = anchorLeft;
 		leftAnchor = physics->GetWorld()->CreateBody(&anchorDef);
 
-		// Configurar la revolute joint para la pala izquierda
+	
 		b2RevoluteJointDef jointDef;
 		jointDef.bodyA = leftAnchor;
 		jointDef.bodyB = body->body;
 		jointDef.localAnchorA.SetZero();
-		jointDef.localAnchorB.Set(-PIXEL_TO_METERS(30), 0); // Punto de anclaje en la pala
+		jointDef.localAnchorB.Set(-PIXEL_TO_METERS(30), 0);
 		jointDef.enableMotor = true;
 		jointDef.maxMotorTorque = 1000.0f;
 		jointDef.enableLimit = true;
@@ -150,12 +150,12 @@ public:
 
 	void Update() override
 	{
-		// Control de rotación de la pala izquierda con el teclado
+
 		if (IsKeyDown(KEY_A)) {
-			leftJoint->SetMotorSpeed(-60.0f); // Rotación en sentido horario
+			leftJoint->SetMotorSpeed(-60.0f); 
 		}
 		else {
-			leftJoint->SetMotorSpeed(60.0f); // Retorno en sentido antihorario
+			leftJoint->SetMotorSpeed(60.0f);
 		}
 
 		int x, y;
@@ -182,7 +182,7 @@ public:
 		, rightAnchor(nullptr)
 		, rightJoint(nullptr)
 	{
-		// Crear anclaje estático para la pala derecha
+	
 		b2Vec2 anchorRight(PIXEL_TO_METERS(_x), PIXEL_TO_METERS(_y));
 		b2BodyDef anchorDef;
 		anchorDef.type = b2_staticBody;
@@ -194,24 +194,24 @@ public:
 		jointDef.bodyA = rightAnchor;
 		jointDef.bodyB = body->body;
 		jointDef.localAnchorA.SetZero();
-		jointDef.localAnchorB.Set(PIXEL_TO_METERS(30), 0); // Ajuste de anclaje para pivote en el lado izquierdo
+		jointDef.localAnchorB.Set(PIXEL_TO_METERS(30), 0);
 		jointDef.enableMotor = true;
 		jointDef.maxMotorTorque = 1000.0f;
 		jointDef.enableLimit = true;
-		jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;  // Límite inferior (mirando hacia abajo)
-		jointDef.upperAngle = 30.0f * b2_pi / 180.0f; // Límite superior (hacia arriba)
+		jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;  
+		jointDef.upperAngle = 30.0f * b2_pi / 180.0f; 
 
 		rightJoint = (b2RevoluteJoint*)physics->GetWorld()->CreateJoint(&jointDef);
 	}
 
 	void Update() override
 	{
-		// Control de rotación de la pala derecha con el teclado
+
 		if (IsKeyDown(KEY_D)) {
-			rightJoint->SetMotorSpeed(60.0f); // Rotación en sentido horario (hacia arriba)
+			rightJoint->SetMotorSpeed(60.0f); 
 		}
 		else {
-			rightJoint->SetMotorSpeed(-60.0f); // Retorno en sentido antihorario (hacia abajo)
+			rightJoint->SetMotorSpeed(-60.0f);
 		}
 
 		int x, y;
@@ -239,69 +239,67 @@ public:
 		, currentFrame(0)
 		, animationTimer(0.0f)
 	{
-		// Configuración de animación
-		frameCount = 7; // Total de frames de la animación
-		frameWidth = 48; // Ancho de cada frame en la imagen
-		frameHeight = 80; // Altura de cada frame en la imagen
-		frameSpeed = 0.2f; // Velocidad de animación en segundos por frame
+		
+		frameCount = 7;
+		frameWidth = 48; 
+		frameHeight = 80; 
+		frameSpeed = 0.2f;
 
-		// Crear el pistón dinámico del resorte
+
 		springPiston = physics->CreateRectangle(_x, _y + _height / 2, _width, _height);
 
-		// Crear el prismatic joint que conecta el cuerpo base con el pistón
+
 		b2PrismaticJointDef prismaticJointDef;
-		prismaticJointDef.bodyA = body->body;  // Cuerpo base estático
+		prismaticJointDef.bodyA = body->body; 
 		prismaticJointDef.bodyB = springPiston->body;
 		prismaticJointDef.collideConnected = false;
 		prismaticJointDef.localAnchorA.Set(0, 0);
 		prismaticJointDef.localAnchorB.Set(0, -PIXEL_TO_METERS(_height) / 2);
-		prismaticJointDef.localAxisA.Set(0, 1);  // Movimiento en el eje Y
+		prismaticJointDef.localAxisA.Set(0, 1); 
 
-		// Configurar límites de movimiento
+	
 		prismaticJointDef.enableLimit = true;
-		prismaticJointDef.lowerTranslation = -PIXEL_TO_METERS(_height * 0.3f); // Límite inferior
-		prismaticJointDef.upperTranslation = PIXEL_TO_METERS(_height * 0.3f);  // Límite superior
+		prismaticJointDef.lowerTranslation = -PIXEL_TO_METERS(_height * 0.3f); 
+		prismaticJointDef.upperTranslation = PIXEL_TO_METERS(_height * 0.3f); 
 
-		// Configurar propiedades del motor (resorte)
+	
 		prismaticJointDef.enableMotor = true;
-		prismaticJointDef.maxMotorForce = 1000.0f; // Fuerza del resorte
-		prismaticJointDef.motorSpeed = 0.0f;       // Velocidad inicial
+		prismaticJointDef.maxMotorForce = 1000.0f; 
+		prismaticJointDef.motorSpeed = 0.0f;       
 
-		// Crear el prismatic joint en el mundo de física
 		springJoint = (b2PrismaticJoint*)physics->GetWorld()->CreateJoint(&prismaticJointDef);
 	}
 
 	void Update() override {
-		// Control de animación y movimiento del resorte con la tecla S
+	
 		if (IsKeyDown(KEY_S)) {
-			springJoint->SetMotorSpeed(3.0f); // Comprimir resorte
+			springJoint->SetMotorSpeed(3.0f);
 
-			// Temporizador para controlar la velocidad de la animación
+	
 			animationTimer += GetFrameTime();
 			if (animationTimer >= frameSpeed) {
-				// Bucle en los últimos tres frames de la animación a una velocidad más lenta
+
 				if (currentFrame < frameCount - 3 || currentFrame > frameCount - 1) {
-					currentFrame = frameCount - 3; // Inicia el bucle en los tres últimos frames
+					currentFrame = frameCount - 3;
 				}
 				else {
 					currentFrame++;
 					if (currentFrame > frameCount - 1) {
-						currentFrame = frameCount - 3; // Vuelve al inicio del bucle de los tres últimos frames
+						currentFrame = frameCount - 3; 
 					}
 				}
-				animationTimer = 0.0f; // Reinicia el temporizador
+				animationTimer = 0.0f; 
 			}
 		}
 		else {
-			springJoint->SetMotorSpeed(-20.0f);  // Soltar resorte
-			currentFrame = 0; // Vuelve al primer frame cuando no se presiona la tecla
+			springJoint->SetMotorSpeed(-20.0f); 
+			currentFrame = 0; 
 		}
 
-		// Obtener la posición del pistón del resorte
 		int x, y;
 		springPiston->GetPhysicPosition(x, y);
 
-		// Dibujar la textura del resorte en el frame actual
+
 		Rectangle source = { currentFrame * frameWidth, 0, frameWidth, frameHeight };
 		Rectangle dest = { (float)x, (float)y + 2, frameWidth, frameHeight };
 		DrawTexturePro(texture, source, dest, Vector2{ frameWidth / 2.0f, frameHeight / 2.0f }, 0.0f, WHITE);
@@ -316,7 +314,7 @@ private:
 	int frameWidth;
 	int frameHeight;
 	float animationTimer;
-	float frameSpeed; // Tiempo en segundos para cambiar de frame (velocidad de animación)
+	float frameSpeed;
 };
 
 
@@ -355,7 +353,7 @@ void Update() override
 	if (!isHit) {
 		frameTimer += animationSpeed;
 		if (frameTimer >= 1.0f) {
-			currentFrame = (currentFrame + 1) % frameCountIdle;  // Alterna entre frame 0 y 1
+			currentFrame = (currentFrame + 1) % frameCountIdle;  
 			frameTimer = 0.0f;
 		}
 	}
@@ -363,17 +361,17 @@ void Update() override
 	// Animación hit
 	if (isHit) {
 		hitTimer += GetFrameTime();
-		if (hitTimer < 1.4f) {  // Duración de la animación de golpe
+		if (hitTimer < 1.4f) { 
 			frameTimer += animationSpeed;
 			if (frameTimer >= 1.0f) {
-				currentFrame = 2 + (currentFrame + 1) % frameCountHit;  // Alterna entre frame 2 y 3
+				currentFrame = 2 + (currentFrame + 1) % frameCountHit; 
 				frameTimer = 0.0f;
 			}
 		}
-		else {  // Después de 0.4 segundos, vuelve a la animación idle
+		else { 
 			isHit = false;
 			hitTimer = 0.0f;
-			currentFrame = 0;  // Reinicia la animación idle al primer frame
+			currentFrame = 0; 
 		}
 	}
 
@@ -386,9 +384,9 @@ void Update() override
 
 void OnHit()
 {
-	if (!isHit) {  // Solo activa el golpe si no está ya activo
+	if (!isHit) {  
 		isHit = true;
-		currentFrame = 2;  // Inicia la animación de golpe en el frame 2
+		currentFrame = 2;
 		hitTimer = 0.0f;
 	}
 }
@@ -451,9 +449,9 @@ public:
 		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC, ELSE), listener), texture(texture)
 	{
 		collisionType = GULPIN;
-		frameCount = 8;          // Solo dos cuadros de animaci�n
+		frameCount = 8;       
 		currentFrame = 0;
-		animationSpeed = 0.11f;   // Control de velocidad de la animaci�n
+		animationSpeed = 0.11f;   
 		frameTimer = 0.0f;
 		scale = 1.2f; 
 	}
@@ -470,12 +468,11 @@ public:
 			frameTimer = 0.0f;
 		}
 
-		// Calcula el rect�ngulo de origen para el cuadro actual
 		Rectangle source = { currentFrame * 64.0f, 0.0f, 64.0f, 48.0f };
 		Rectangle dest = { position.x, position.y, 64.0f * scale, 48.0f * scale };
-		Vector2 origin = { 259.0f * scale, -302.0f * scale}; // Centro del cuadro de 48x48
+		Vector2 origin = { 259.0f * scale, -302.0f * scale}; 
 
-		// Dibuja el cuadro actual sin aplicar rotaci�n
+
 		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 	}
 private:
@@ -533,9 +530,9 @@ public:
 		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC, ELSE), listener), texture(texture)
 	{
 		collisionType = WISHCASH;
-		frameCount = 6;          // Solo dos cuadros de animaci�n
+		frameCount = 6;  
 		currentFrame = 0;
-		animationSpeed = 0.085f;   // Control de velocidad de la animaci�n
+		animationSpeed = 0.085f;
 		frameTimer = 0.0f;
 		scale = 1.25f;
 	}
@@ -545,29 +542,29 @@ public:
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
 
-		// Avanza el temporizador de animaci�n
+		
 		frameTimer += animationSpeed;
 		if (frameTimer >= 1.0f)
 		{
-			// Cambia al siguiente cuadro y reinicia el temporizador
+	
 			currentFrame = (currentFrame + 1) % frameCount;
 			frameTimer = 0.0f;
 		}
 
-		// Calcula el rect�ngulo de origen para el cuadro actual
+	
 		Rectangle source = { currentFrame * 96.0f, 0.0f, 96.0f, 96.0f };
 		Rectangle dest = { position.x, position.y, 96.0f * scale, 96.0f * scale };
-		Vector2 origin = { -32.0f * scale, 182.0f * scale }; // Centro del cuadro de 48x48
+		Vector2 origin = { -32.0f * scale, 182.0f * scale };
 
-		// Dibuja el cuadro actual sin aplicar rotaci�n
+
 		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 	}
 private:
 	Texture2D texture;
-	int currentFrame;       // Cuadro actual de la animaci�n
-	int frameCount;         // N�mero total de cuadros en la animaci�n (2 en este caso)
-	float animationSpeed;   // Control de velocidad de la animaci�n
-	float frameTimer;       // Temporizador para cambiar de cuadro
+	int currentFrame;
+	int frameCount;
+	float animationSpeed;
+	float frameTimer;
 	float scale;
 };
 
@@ -577,9 +574,9 @@ public:
 		: PhysicEntity(physics->CreateCircle(x, y, 10, STATIC, ELSE), listener), texture(texture)
 	{
 		collisionType = NUZLEAF;
-		frameCount = 3;          // Solo dos cuadros de animaci�n
+		frameCount = 3;
 		currentFrame = 0;
-		animationSpeed = 0.085f;   // Control de velocidad de la animaci�n
+		animationSpeed = 0.085f;
 		frameTimer = 0.0f;
 		scale = 1.25f;
 	}
@@ -589,29 +586,29 @@ public:
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
 
-		// Avanza el temporizador de animaci�n
+		
 		frameTimer += animationSpeed;
 		if (frameTimer >= 1.0f)
 		{
-			// Cambia al siguiente cuadro y reinicia el temporizador
+
 			currentFrame = (currentFrame + 1) % frameCount;
 			frameTimer = 0.0f;
 		}
 
-		// Calcula el rect�ngulo de origen para el cuadro actual
+
 		Rectangle source = { currentFrame * 64.0f, 0.0f, 64.0f, 80.0f };
 		Rectangle dest = { position.x, position.y, 64.0f * scale, 80.0f * scale };
-		Vector2 origin = { -98.0f * scale, -244.0f * scale }; // Centro del cuadro de 48x48
+		Vector2 origin = { -98.0f * scale, -244.0f * scale };
 
-		// Dibuja el cuadro actual sin aplicar rotaci�n
+
 		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 	}
 private:
 	Texture2D texture;
-	int currentFrame;       // Cuadro actual de la animaci�n
-	int frameCount;         // N�mero total de cuadros en la animaci�n (2 en este caso)
-	float animationSpeed;   // Control de velocidad de la animaci�n
-	float frameTimer;       // Temporizador para cambiar de cuadro
+	int currentFrame;
+	int frameCount;
+	float animationSpeed;
+	float frameTimer;
 	float scale;
 };
 
@@ -637,13 +634,13 @@ public:
 
 	void Update() override
 	{
-		// Actualiza la posición horizontal usando `posX`
+
 		posX += speedX;
 
-		// Comprueba si la posición supera la anchura de la ventana y marca para eliminación
+	
 		if (posX > GetScreenWidth() + 50) {
 			isMarkedForDeletion = true;
-			return; // No seguir dibujando si está marcado para eliminar
+			return; 
 		}
 		if (posX > GetScreenWidth() - 45) {
 			hasToSpawnBall = true;
@@ -652,16 +649,16 @@ public:
 			hasToSpawnBall = false;
 		}
 
-		// Obtiene la posición física de `y` para mantener el valor actual
+
 		int x, y;
 		body->GetPhysicPosition(x, y);
 
-		// Usa `posX` en lugar de `x` para el dibujado
+	
 		Vector2 position{ posX, (float)y };
 
 		Rectangle source = { 0.0f, 0.0f, 126.0f, 99.0f };
 		Rectangle dest = { position.x, position.y, 126.0f * scale, 99.0f * scale };
-		Vector2 origin = { 126.0f * scale / 2, 99.0f * scale / 2 }; // Centro de la imagen
+		Vector2 origin = { 126.0f * scale / 2, 99.0f * scale / 2 };
 
 		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 	}
@@ -1810,7 +1807,7 @@ public:
 	}
 
 	void ActivateLetter() override {
-		letterVisible = true; // Activa la letra de forma permanente
+		letterVisible = true;
 	}
 
 	void Update() override {
@@ -1818,7 +1815,7 @@ public:
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
 
-		// Dibuja la letra solo si está activada
+
 		if (letterVisible) {
 			Rectangle source = { 0.0f, 0.0f, 16.0f, 16.0f };
 			Rectangle dest = { position.x, position.y, 16.0f * scale, 16.0f * scale };
@@ -1830,7 +1827,7 @@ public:
 
 private:
 	Texture2D texture;
-	/*bool letterVisible;*/ // Indica si la letra está visible
+
 	float scale = 1.3f;
 };
 
@@ -1845,7 +1842,7 @@ public:
 	}
 
 	void ActivateLetter() override {
-		letterVisible2 = true; // Activa la letra de forma permanente
+		letterVisible2 = true;
 	}
 
 	void Update() override {
@@ -1853,7 +1850,6 @@ public:
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
 
-		// Dibuja la letra solo si está activada
 		if (letterVisible2) {
 			Rectangle source = { 0.0f, 0.0f, 16.0f, 16.0f };
 			Rectangle dest = { position.x, position.y, 16.0f * scale, 16.0f * scale };
@@ -1865,7 +1861,6 @@ public:
 
 private:
 	Texture2D texture;
-/*	bool letterVisible;*/ // Indica si la letra está visible
 	float scale = 1.3f;
 };
 
@@ -1880,7 +1875,7 @@ public:
 	}
 
 	void ActivateLetter() override {
-		letterVisible3 = true; // Activa la letra de forma permanente
+		letterVisible3 = true; 
 	}
 
 	void Update() override {
@@ -1888,7 +1883,7 @@ public:
 		body->GetPhysicPosition(x, y);
 		Vector2 position{ (float)x, (float)y };
 
-		// Dibuja la letra solo si está activada
+
 		if (letterVisible3) {
 			Rectangle source = { 0.0f, 0.0f, 16.0f, 16.0f };
 			Rectangle dest = { position.x, position.y, 16.0f * scale, 16.0f * scale };
@@ -1900,7 +1895,6 @@ public:
 
 private:
 	Texture2D texture;
-	/*bool letterVisible;*/ // Indica si la letra está visible
 	float scale = 1.3f;
 };
 
@@ -1957,7 +1951,6 @@ bool ModuleGame::Start()
 	
 	gameOverTexture = LoadTexture("Assets/Gameover.png");
 
-	//recuadroTexture = LoadTexture("Assets/recuadro.png");
 
 	default_fx = App->audio->LoadFx("Assets/Po.wav");
 	bonus_fx = App->audio->LoadFx("Assets/Diri.WAV");
@@ -1966,7 +1959,7 @@ bool ModuleGame::Start()
 
 	App->fontsModule->LoadFontTexture("Assets/Fonts32x16.png", '0',16);
 
-	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT+25, SCREEN_WIDTH, 50);
+
 	PlayMusicStream(backgroundMusic);
 	entities.emplace_back(new LeftPad(App->physics,215,940, this, leftPad));
 	entities.emplace_back(new RightPad(App->physics,360,940, this, rightPad));
@@ -2082,7 +2075,6 @@ update_status ModuleGame::Update()
 				if (latios->hasToSpawnBall && !latios->pokeballSpawned) {
 					newEntities.emplace_back(new Circle(App->physics, SCREEN_WIDTH - 45, 790, this, circle));
 
-					// Marcar como creada para evitar más spawns
 					latios->pokeballSpawned = true;
 				}
 			}
@@ -2115,14 +2107,14 @@ update_status ModuleGame::Update()
 		{
 			for (auto it = entities.begin(); it != entities.end(); )
 			{
-				// Verificamos si el tipo es Circle usando dynamic_cast
+	
 				if (dynamic_cast<Circle*>(*it) != nullptr)
 				{
-					it = entities.erase(it); // Eliminar instancia de Circle
+					it = entities.erase(it); 
 				}
 				else
 				{
-					++it; // Continuar con el siguiente elemento
+					++it;
 				}
 			}
 		}

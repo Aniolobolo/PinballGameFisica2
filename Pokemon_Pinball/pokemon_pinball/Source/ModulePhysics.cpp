@@ -212,25 +212,24 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, const int* points, int size)
 
 PhysBody* ModulePhysics::CreateLeftFlipper(int x,int y)
 {
-	// Crear y configurar la pala izquierda como PhysBody
+
 	PhysBody* leftFlipper = new PhysBody();
 
-	// Posición del anclaje de la pala izquierda
-	b2Vec2 anchorLeft(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y)); // Anclaje de la pala izquierda
 
-	// Crear anclaje estático para la pala izquierda
+	b2Vec2 anchorLeft(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+
 	b2BodyDef anchorDef;
 	anchorDef.type = b2_staticBody;
 	anchorDef.position = anchorLeft;
 	b2Body* leftAnchor = world->CreateBody(&anchorDef);
 
-	// Crear cuerpo para la pala izquierda
+	
 	leftFlipper->body = CreateRectangle(METERS_TO_PIXELS(anchorLeft.x), METERS_TO_PIXELS(anchorLeft.y), 60, 10)->body;
 
-	// Configurar la revolute joint para la pala izquierda
+	
 	b2RevoluteJointDef jointDef;
 	jointDef.enableMotor = true;
-	jointDef.maxMotorTorque = 1000.0f; // Torque máximo del motor
+	jointDef.maxMotorTorque = 1000.0f;
 	jointDef.enableLimit = true;
 	jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;
 	jointDef.upperAngle = 30.0f * b2_pi / 180.0f;
@@ -238,10 +237,9 @@ PhysBody* ModulePhysics::CreateLeftFlipper(int x,int y)
 	jointDef.bodyA = leftAnchor;
 	jointDef.bodyB = leftFlipper->body;
 	jointDef.localAnchorA.SetZero();
-	jointDef.localAnchorB.Set(-PIXEL_TO_METERS(30), 0); // Punto de anclaje en la pala
+	jointDef.localAnchorB.Set(-PIXEL_TO_METERS(30), 0); 
 	lJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
 
-	// Configurar ancho y alto de la pala izquierda en PhysBody
 	leftFlipper->width = 60;
 	leftFlipper->height = 10;
 
@@ -250,42 +248,40 @@ PhysBody* ModulePhysics::CreateLeftFlipper(int x,int y)
 
 PhysBody* ModulePhysics::CreateRightFlipper(int x, int y)
 {
-	// Crear y configurar la pala derecha como PhysBody
+	
 	PhysBody* rightFlipper = new PhysBody();
 
-	// Posición del anclaje de la pala derecha (utilizando la posición x, y del parámetro)
-	b2Vec2 anchorRight(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y)); // Anclaje de la pala derecha
 
-	// Crear anclaje estático para la pala derecha
+	b2Vec2 anchorRight(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+
 	b2BodyDef anchorDef;
 	anchorDef.type = b2_staticBody;
 	anchorDef.position = anchorRight;
 	b2Body* rightAnchor = world->CreateBody(&anchorDef);
 
-	// Crear cuerpo para la pala derecha
 	rightFlipper->body = CreateRectangle(METERS_TO_PIXELS(anchorRight.x), METERS_TO_PIXELS(anchorRight.y), 60, 10)->body;
 
-	// Configurar la revolute joint para la pala derecha
+
 	b2RevoluteJointDef jointDef;
 	jointDef.enableMotor = true;
-	jointDef.maxMotorTorque = 1000.0f; // Torque máximo del motor
+	jointDef.maxMotorTorque = 1000.0f;
 	jointDef.enableLimit = true;
 
-	// Ajustar límites de ángulo para la pala derecha (inversión de límites)
-	jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;  // Invertido respecto a la pala izquierda
+
+	jointDef.lowerAngle = -30.0f * b2_pi / 180.0f;
 	jointDef.upperAngle = 30.0f * b2_pi / 180.0f;
 
 	jointDef.bodyA = rightAnchor;
 	jointDef.bodyB = rightFlipper->body;
 	jointDef.localAnchorA.SetZero();
 
-	// Cambiar el punto de anclaje en la pala derecha
-	jointDef.localAnchorB.Set(PIXEL_TO_METERS(30), 0); // Punto de anclaje en el extremo opuesto
+	
+	jointDef.localAnchorB.Set(PIXEL_TO_METERS(30), 0);
 
-	// Crear el joint para la pala derecha
+
 	rJoint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
 
-	// Configurar ancho y alto de la pala derecha en PhysBody
+
 	rightFlipper->width = 60;
 	rightFlipper->height = 10;
 
@@ -313,37 +309,36 @@ update_status ModulePhysics::PostUpdate()
 
 	if (!debug)
 	{
-		if (App->scene_intro->deleteCircles) //si es true
+		if (App->scene_intro->deleteCircles) 
 		{
-			// Usamos una lista auxiliar para eliminar los cuerpos después de la iteración
+			
 			std::vector<b2Body*> bodiesToDestroy;
 
 			for (b2Body* b = world->GetBodyList(); b != nullptr; b = b->GetNext())
 			{
-				bool isCirclePOKEBALL = false; // Indicador para detectar el tipo POKEBALL
+				bool isCirclePOKEBALL = false; 
 
 				for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
 				{
 					if (f->GetType() == b2Shape::e_circle)
 					{
-						// Verificamos si es del tipo POKEBALL
+						
 						PhysBody* pbody = (PhysBody*)b->GetUserData().pointer;
 
-						if (pbody && pbody->circleType == POKEBALL)  // Accede correctamente a circleType
+						if (pbody && pbody->circleType == POKEBALL) 
 						{
-							isCirclePOKEBALL = true;  // Establece la bandera si es un POKEBALL
+							isCirclePOKEBALL = true; 
 						}
-						break; // Salimos del bucle de fixtures si encontramos el círculo
+						break;
 					}
 				}
 
 				if (isCirclePOKEBALL)
 				{
-					bodiesToDestroy.push_back(b); // Agregamos el cuerpo a la lista para eliminarlo más tarde
+					bodiesToDestroy.push_back(b); 
 				}
 			}
 
-			// Destruimos los cuerpos fuera de la iteración
 			for (b2Body* b : bodiesToDestroy)
 			{
 				world->DestroyBody(b);
@@ -356,42 +351,42 @@ update_status ModulePhysics::PostUpdate()
 
 	if (App->scene_intro->deleteCircles) // Si es true
 	{
-		// Eliminamos la mouse_joint si existe para evitar accesos a cuerpos destruidos
+		
 		if (mouse_joint != nullptr)
 		{
 			world->DestroyJoint(mouse_joint);
 			mouse_joint = nullptr;
 		}
 
-		// Usamos una lista auxiliar para eliminar los cuerpos después de la iteración
+		
 		std::vector<b2Body*> bodiesToDestroy;
 
 		for (b2Body* b = world->GetBodyList(); b != nullptr; b = b->GetNext())
 		{
-			bool isCirclePOKEBALL = false; // Indicador para detectar el tipo POKEBALL
+			bool isCirclePOKEBALL = false; 
 
 			for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
 			{
 				if (f->GetType() == b2Shape::e_circle)
 				{
-					// Verificamos si es del tipo POKEBALL
+					
 					PhysBody* pbody = (PhysBody*)b->GetUserData().pointer;
 
-					if (pbody && pbody->circleType == POKEBALL)  // Accede correctamente a circleType
+					if (pbody && pbody->circleType == POKEBALL) 
 					{
-						isCirclePOKEBALL = true;  // Establece la bandera si es un POKEBALL
+						isCirclePOKEBALL = true; 
 					}
-					break; // Salimos del bucle de fixtures si encontramos el círculo
+					break; 
 				}
 			}
 
 			if (isCirclePOKEBALL)
 			{
-				bodiesToDestroy.push_back(b); // Agregamos el cuerpo a la lista para eliminarlo más tarde
+				bodiesToDestroy.push_back(b); 
 			}
 		}
 
-		// Destruimos los cuerpos fuera de la iteración
+
 		for (b2Body* b : bodiesToDestroy)
 		{
 			world->DestroyBody(b);
@@ -402,35 +397,35 @@ update_status ModulePhysics::PostUpdate()
 
 	if (IsKeyPressed(KEY_TWO))
 	{
-		// Usamos una lista auxiliar para eliminar los cuerpos después de la iteración
+		
 		std::vector<b2Body*> bodiesToDestroy;
 
 		for (b2Body* b = world->GetBodyList(); b != nullptr; b = b->GetNext())
 		{
-			bool isCirclePOKEBALL = false; // Indicador para detectar el tipo POKEBALL
+			bool isCirclePOKEBALL = false; 
 
 			for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
 			{
 				if (f->GetType() == b2Shape::e_circle)
 				{
-					// Verificamos si es del tipo POKEBALL
+					
 					PhysBody* pbody = (PhysBody*)b->GetUserData().pointer;
 
-					if (pbody && pbody->circleType == POKEBALL)  // Accede correctamente a circleType
+					if (pbody && pbody->circleType == POKEBALL) 
 					{
-						isCirclePOKEBALL = true;  // Establece la bandera si es un POKEBALL
+						isCirclePOKEBALL = true;  
 					}
-					break; // Salimos del bucle de fixtures si encontramos el círculo
+					break; 
 				}
 			}
 
 			if (isCirclePOKEBALL)
 			{
-				bodiesToDestroy.push_back(b); // Agregamos el cuerpo a la lista para eliminarlo más tarde
+				bodiesToDestroy.push_back(b); 
 			}
 		}
 
-		// Destruimos los cuerpos fuera de la iteración
+
 		for (b2Body* b : bodiesToDestroy)
 		{
 			world->DestroyBody(b);
