@@ -41,7 +41,7 @@ public:
 
 	PhysBody* body;
 
-	bool letterVisible, letterVisible2, letterVisible3 = false;
+	bool letterVisible = false, letterVisible2 = false, letterVisible3 = false;
 
 protected:
 
@@ -2057,18 +2057,26 @@ update_status ModuleGame::Update()
 	}
 	entities.insert(entities.end(), newEntities.begin(), newEntities.end());
 
-	//bool allConditionsMet = true;
+	bool allLettersVisible = true;
 
 	for (PhysicEntity* entity : entities) {
-		if (entity->letterVisible && entity->letterVisible2 && entity->letterVisible3) {
-			allConditionsMet = true; 
-			break; 
+		if (entity->GetCollisionType() == PUNTOROJO && !entity->letterVisible) {
+			allLettersVisible = false;
+			break;
+		}
+		else if (entity->GetCollisionType() == PUNTOROJO2 && !entity->letterVisible2) {
+			allLettersVisible = false;
+			break;
+		}
+		else if (entity->GetCollisionType() == PUNTOROJO3 && !entity->letterVisible3) {
+			allLettersVisible = false;
+			break;
 		}
 	}
 
-	if (allConditionsMet && !lifeAdded) {
+	if (allLettersVisible && !lifeAdded) {
 		lives += 1;
-		lifeAdded = true; // Marca que ya se ha añadido una vida
+		lifeAdded = true; 
 	}
 
 	if (IsKeyPressed(KEY_TWO))

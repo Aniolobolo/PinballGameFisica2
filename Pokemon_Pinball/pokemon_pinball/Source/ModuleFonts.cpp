@@ -11,7 +11,7 @@ ModuleFonts::ModuleFonts(Application* app) : Module(app), first_character(0), ch
 
 ModuleFonts::~ModuleFonts()
 {
-    UnloadTexture(font_texture);  // Asegura que la textura se descargue al destruir el módulo
+    UnloadTexture(font_texture);  
 }
 
 bool ModuleFonts::LoadFontTexture(const std::string& file_path, char first_character, int character_size)
@@ -24,7 +24,7 @@ bool ModuleFonts::LoadFontTexture(const std::string& file_path, char first_chara
     }
 
     this->first_character = first_character;
-    this->character_size = 32;  // Asegura que el tamaño de los caracteres es 32x32
+    this->character_size = 32;  
     columns = font_texture.width / character_size;
     rows = font_texture.height / character_size;
 
