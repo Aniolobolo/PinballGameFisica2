@@ -27,9 +27,9 @@ We have added the following aspects to the game:
   - FPS counter.
 
 Gameplay controls:
-  - S: Controlling the spring.
-  - A: Movement of the left pad.
-  - D: Movement of the right pad.
+  - S/Down Arrow: Controlling the spring.
+  - A/Left Arrow: Movement of the left pad.
+  - D/Right Arrow: Movement of the right pad.
   - R: Restart the game after losing.
 
 Debug functionalities:
