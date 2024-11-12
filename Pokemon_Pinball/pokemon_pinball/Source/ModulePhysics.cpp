@@ -353,8 +353,16 @@ update_status ModulePhysics::PostUpdate()
 		}
 		return UPDATE_CONTINUE;
 	}
-	if(App->scene_intro->deleteCircles) //si es true
+
+	if (App->scene_intro->deleteCircles) // Si es true
 	{
+		// Eliminamos la mouse_joint si existe para evitar accesos a cuerpos destruidos
+		if (mouse_joint != nullptr)
+		{
+			world->DestroyJoint(mouse_joint);
+			mouse_joint = nullptr;
+		}
+
 		// Usamos una lista auxiliar para eliminar los cuerpos después de la iteración
 		std::vector<b2Body*> bodiesToDestroy;
 
