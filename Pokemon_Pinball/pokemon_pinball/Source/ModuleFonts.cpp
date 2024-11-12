@@ -24,7 +24,7 @@ bool ModuleFonts::LoadFontTexture(const std::string& file_path, char first_chara
     }
 
     this->first_character = first_character;
-    this->character_size = 32;  
+    this->character_size = 16;  
     columns = font_texture.width / character_size;
     rows = font_texture.height / character_size;
 
@@ -53,7 +53,7 @@ void ModuleFonts::DrawCharacter(int x, int y, char c, const Color& col) const
         return;
     }
 
-    Rectangle srcRect = { (float)(coord_x * character_size), (float)(coord_y * character_size), 32.0f, 32.0f };
+    Rectangle srcRect = { (float)(coord_x * character_size), (float)(coord_y * character_size), 16.0f, 32.0f };
     Vector2 pos = { (float)x, (float)y };
 
     DrawTextureRec(font_texture, srcRect, pos, col);

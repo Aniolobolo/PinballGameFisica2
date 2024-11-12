@@ -1960,7 +1960,7 @@ bool ModuleGame::Start()
 	saver_fx = App->audio->LoadFx("Assets/Saver.WAV");
 	backgroundMusic = LoadMusicStream("Assets/19-Red-Table.ogg");
 
-	App->fontsModule->LoadFontTexture("Assets/fonts16x32.png", '0',16);
+	App->fontsModule->LoadFontTexture("Assets/Fonts32x16.png", '0',16);
 
 	//sensor = App->physics->CreateRectangleSensor(SCREEN_WIDTH / 2, SCREEN_HEIGHT+25, SCREEN_WIDTH, 50);
 	PlayMusicStream(backgroundMusic);
@@ -2150,11 +2150,11 @@ update_status ModuleGame::Update()
 			DrawLine((int)(ray.x + destination.x), (int)(ray.y + destination.y), (int)(ray.x + destination.x + normal.x * 25.0f), (int)(ray.y + destination.y + normal.y * 25.0f), Color{ 100, 255, 100, 255 });
 		}
 	}
-	/*App->fontsModule->DrawText(10, 10, TextFormat("%d", suma), WHITE);*/
-	/*App->fontsModule->DrawText(10, 30, TextFormat("Lives: %d", lives), WHITE);*/
+	App->fontsModule->DrawText(10, 10, TextFormat("%d", suma), WHITE);
+	App->fontsModule->DrawText(560, 8, TextFormat(":%d", lives), WHITE);
 
-	DrawText(TextFormat("Score: %d", suma), 10, 10, 30, BLACK);
-	DrawText(TextFormat("Lives: %d", lives), 10, 40, 30, BLACK);
+	/*DrawText(TextFormat("Score: %d", suma), 10, 10, 30, BLACK);
+	DrawText(TextFormat("Lives: %d", lives), 10, 40, 30, BLACK);*/
 
 	return UPDATE_CONTINUE;
 }
