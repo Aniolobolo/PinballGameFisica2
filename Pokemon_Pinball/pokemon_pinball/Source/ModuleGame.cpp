@@ -2047,11 +2047,25 @@ update_status ModuleGame::Update()
 	DrawTexture(recuadroTexture, 10, 10, WHITE);
 
 	if (IsKeyPressed(KEY_R) && gameOver) {
+
+		for (PhysicEntity* entity : entities) {
+			if (entity->GetCollisionType() == PUNTOROJO && entity->letterVisible) {
+				entity->letterVisible = false;
+			}
+			else if (entity->GetCollisionType() == PUNTOROJO2 && entity->letterVisible2) {
+				entity->letterVisible2 = false;
+			}
+			else if (entity->GetCollisionType() == PUNTOROJO3 && entity->letterVisible3) {
+				entity->letterVisible3 = false;
+			}
+		}
+		lifeAdded = false;
 		lives = 3;
 		previousScore = suma; 
 		suma = 0;
 		entities.emplace_back(new Latios(App->physics, 0, 740, this, latios, 5));
 		gameOver = false;
+
 	}
 
 	if (!gameOver) {
