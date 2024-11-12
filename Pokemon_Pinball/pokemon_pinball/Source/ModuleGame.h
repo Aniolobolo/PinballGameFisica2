@@ -77,9 +77,11 @@ public:
 	bool sensed;
 
 	int suma = 0;
+	int highscore = 0;
 	int wait = 2; // time in seconds
 	bool deleteCircles = false;
-	int lives = 4;
+	int lives = 3;
+	bool gameOver = false;
 	
 	Texture2D chinchou;
 	Texture2D cyndaquil;
@@ -91,6 +93,8 @@ public:
 	Texture2D wishcash;
 	Texture2D latios;
 	Texture2D puntorojo;
+	Texture2D gameOverTexture;
+	Texture2D recuadroTexture;
 	/*Texture2D livesTexture;*/
 
 	Texture2D puertarotante;
