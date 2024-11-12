@@ -1957,7 +1957,7 @@ bool ModuleGame::Start()
 	
 	gameOverTexture = LoadTexture("Assets/Gameover.png");
 
-	recuadroTexture = LoadTexture("Assets/recuadro.png");
+	//recuadroTexture = LoadTexture("Assets/recuadro.png");
 
 	default_fx = App->audio->LoadFx("Assets/Po.wav");
 	bonus_fx = App->audio->LoadFx("Assets/Diri.WAV");
@@ -2168,10 +2168,10 @@ update_status ModuleGame::Update()
 		}
 	}
 
-	App->fontsModule->DrawText(10, 10, TextFormat("%d", suma), WHITE);
-	App->fontsModule->DrawText(10, 30, TextFormat(":%d", lives), WHITE);
-	App->fontsModule->DrawText(100, 40, TextFormat("%d", highscore), WHITE);
-	App->fontsModule->DrawText(400, 40, TextFormat("%d", previousScore), WHITE);
+	App->fontsModule->DrawText(392, 9, TextFormat("%d", suma), WHITE);
+	App->fontsModule->DrawText(548, 9, TextFormat(":%d", lives), WHITE);
+	App->fontsModule->DrawText(313, 77, TextFormat("%d", highscore), WHITE);
+	App->fontsModule->DrawText(465, 77, TextFormat("%d", previousScore), WHITE);
 
 	if (suma > highscore) {
 		highscore = suma;

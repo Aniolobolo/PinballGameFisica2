@@ -51,7 +51,7 @@ update_status ModuleRender::PostUpdate()
     // Draw everything in our batch!
     
     /*DrawFPS(300, 10);*/
-    App->fontsModule->DrawText(305, 120, TextFormat("%d",FPS), WHITE);
+    App->fontsModule->DrawText(550, 116, TextFormat("%d",FPS), WHITE);
 
     EndDrawing();
 
